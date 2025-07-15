@@ -31,18 +31,62 @@
         </VCard>
       </VCol>
     </VRow>
+
+    <!-- Contadores favoritos -->
+    <VRow class="mt-5">
+      <VCol cols="12">
+        <VCard v-if="favoriteCounters.length > 0">
+          <VCardTitle class="d-flex align-center">
+            <h2 class="text-h5">
+              <VIcon color="amber-darken-2" class="mr-2">mdi-star</VIcon>
+              Mis Favoritos
+            </h2>
+          </VCardTitle>
+
+          <VDivider />
+
+          <VList>
+            <VListItem v-for="counter in favoriteCounters" :key="counter.id">
+              <template v-slot:prepend>
+                <VIcon :color="counter.color || 'primary'" size="large" class="mr-3">
+                  {{ counter.icon || 'mdi-calendar-clock' }}
+                </VIcon>
+              </template>
+
+              <VListItemTitle class="text-h6">
+                {{ counter.name }}
+              </VListItemTitle>
+
+              <VListItemSubtitle>
+                {{ formatCounterDate(counter.startDate) }}
+              </VListItemSubtitle>
+
+              <template v-slot:append>
+                <VChip color="primary" size="large" class="days-chip">
+                  {{ calculateDays(counter.startDate) }}
+                </VChip>
+              </template>
+            </VListItem>
+          </VList>
+        </VCard>
+      </VCol>
+    </VRow>
   </VContainer>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const db = getFirestore()
 const user = ref<any>(null)
 const daysRegistered = ref<number | null>(null)
 const registrationDate = ref<string>('')
+const favoriteCounters = ref<any[]>([])
+const userId = ref<string | null>(null)
 
 // Calcular días desde registro
 const calculateDaysSinceRegistration = (creationTime: number) => {
@@ -63,11 +107,123 @@ const formatDate = (timestamp: number) => {
   })
 }
 
+// Alias para formatDate para evitar confusión
+const formatCounterDate = formatDate
+
+// Calcular días para contadores favoritos - Igual que en CountersView
+const calculateDays = (timestamp: number) => {
+  const start = new Date(timestamp)
+  const today = new Date()
+
+  // Normalizar las fechas para quitar las horas, minutos, segundos y milisegundos
+  start.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+
+  // Asegurar que startDate no sea posterior a today
+  if (start > today) {
+    return '0 días'
+  }
+
+  // Clonar la fecha de inicio para no modificar la original
+  const startYear = start.getFullYear()
+  const startMonth = start.getMonth()
+  const startDay = start.getDate()
+
+  // Valores actuales
+  const currentYear = today.getFullYear()
+  const currentMonth = today.getMonth()
+  const currentDay = today.getDate()
+
+  // Calcular diferencia inicial
+  let years = currentYear - startYear
+  let months = currentMonth - startMonth
+  let days = currentDay - startDay
+
+  // Ajustar si los días son negativos
+  if (days < 0) {
+    // Obtener el último día del mes anterior
+    const lastDayOfPrevMonth = new Date(currentYear, currentMonth, 0).getDate()
+    days += lastDayOfPrevMonth
+    months -= 1
+  }
+
+  // Ajustar si los meses son negativos
+  if (months < 0) {
+    months += 12
+    years -= 1
+  }
+
+  // Si la fecha original es mayor que la fecha después de los cálculos, ajustar
+  const checkDate = new Date(startYear + years, startMonth + months, startDay)
+  if (checkDate > today) {
+    if (months > 0) {
+      months -= 1
+      // Calcular días desde el día de inicio hasta el final del mes
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate()
+      days = daysInMonth - startDay + currentDay
+    } else {
+      years -= 1
+      months = 11
+      // Calcular días desde el día de inicio hasta el final del mes
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate()
+      days = daysInMonth - startDay + currentDay
+    }
+  }
+
+  // Asegurar que todas las cifras sean positivas
+  years = Math.max(0, years)
+  months = Math.max(0, months)
+  days = Math.max(0, days)
+
+  // Si no hay diferencia, devolver 0 días
+  if (years === 0 && months === 0 && days === 0) {
+    return '0 días'
+  }
+
+  // Construir el string de resultado
+  let result = ''
+
+  if (years > 0) {
+    result += `${years} ${years === 1 ? 'año' : 'años'}`
+  }
+
+  if (months > 0) {
+    if (result) result += ', '
+    result += `${months} ${months === 1 ? 'mes' : 'meses'}`
+  }
+
+  if (days > 0 || (years === 0 && months === 0)) {
+    if (result) result += ', '
+    result += `${days} ${days === 1 ? 'día' : 'días'}`
+  }
+
+  return result
+}
+
+// Cargar contadores favoritos
+const loadFavoriteCounters = async () => {
+  if (!userId.value) return
+
+  try {
+    const countersRef = collection(db, 'counters')
+    const q = query(countersRef, where('userId', '==', userId.value), where('favorite', '==', true))
+    const querySnapshot = await getDocs(q)
+
+    favoriteCounters.value = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }))
+  } catch (error) {
+    console.error('Error al cargar contadores favoritos:', error)
+  }
+}
+
 onMounted(() => {
   const auth = getAuth()
   onAuthStateChanged(auth, currentUser => {
     if (currentUser) {
       user.value = currentUser
+      userId.value = currentUser.uid
 
       // Obtener metadata de creación de cuenta
       if (currentUser.metadata && currentUser.metadata.creationTime) {
@@ -75,6 +231,9 @@ onMounted(() => {
         daysRegistered.value = calculateDaysSinceRegistration(creationTime)
         registrationDate.value = formatDate(creationTime)
       }
+
+      // Cargar contadores favoritos
+      loadFavoriteCounters()
     } else {
       router.push('/login')
     }
@@ -119,5 +278,18 @@ const logout = async () => {
   letter-spacing: 1px;
   margin-top: 0.5rem;
   color: #666;
+}
+
+.days-chip {
+  font-weight: bold;
+  min-width: 120px;
+  max-width: 200px;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.3;
+  white-space: normal;
+  height: auto;
+  padding: 8px 12px;
+  font-size: 0.875rem;
 }
 </style>

@@ -38,15 +38,26 @@
                 <VChip color="primary" size="large" class="days-chip">
                   {{ calculateDays(counter.startDate) }}
                 </VChip>
-                <VBtn
-                  icon
-                  variant="text"
-                  color="error"
-                  @click="deleteCounter(counter.id)"
-                  class="ml-3"
-                >
-                  <VIcon>mdi-delete</VIcon>
-                </VBtn>
+                <div class="d-flex align-center">
+                  <VBtn
+                    icon
+                    variant="text"
+                    :color="counter.favorite ? 'amber-darken-2' : 'grey'"
+                    @click="toggleFavorite(counter)"
+                    class="ml-3"
+                  >
+                    <VIcon>{{ counter.favorite ? 'mdi-star' : 'mdi-star-outline' }}</VIcon>
+                  </VBtn>
+                  <VBtn
+                    icon
+                    variant="text"
+                    color="error"
+                    @click="deleteCounter(counter.id)"
+                    class="ml-1"
+                  >
+                    <VIcon>mdi-delete</VIcon>
+                  </VBtn>
+                </div>
               </template>
             </VListItem>
           </VList>
@@ -116,6 +127,7 @@ import {
   getDocs,
   doc,
   deleteDoc,
+  updateDoc,
   getFirestore,
   query,
   where,
@@ -136,6 +148,7 @@ const newCounter = ref({
   date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
   color: 'primary',
   icon: 'mdi-calendar-clock',
+  favorite: false,
 })
 
 // Opciones
@@ -204,6 +217,7 @@ const createCounter = async () => {
       startDate: startDate,
       color: newCounter.value.color,
       icon: newCounter.value.icon,
+      favorite: newCounter.value.favorite,
       userId: userId.value,
       createdAt: Date.now(),
     })
@@ -214,12 +228,29 @@ const createCounter = async () => {
       date: new Date().toISOString().split('T')[0],
       color: 'primary',
       icon: 'mdi-calendar-clock',
+      favorite: false,
     }
 
     showNewCounterDialog.value = false
     loadCounters()
   } catch (error) {
     console.error('Error al crear contador:', error)
+  }
+}
+
+// Marcar/desmarcar como favorito
+const toggleFavorite = async (counter: any) => {
+  try {
+    // Actualizar en Firestore
+    const counterRef = doc(db, 'counters', counter.id)
+    await updateDoc(counterRef, {
+      favorite: !counter.favorite,
+    })
+
+    // Actualizar en la vista local
+    counter.favorite = !counter.favorite
+  } catch (error) {
+    console.error('Error al actualizar favorito:', error)
   }
 }
 
