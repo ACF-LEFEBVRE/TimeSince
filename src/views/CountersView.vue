@@ -109,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue'
 import {
   collection,
   addDoc,
@@ -119,16 +119,16 @@ import {
   getFirestore,
   query,
   where,
-} from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { useRouter } from 'vue-router';
+} from 'firebase/firestore'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const db = getFirestore();
-const counters = ref<any[]>([]);
-const showNewCounterDialog = ref(false);
-const form = ref<any>(null);
-const userId = ref<string | null>(null);
+const router = useRouter()
+const db = getFirestore()
+const counters = ref<any[]>([])
+const showNewCounterDialog = ref(false)
+const form = ref<any>(null)
+const userId = ref<string | null>(null)
 
 // Nuevo contador
 const newCounter = ref({
@@ -136,7 +136,7 @@ const newCounter = ref({
   date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
   color: 'primary',
   icon: 'mdi-calendar-clock',
-});
+})
 
 // Opciones
 const colorOptions = [
@@ -145,7 +145,7 @@ const colorOptions = [
   { text: 'Rojo', value: 'error' },
   { text: 'Naranja', value: 'warning' },
   { text: 'Morado', value: 'purple' },
-];
+]
 
 const iconOptions = [
   { text: 'Calendario', value: 'mdi-calendar-clock' },
@@ -154,50 +154,50 @@ const iconOptions = [
   { text: 'Trofeo', value: 'mdi-trophy' },
   { text: 'Regalo', value: 'mdi-gift' },
   { text: 'Deporte', value: 'mdi-run' },
-];
+]
 
 // Validación
 const isFormValid = computed(() => {
-  return newCounter.value.name && newCounter.value.date;
-});
+  return newCounter.value.name && newCounter.value.date
+})
 
 // Cargar datos del usuario
 onMounted(() => {
-  const auth = getAuth();
+  const auth = getAuth()
   onAuthStateChanged(auth, user => {
     if (user) {
-      userId.value = user.uid;
-      loadCounters();
+      userId.value = user.uid
+      loadCounters()
     } else {
-      router.push('/login');
+      router.push('/login')
     }
-  });
-});
+  })
+})
 
 // Cargar contadores
 const loadCounters = async () => {
-  if (!userId.value) return;
+  if (!userId.value) return
 
   try {
-    const countersRef = collection(db, 'counters');
-    const q = query(countersRef, where('userId', '==', userId.value));
-    const querySnapshot = await getDocs(q);
+    const countersRef = collection(db, 'counters')
+    const q = query(countersRef, where('userId', '==', userId.value))
+    const querySnapshot = await getDocs(q)
 
     counters.value = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
-    }));
+    }))
   } catch (error) {
-    console.error('Error al cargar contadores:', error);
+    console.error('Error al cargar contadores:', error)
   }
-};
+}
 
 // Crear contador
 const createCounter = async () => {
-  if (!isFormValid.value || !userId.value) return;
+  if (!isFormValid.value || !userId.value) return
 
   try {
-    const startDate = new Date(newCounter.value.date).getTime();
+    const startDate = new Date(newCounter.value.date).getTime()
 
     await addDoc(collection(db, 'counters'), {
       name: newCounter.value.name,
@@ -206,7 +206,7 @@ const createCounter = async () => {
       icon: newCounter.value.icon,
       userId: userId.value,
       createdAt: Date.now(),
-    });
+    })
 
     // Resetear formulario y cerrar diálogo
     newCounter.value = {
@@ -214,55 +214,55 @@ const createCounter = async () => {
       date: new Date().toISOString().split('T')[0],
       color: 'primary',
       icon: 'mdi-calendar-clock',
-    };
+    }
 
-    showNewCounterDialog.value = false;
-    loadCounters();
+    showNewCounterDialog.value = false
+    loadCounters()
   } catch (error) {
-    console.error('Error al crear contador:', error);
+    console.error('Error al crear contador:', error)
   }
-};
+}
 
 // Eliminar contador
 const deleteCounter = async (counterId: string) => {
-  if (!confirm('¿Estás seguro de que quieres eliminar este contador?')) return;
+  if (!confirm('¿Estás seguro de que quieres eliminar este contador?')) return
 
   try {
-    await deleteDoc(doc(db, 'counters', counterId));
-    loadCounters();
+    await deleteDoc(doc(db, 'counters', counterId))
+    loadCounters()
   } catch (error) {
-    console.error('Error al eliminar contador:', error);
+    console.error('Error al eliminar contador:', error)
   }
-};
+}
 
 // Formatear fecha
 const formatDate = (timestamp: number) => {
-  const date = new Date(timestamp);
+  const date = new Date(timestamp)
   return date.toLocaleDateString('es-ES', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
-  });
-};
+  })
+}
 
 // Calcular días
 const calculateDays = (timestamp: number) => {
-  const startDate = new Date(timestamp);
-  const today = new Date();
-  const diffTime = Math.abs(today.getTime() - startDate.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  const startDate = new Date(timestamp)
+  const today = new Date()
+  const diffTime = Math.abs(today.getTime() - startDate.getTime())
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
   // Si es más de un año, mostrar años y días
   if (diffDays >= 365) {
-    const years = Math.floor(diffDays / 365);
-    const remainingDays = diffDays % 365;
+    const years = Math.floor(diffDays / 365)
+    const remainingDays = diffDays % 365
     return `${years} ${years === 1 ? 'año' : 'años'}, ${remainingDays} ${
       remainingDays === 1 ? 'día' : 'días'
-    }`;
+    }`
   }
 
-  return `${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
-};
+  return `${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
+}
 </script>
 
 <style scoped>

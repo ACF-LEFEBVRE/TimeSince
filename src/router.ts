@@ -1,8 +1,8 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import type { RouteRecordRaw } from 'vue-router';
-import { getAuth } from 'firebase/auth';
-import LoginView from './views/LoginView.vue';
-import HomeView from './views/HomeView.vue';
+import { createRouter, createWebHistory } from 'vue-router'
+import type { RouteRecordRaw } from 'vue-router'
+import { getAuth } from 'firebase/auth'
+import LoginView from './views/LoginView.vue'
+import HomeView from './views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -27,27 +27,27 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     redirect: '/home',
   },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
 // Navegación protegida
 router.beforeEach(async (to, _from, next) => {
-  const auth = getAuth();
-  const currentUser = auth.currentUser;
+  const auth = getAuth()
+  const currentUser = auth.currentUser
 
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   if (requiresAuth && !currentUser) {
-    next('/login');
+    next('/login')
   } else if (to.path === '/login' && currentUser) {
-    next('/home');
+    next('/home')
   } else {
-    next();
+    next()
   }
-});
+})
 
-export default router;
+export default router

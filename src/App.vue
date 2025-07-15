@@ -1,27 +1,27 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const isAuthenticated = ref(false);
+const router = useRouter()
+const isAuthenticated = ref(false)
 
 onMounted(() => {
-  const auth = getAuth();
+  const auth = getAuth()
   onAuthStateChanged(auth, user => {
-    isAuthenticated.value = !!user;
-  });
-});
+    isAuthenticated.value = !!user
+  })
+})
 
 const logout = async () => {
   try {
-    const auth = getAuth();
-    await signOut(auth);
-    router.push('/login');
+    const auth = getAuth()
+    await signOut(auth)
+    router.push('/login')
   } catch (error) {
-    console.error('Error al cerrar sesión:', error);
+    console.error('Error al cerrar sesión:', error)
   }
-};
+}
 </script>
 
 <template>
