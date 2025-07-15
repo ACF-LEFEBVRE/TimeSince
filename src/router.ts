@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { getAuth } from 'firebase/auth'
-import LoginView from './views/LoginView.vue'
-import HomeView from './views/HomeView.vue'
+import LoginView from '@/views/LoginView.vue'
+import HomeView from '@/views/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/counters',
     name: 'Counters',
-    component: () => import('./views/CountersView.vue'),
+    component: () => import('@/views/CountersView.vue'),
     meta: { requiresAuth: true },
   },
   {
