@@ -1,30 +1,59 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, onMounted } from "vue";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const isAuthenticated = ref(false);
+
+onMounted(() => {
+  const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    isAuthenticated.value = !!user;
+  });
+});
+
+const logout = async () => {
+  try {
+    const auth = getAuth();
+    await signOut(auth);
+    router.push("/login");
+  } catch (error) {
+    console.error("Error al cerrar sesión:", error);
+  }
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <VApp>
+    <VAppBar color="primary" dark flat>
+      <VToolbarTitle class="cursor-pointer" @click="router.push('/home')"
+        >TimeSince</VToolbarTitle
+      >
+      <VSpacer></VSpacer>
+      <div v-if="isAuthenticated">
+        <VBtn to="/home" variant="text">Home</VBtn>
+        <VBtn to="/counters" variant="text">Contadores</VBtn>
+        <VBtn @click="logout" variant="text" prepend-icon="mdi-logout">
+          Cerrar sesión
+        </VBtn>
+      </div>
+    </VAppBar>
+    <VMain class="fill-height">
+      <router-view />
+    </VMain>
+  </VApp>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* Estilos para layout */
+.v-application {
+  width: 100%;
+  height: 100%;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+
+.v-main {
+  width: 100%;
+  min-height: calc(100vh - 64px); /* altura total menos la altura de VAppBar */
 }
 </style>
