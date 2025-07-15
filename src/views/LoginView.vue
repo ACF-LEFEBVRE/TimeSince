@@ -47,9 +47,7 @@
             class="mb-4"
             hint="Mínimo 6 caracteres"
           />
-          <VBtn type="submit" color="success" block size="large"
-            >Registrarse</VBtn
-          >
+          <VBtn type="submit" color="success" block size="large">Registrarse</VBtn>
         </VForm>
       </VWindowItem>
     </VWindow>
@@ -61,38 +59,34 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import "../firebase";
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-} from "firebase/auth";
-import { useRouter } from "vue-router";
+import { ref } from 'vue';
+import '../firebase';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const activeTab = ref("login");
-const email = ref("");
-const password = ref("");
-const error = ref("");
+const activeTab = ref('login');
+const email = ref('');
+const password = ref('');
+const error = ref('');
 
 const login = async () => {
-  error.value = "";
+  error.value = '';
   try {
     const auth = getAuth();
     await signInWithEmailAndPassword(auth, email.value, password.value);
-    router.push("/home");
+    router.push('/home');
   } catch (e: any) {
     error.value = e.message;
   }
 };
 
 const register = async () => {
-  error.value = "";
+  error.value = '';
   try {
     const auth = getAuth();
     await createUserWithEmailAndPassword(auth, email.value, password.value);
-    router.push("/home");
+    router.push('/home');
   } catch (e: any) {
     error.value = e.message;
   }

@@ -3,23 +3,17 @@
     <VRow>
       <VCol cols="12">
         <VCard class="mt-5">
-          <VCardTitle class="text-h4 mb-2">
-            ¡Bienvenido a TimeSince!
-          </VCardTitle>
+          <VCardTitle class="text-h4 mb-2"> ¡Bienvenido a TimeSince! </VCardTitle>
           <VCardText>
             <p class="text-h6 mb-3" v-if="user">Hola, {{ user.email }}</p>
             <p>
-              Aquí podrás crear y gestionar contadores para recordar cuánto
-              tiempo ha pasado desde momentos importantes.
+              Aquí podrás crear y gestionar contadores para recordar cuánto tiempo ha pasado desde
+              momentos importantes.
             </p>
           </VCardText>
           <VCardActions>
-            <VBtn color="primary" variant="elevated" to="/counters">
-              Ver mis contadores
-            </VBtn>
-            <VBtn color="secondary" variant="outlined" @click="logout">
-              Cerrar sesión
-            </VBtn>
+            <VBtn color="primary" variant="elevated" to="/counters"> Ver mis contadores </VBtn>
+            <VBtn color="secondary" variant="outlined" @click="logout"> Cerrar sesión </VBtn>
           </VCardActions>
         </VCard>
       </VCol>
@@ -28,9 +22,7 @@
     <VRow class="mt-5" v-if="user && daysRegistered !== null">
       <VCol cols="12" md="6">
         <VCard class="registration-counter">
-          <VCardTitle class="text-h5">
-            Días como usuario de TimeSince
-          </VCardTitle>
+          <VCardTitle class="text-h5"> Días como usuario de TimeSince </VCardTitle>
           <div class="counter-display">
             <div class="counter-value">{{ daysRegistered }}</div>
             <div class="counter-label">días</div>
@@ -43,14 +35,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed } from 'vue';
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const user = ref<any>(null);
 const daysRegistered = ref<number | null>(null);
-const registrationDate = ref<string>("");
+const registrationDate = ref<string>('');
 
 // Calcular días desde registro
 const calculateDaysSinceRegistration = (creationTime: number) => {
@@ -64,16 +56,16 @@ const calculateDaysSinceRegistration = (creationTime: number) => {
 // Formatear fecha para mostrar
 const formatDate = (timestamp: number) => {
   const date = new Date(timestamp);
-  return date.toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 };
 
 onMounted(() => {
   const auth = getAuth();
-  onAuthStateChanged(auth, (currentUser) => {
+  onAuthStateChanged(auth, currentUser => {
     if (currentUser) {
       user.value = currentUser;
 
@@ -84,7 +76,7 @@ onMounted(() => {
         registrationDate.value = formatDate(creationTime);
       }
     } else {
-      router.push("/login");
+      router.push('/login');
     }
   });
 });
@@ -93,9 +85,9 @@ const logout = async () => {
   try {
     const auth = getAuth();
     await signOut(auth);
-    router.push("/login");
+    router.push('/login');
   } catch (error) {
-    console.error("Error al cerrar sesión:", error);
+    console.error('Error al cerrar sesión:', error);
   }
 };
 </script>

@@ -6,11 +6,7 @@
           <VCardTitle class="d-flex align-center">
             <h2 class="text-h5">Mis Contadores</h2>
             <VSpacer />
-            <VBtn
-              color="primary"
-              @click="showNewCounterDialog = true"
-              prepend-icon="mdi-plus"
-            >
+            <VBtn color="primary" @click="showNewCounterDialog = true" prepend-icon="mdi-plus">
               Nuevo contador
             </VBtn>
           </VCardTitle>
@@ -25,12 +21,9 @@
           <VList v-else>
             <VListItem v-for="counter in counters" :key="counter.id">
               <template v-slot:prepend>
-                <VIcon
-                  :color="counter.color || 'primary'"
-                  size="large"
-                  class="mr-3"
-                  >{{ counter.icon || "mdi-calendar-clock" }}</VIcon
-                >
+                <VIcon :color="counter.color || 'primary'" size="large" class="mr-3">{{
+                  counter.icon || 'mdi-calendar-clock'
+                }}</VIcon>
               </template>
 
               <VListItemTitle class="text-h6">
@@ -71,7 +64,7 @@
               v-model="newCounter.name"
               label="Nombre del contador"
               required
-              :rules="[(v) => !!v || 'El nombre es obligatorio']"
+              :rules="[v => !!v || 'El nombre es obligatorio']"
             />
 
             <VRow>
@@ -81,7 +74,7 @@
                   label="Fecha de inicio"
                   type="date"
                   required
-                  :rules="[(v) => !!v || 'La fecha es obligatoria']"
+                  :rules="[v => !!v || 'La fecha es obligatoria']"
                 />
               </VCol>
               <VCol cols="12" sm="6">
@@ -107,16 +100,8 @@
 
         <VCardActions>
           <VSpacer />
-          <VBtn
-            color="grey-darken-1"
-            text
-            @click="showNewCounterDialog = false"
-          >
-            Cancelar
-          </VBtn>
-          <VBtn color="primary" @click="createCounter" :disabled="!isFormValid">
-            Crear
-          </VBtn>
+          <VBtn color="grey-darken-1" text @click="showNewCounterDialog = false"> Cancelar </VBtn>
+          <VBtn color="primary" @click="createCounter" :disabled="!isFormValid"> Crear </VBtn>
         </VCardActions>
       </VCard>
     </VDialog>
@@ -124,7 +109,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted } from 'vue';
 import {
   collection,
   addDoc,
@@ -134,9 +119,9 @@ import {
   getFirestore,
   query,
   where,
-} from "firebase/firestore";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useRouter } from "vue-router";
+} from 'firebase/firestore';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const db = getFirestore();
@@ -147,28 +132,28 @@ const userId = ref<string | null>(null);
 
 // Nuevo contador
 const newCounter = ref({
-  name: "",
-  date: new Date().toISOString().split("T")[0], // Fecha actual en formato YYYY-MM-DD
-  color: "primary",
-  icon: "mdi-calendar-clock",
+  name: '',
+  date: new Date().toISOString().split('T')[0], // Fecha actual en formato YYYY-MM-DD
+  color: 'primary',
+  icon: 'mdi-calendar-clock',
 });
 
 // Opciones
 const colorOptions = [
-  { text: "Azul", value: "primary" },
-  { text: "Verde", value: "success" },
-  { text: "Rojo", value: "error" },
-  { text: "Naranja", value: "warning" },
-  { text: "Morado", value: "purple" },
+  { text: 'Azul', value: 'primary' },
+  { text: 'Verde', value: 'success' },
+  { text: 'Rojo', value: 'error' },
+  { text: 'Naranja', value: 'warning' },
+  { text: 'Morado', value: 'purple' },
 ];
 
 const iconOptions = [
-  { text: "Calendario", value: "mdi-calendar-clock" },
-  { text: "Estrella", value: "mdi-star" },
-  { text: "Corazón", value: "mdi-heart" },
-  { text: "Trofeo", value: "mdi-trophy" },
-  { text: "Regalo", value: "mdi-gift" },
-  { text: "Deporte", value: "mdi-run" },
+  { text: 'Calendario', value: 'mdi-calendar-clock' },
+  { text: 'Estrella', value: 'mdi-star' },
+  { text: 'Corazón', value: 'mdi-heart' },
+  { text: 'Trofeo', value: 'mdi-trophy' },
+  { text: 'Regalo', value: 'mdi-gift' },
+  { text: 'Deporte', value: 'mdi-run' },
 ];
 
 // Validación
@@ -179,12 +164,12 @@ const isFormValid = computed(() => {
 // Cargar datos del usuario
 onMounted(() => {
   const auth = getAuth();
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, user => {
     if (user) {
       userId.value = user.uid;
       loadCounters();
     } else {
-      router.push("/login");
+      router.push('/login');
     }
   });
 });
@@ -194,16 +179,16 @@ const loadCounters = async () => {
   if (!userId.value) return;
 
   try {
-    const countersRef = collection(db, "counters");
-    const q = query(countersRef, where("userId", "==", userId.value));
+    const countersRef = collection(db, 'counters');
+    const q = query(countersRef, where('userId', '==', userId.value));
     const querySnapshot = await getDocs(q);
 
-    counters.value = querySnapshot.docs.map((doc) => ({
+    counters.value = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
     }));
   } catch (error) {
-    console.error("Error al cargar contadores:", error);
+    console.error('Error al cargar contadores:', error);
   }
 };
 
@@ -214,7 +199,7 @@ const createCounter = async () => {
   try {
     const startDate = new Date(newCounter.value.date).getTime();
 
-    await addDoc(collection(db, "counters"), {
+    await addDoc(collection(db, 'counters'), {
       name: newCounter.value.name,
       startDate: startDate,
       color: newCounter.value.color,
@@ -225,38 +210,38 @@ const createCounter = async () => {
 
     // Resetear formulario y cerrar diálogo
     newCounter.value = {
-      name: "",
-      date: new Date().toISOString().split("T")[0],
-      color: "primary",
-      icon: "mdi-calendar-clock",
+      name: '',
+      date: new Date().toISOString().split('T')[0],
+      color: 'primary',
+      icon: 'mdi-calendar-clock',
     };
 
     showNewCounterDialog.value = false;
     loadCounters();
   } catch (error) {
-    console.error("Error al crear contador:", error);
+    console.error('Error al crear contador:', error);
   }
 };
 
 // Eliminar contador
 const deleteCounter = async (counterId: string) => {
-  if (!confirm("¿Estás seguro de que quieres eliminar este contador?")) return;
+  if (!confirm('¿Estás seguro de que quieres eliminar este contador?')) return;
 
   try {
-    await deleteDoc(doc(db, "counters", counterId));
+    await deleteDoc(doc(db, 'counters', counterId));
     loadCounters();
   } catch (error) {
-    console.error("Error al eliminar contador:", error);
+    console.error('Error al eliminar contador:', error);
   }
 };
 
 // Formatear fecha
 const formatDate = (timestamp: number) => {
   const date = new Date(timestamp);
-  return date.toLocaleDateString("es-ES", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
+  return date.toLocaleDateString('es-ES', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 };
 
@@ -271,12 +256,12 @@ const calculateDays = (timestamp: number) => {
   if (diffDays >= 365) {
     const years = Math.floor(diffDays / 365);
     const remainingDays = diffDays % 365;
-    return `${years} ${years === 1 ? "año" : "años"}, ${remainingDays} ${
-      remainingDays === 1 ? "día" : "días"
+    return `${years} ${years === 1 ? 'año' : 'años'}, ${remainingDays} ${
+      remainingDays === 1 ? 'día' : 'días'
     }`;
   }
 
-  return `${diffDays} ${diffDays === 1 ? "día" : "días"}`;
+  return `${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
 };
 </script>
 
