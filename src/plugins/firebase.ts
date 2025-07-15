@@ -1,7 +1,6 @@
 // src/firebase.ts
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 import { getFirestore as initFirestore } from 'firebase/firestore'
 
 // Firebase configuration
