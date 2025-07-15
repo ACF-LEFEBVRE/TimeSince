@@ -129,8 +129,6 @@ import {
   deleteDoc,
   updateDoc,
   getFirestore,
-  query,
-  where,
 } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'vue-router'
@@ -192,9 +190,9 @@ const loadCounters = async () => {
   if (!userId.value) return
 
   try {
-    const countersRef = collection(db, 'counters')
-    const q = query(countersRef, where('userId', '==', userId.value))
-    const querySnapshot = await getDocs(q)
+    // Usar la subcolección de contadores para cada usuario
+    const userCountersRef = collection(db, `users/${userId.value}/counters`)
+    const querySnapshot = await getDocs(userCountersRef)
 
     counters.value = querySnapshot.docs.map(doc => ({
       id: doc.id,
@@ -212,13 +210,15 @@ const createCounter = async () => {
   try {
     const startDate = new Date(newCounter.value.date).getTime()
 
-    await addDoc(collection(db, 'counters'), {
+    // Usar la subcolección de contadores para cada usuario
+    const userCountersRef = collection(db, `users/${userId.value}/counters`)
+
+    await addDoc(userCountersRef, {
       name: newCounter.value.name,
       startDate: startDate,
       color: newCounter.value.color,
       icon: newCounter.value.icon,
       favorite: newCounter.value.favorite,
-      userId: userId.value,
       createdAt: Date.now(),
     })
 
@@ -241,8 +241,10 @@ const createCounter = async () => {
 // Marcar/desmarcar como favorito
 const toggleFavorite = async (counter: any) => {
   try {
-    // Actualizar en Firestore
-    const counterRef = doc(db, 'counters', counter.id)
+    if (!userId.value) return
+
+    // Actualizar en Firestore usando la ruta de la subcolección
+    const counterRef = doc(db, `users/${userId.value}/counters`, counter.id)
     await updateDoc(counterRef, {
       favorite: !counter.favorite,
     })
@@ -257,9 +259,11 @@ const toggleFavorite = async (counter: any) => {
 // Eliminar contador
 const deleteCounter = async (counterId: string) => {
   if (!confirm('¿Estás seguro de que quieres eliminar este contador?')) return
+  if (!userId.value) return
 
   try {
-    await deleteDoc(doc(db, 'counters', counterId))
+    // Usar la ruta de la subcolección para eliminar el contador
+    await deleteDoc(doc(db, `users/${userId.value}/counters`, counterId))
     loadCounters()
   } catch (error) {
     console.error('Error al eliminar contador:', error)

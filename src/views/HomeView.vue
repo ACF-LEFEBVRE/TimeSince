@@ -205,8 +205,9 @@ const loadFavoriteCounters = async () => {
   if (!userId.value) return
 
   try {
-    const countersRef = collection(db, 'counters')
-    const q = query(countersRef, where('userId', '==', userId.value), where('favorite', '==', true))
+    // Usar la subcolección de contadores para cada usuario
+    const userCountersRef = collection(db, `users/${userId.value}/counters`)
+    const q = query(userCountersRef, where('favorite', '==', true))
     const querySnapshot = await getDocs(q)
 
     favoriteCounters.value = querySnapshot.docs.map(doc => ({

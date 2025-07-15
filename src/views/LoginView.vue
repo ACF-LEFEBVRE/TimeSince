@@ -62,6 +62,7 @@
 import { ref } from 'vue'
 import '@/firebase'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
+import { getFirestore, doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -74,7 +75,17 @@ const login = async () => {
   error.value = ''
   try {
     const auth = getAuth()
-    await signInWithEmailAndPassword(auth, email.value, password.value)
+    const db = getFirestore()
+    
+    // Iniciar sesión con Firebase Auth
+    const userCredential = await signInWithEmailAndPassword(auth, email.value, password.value)
+    const user = userCredential.user
+    
+    // Actualizar la fecha de último acceso
+    await setDoc(doc(db, 'users', user.uid), {
+      lastLogin: Date.now()
+    }, { merge: true }) // El parámetro merge: true asegura que solo se actualice el campo lastLogin
+    
     router.push('/home')
   } catch (e: any) {
     error.value = e.message
@@ -85,7 +96,19 @@ const register = async () => {
   error.value = ''
   try {
     const auth = getAuth()
-    await createUserWithEmailAndPassword(auth, email.value, password.value)
+    const db = getFirestore()
+    
+    // Crear el usuario en Firebase Auth
+    const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value)
+    const user = userCredential.user
+    
+    // Crear el documento del usuario en Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      createdAt: Date.now(),
+      lastLogin: Date.now()
+    })
+    
     router.push('/home')
   } catch (e: any) {
     error.value = e.message
