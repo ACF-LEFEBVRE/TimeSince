@@ -247,21 +247,92 @@ const formatDate = (timestamp: number) => {
 
 // Calcular días
 const calculateDays = (timestamp: number) => {
-  const startDate = new Date(timestamp)
+  const start = new Date(timestamp)
   const today = new Date()
-  const diffTime = Math.abs(today.getTime() - startDate.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  // Si es más de un año, mostrar años y días
-  if (diffDays >= 365) {
-    const years = Math.floor(diffDays / 365)
-    const remainingDays = diffDays % 365
-    return `${years} ${years === 1 ? 'año' : 'años'}, ${remainingDays} ${
-      remainingDays === 1 ? 'día' : 'días'
-    }`
+  // Normalizar las fechas para quitar las horas, minutos, segundos y milisegundos
+  start.setHours(0, 0, 0, 0)
+  today.setHours(0, 0, 0, 0)
+
+  // Asegurar que startDate no sea posterior a today
+  if (start > today) {
+    return '0 días'
   }
 
-  return `${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
+  // Clonar la fecha de inicio para no modificar la original
+  const startYear = start.getFullYear()
+  const startMonth = start.getMonth()
+  const startDay = start.getDate()
+
+  // Valores actuales
+  const currentYear = today.getFullYear()
+  const currentMonth = today.getMonth()
+  const currentDay = today.getDate()
+
+  // Calcular diferencia inicial
+  let years = currentYear - startYear
+  let months = currentMonth - startMonth
+  let days = currentDay - startDay
+
+  // Ajustar si los días son negativos
+  if (days < 0) {
+    // Obtener el último día del mes anterior
+    const lastDayOfPrevMonth = new Date(currentYear, currentMonth, 0).getDate()
+    days += lastDayOfPrevMonth
+    months -= 1
+  }
+
+  // Ajustar si los meses son negativos
+  if (months < 0) {
+    months += 12
+    years -= 1
+  }
+
+  // Si la fecha original es mayor que la fecha después de los cálculos, ajustar
+  const checkDate = new Date(startYear + years, startMonth + months, startDay)
+  if (checkDate > today) {
+    if (months > 0) {
+      months -= 1
+      // Calcular días desde el día de inicio hasta el final del mes
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate()
+      days = daysInMonth - startDay + currentDay
+    } else {
+      years -= 1
+      months = 11
+      // Calcular días desde el día de inicio hasta el final del mes
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate()
+      days = daysInMonth - startDay + currentDay
+    }
+  }
+
+  // Asegurar que todas las cifras sean positivas
+  years = Math.max(0, years)
+  months = Math.max(0, months)
+  days = Math.max(0, days)
+
+  // Si no hay diferencia, devolver 0 días
+  if (years === 0 && months === 0 && days === 0) {
+    return '0 días'
+  }
+
+  // Construir el string de resultado
+  let result = ''
+
+  if (years > 0) {
+    result += `${years} ${years === 1 ? 'año' : 'años'}`
+  }
+
+  if (months > 0) {
+    if (result) result += ', '
+    result += `${months} ${months === 1 ? 'mes' : 'meses'}`
+  }
+
+  if (days > 0 || (years === 0 && months === 0)) {
+    if (result) result += ', '
+    result += `${days} ${days === 1 ? 'día' : 'días'}`
+  }
+
+  return result
 }
 </script>
 
@@ -269,11 +340,13 @@ const calculateDays = (timestamp: number) => {
 .days-chip {
   font-weight: bold;
   min-width: 120px;
+  max-width: 200px;
   justify-content: center;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.3;
   white-space: normal;
   height: auto;
   padding: 8px 12px;
+  font-size: 0.875rem;
 }
 </style>
