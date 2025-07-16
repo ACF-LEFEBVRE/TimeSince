@@ -65,6 +65,13 @@ button:focus-visible {
   text-align: center;
 }
 
+/* Estilos para las banderas de idiomas */
+.fi {
+  display: inline-block;
+  background-size: cover;
+  background-position: center;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

@@ -2,13 +2,16 @@
   <VAppBar color="primary" dark flat>
     <VToolbarTitle class="cursor-pointer" @click="navigateToHome">TimeSince</VToolbarTitle>
     <VSpacer></VSpacer>
-    <div v-if="props.isAuthenticated">
+    <div v-if="props.isAuthenticated" class="d-flex align-center">
       <VBtn :to="ROUTES.HOME" variant="text">{{ $t('navigation.home') }}</VBtn>
       <VBtn :to="ROUTES.COUNTERS" variant="text">{{ $t('navigation.counters') }}</VBtn>
       <VBtn @click="onLogout" variant="text" prepend-icon="mdi-logout">{{ $t('auth.logout') }}</VBtn>
-      <LocaleSwitcher class="ms-4" />
+      <VDivider vertical class="mx-2 my-auto" />
+      <LocaleSwitcher />
     </div>
-    <LocaleSwitcher v-else class="ms-4" />
+    <div v-else class="d-flex align-center">
+      <LocaleSwitcher />
+    </div>
   </VAppBar>
 </template>
 

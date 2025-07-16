@@ -3,12 +3,18 @@
     <VBtn
       v-for="locale in availableLocales"
       :key="locale.code"
-      :color="currentLocale === locale.code ? 'primary' : ''"
+      :color="currentLocale === locale.code ? 'white' : 'default'"
+      :title="locale.name"
+      :aria-label="'Cambiar idioma a ' + locale.name"
+      density="comfortable"
+      icon
       size="small"
-      variant="text"
+      class="locale-btn"
       @click="changeLocale(locale.code)"
     >
-      {{ locale.name }}
+      <div :class="['flag-icon', currentLocale === locale.code ? 'active' : '']">
+        <span :class="'fi fi-' + getFlagCode(locale.code)"></span>
+      </div>
     </VBtn>
   </div>
 </template>
@@ -33,11 +39,56 @@ const changeLocale = (locale: string) => {
     setLocale(locale as 'es' | 'en')
   }
 }
+
+// Helper para obtener el código de bandera desde supportedLocales
+const getFlagCode = (locale: string): string => {
+  const localeObj = availableLocales.value.find(l => l.code === locale)
+  return localeObj?.flag || locale
+}
 </script>
 
 <style scoped>
 .locale-switcher {
   display: flex;
-  gap: 8px;
+  gap: 4px;
+  align-items: center;
+}
+
+.locale-btn {
+  margin: 0 2px;
+}
+
+.flag-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.flag-icon.active {
+  border-color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+/* Usa la clase fi para banderas */
+.fi {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  background-size: cover;
+  background-position: center;
+  vertical-align: middle;
+}
+
+/* Banderas específicas */
+.fi-es {
+  background-image: url('https://flagcdn.com/w40/es.png');
+}
+
+.fi-gb {
+  background-image: url('https://flagcdn.com/w40/gb.png');
 }
 </style>
