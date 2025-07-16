@@ -28,27 +28,18 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  deleteDoc,
-  updateDoc,
-  getFirestore,
-} from 'firebase/firestore'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import { onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 import { ROUTES } from '@/router/routes'
+import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
 
 // COMPOSABLE
 const router = useRouter()
-
-// FIREBASE
-const db = getFirestore()
+const { auth, db } = useFirebase()
 
 // DATA
 const counters = ref<Counter[]>([])
@@ -58,7 +49,6 @@ const isLoading = ref(false)
 
 // HOOKS
 onMounted(() => {
-  const auth = getAuth()
   onAuthStateChanged(auth, user => {
     if (user) {
       userId.value = user.uid

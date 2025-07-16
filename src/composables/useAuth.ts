@@ -1,17 +1,17 @@
 import { ref, readonly } from 'vue'
 import { ROUTES } from '@/router/routes'
 import {
-  getAuth,
   onAuthStateChanged,
   signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
 } from 'firebase/auth'
 import type { User } from 'firebase/auth'
-import { getFirestore, doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 import { Collection } from '@/plugins/firebase/collections'
 import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
+import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 
 export interface AuthCredentials {
   email: string
@@ -22,6 +22,7 @@ export function useAuth() {
   // COMPOSABLES
   const router = useRouter()
   const { getErrorMessage } = useFirebaseErrors()
+  const { auth, db } = useFirebase()
 
   // DATA
   const isAuthenticated = ref(false)
@@ -56,7 +57,6 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      const auth = getAuth()
       await signOut(auth)
       router.push(`/${ROUTES.LOGIN}`)
     } catch (err) {
@@ -71,9 +71,6 @@ export function useAuth() {
     isLoading.value = true
 
     try {
-      const auth = getAuth()
-      const db = getFirestore()
-
       // Iniciar sesión con Firebase Auth
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -108,9 +105,6 @@ export function useAuth() {
     isLoading.value = true
 
     try {
-      const auth = getAuth()
-      const db = getFirestore()
-
       // Crear el usuario en Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
@@ -142,7 +136,6 @@ export function useAuth() {
     if (currentUser.value) return true
 
     return new Promise(resolve => {
-      const auth = getAuth()
       const unsubscribe = onAuthStateChanged(auth, user => {
         unsubscribe()
         resolve(!!user)
@@ -152,7 +145,6 @@ export function useAuth() {
 
   // HOOKS
   // Inicialización - eliminar onMounted ya que queremos que se ejecute inmediatamente
-  const auth = getAuth()
   onAuthStateChanged(auth, user => {
     isAuthenticated.value = !!user
     currentUser.value = user

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
+import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import LoginView from '@/views/login/LoginView.vue'
 import HomeView from '@/views/home/HomeView.vue'
 import { ROUTES } from '@/router/routes'
@@ -37,7 +38,7 @@ const router = createRouter({
 
 // Navegación protegida - versión simplificada
 router.beforeEach(async (to, _from, next) => {
-  const auth = getAuth()
+  const { auth } = useFirebase()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   try {
