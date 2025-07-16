@@ -9,13 +9,15 @@
       </p>
     </VCardText>
     <VCardActions>
-      <VBtn color="primary" variant="elevated" to="/counters">Ver mis contadores</VBtn>
+      <VBtn color="primary" variant="elevated" :to="ROUTES.COUNTERS">Ver mis contadores</VBtn>
       <VBtn color="secondary" variant="outlined" @click="onLogout">Cerrar sesión</VBtn>
     </VCardActions>
   </VCard>
 </template>
 
 <script setup lang="ts">
+import { ROUTES } from '@/router/routes'
+
 // PROPS
 const { email } = defineProps({
   email: {

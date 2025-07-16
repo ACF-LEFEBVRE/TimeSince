@@ -1,15 +1,19 @@
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { ROUTES } from '@/router/routes'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import type { User } from 'firebase/auth'
 import { useRouter } from 'vue-router'
 
 export function useAuth() {
+  // COMPOSABLES
   const router = useRouter()
+
+  // DATA
   const isAuthenticated = ref(false)
   const currentUser = ref<User | null>(null)
   const userId = ref<string | null>(null)
-  
+  const isLoading = ref(true)
+
   // Datos de registro
   const daysRegistered = ref<number | null>(null)
   const registrationDate = ref<string>('')
@@ -33,7 +37,7 @@ export function useAuth() {
       year: 'numeric',
     })
   }
-  
+
   const logout = async () => {
     try {
       const auth = getAuth()
@@ -45,29 +49,30 @@ export function useAuth() {
   }
 
   // HOOKS
-  onMounted(() => {
-    const auth = getAuth()
-    onAuthStateChanged(auth, user => {
-      isAuthenticated.value = !!user
-      currentUser.value = user
-      userId.value = user ? user.uid : null
-      
-      // Obtener metadata de creación de cuenta
-      if (user && user.metadata && user.metadata.creationTime) {
-        const creationTime = Date.parse(user.metadata.creationTime)
-        daysRegistered.value = calculateDaysSinceRegistration(creationTime)
-        registrationDate.value = formatDate(creationTime)
-      } else {
-        daysRegistered.value = null
-        registrationDate.value = ''
-      }
-    })
+  // Inicialización - eliminar onMounted ya que queremos que se ejecute inmediatamente
+  const auth = getAuth()
+  onAuthStateChanged(auth, user => {
+    isAuthenticated.value = !!user
+    currentUser.value = user
+    userId.value = user ? user.uid : null
+    isLoading.value = false
+
+    // Obtener metadata de creación de cuenta
+    if (user && user.metadata && user.metadata.creationTime) {
+      const creationTime = Date.parse(user.metadata.creationTime)
+      daysRegistered.value = calculateDaysSinceRegistration(creationTime)
+      registrationDate.value = formatDate(creationTime)
+    } else {
+      daysRegistered.value = null
+      registrationDate.value = ''
+    }
   })
 
   return {
     isAuthenticated,
     currentUser,
     userId,
+    isLoading,
     daysRegistered,
     registrationDate,
     logout,

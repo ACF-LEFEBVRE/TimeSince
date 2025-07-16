@@ -1,31 +1,32 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { getAuth } from 'firebase/auth'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import LoginView from '@/views/login/LoginView.vue'
 import HomeView from '@/views/home/HomeView.vue'
+import { ROUTES } from '@/router/routes'
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/login',
+    path: `/${ROUTES.LOGIN}`,
     name: 'Login',
     component: LoginView,
     meta: { requiresAuth: false },
   },
   {
-    path: '/home',
+    path: `/${ROUTES.HOME}`,
     name: 'Home',
     component: HomeView,
     meta: { requiresAuth: true },
   },
   {
-    path: '/counters',
+    path: `/${ROUTES.COUNTERS}`,
     name: 'Counters',
     component: () => import('@/views/CountersView.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/',
-    redirect: '/home',
+    redirect: ROUTES.HOME,
   },
 ]
 
@@ -34,19 +35,38 @@ const router = createRouter({
   routes,
 })
 
-// Navegación protegida
+// Navegación protegida - versión simplificada
 router.beforeEach(async (to, _from, next) => {
   const auth = getAuth()
-  const currentUser = auth.currentUser
-
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
-  if (requiresAuth && !currentUser) {
-    next('/login')
-  } else if (to.path === '/login' && currentUser) {
-    next('/home')
-  } else {
-    next()
+  try {
+    // Convertir onAuthStateChanged en una promesa para usar async/await
+    const user = await new Promise((resolve, reject) => {
+      const unsubscribe = onAuthStateChanged(
+        auth,
+        user => {
+          unsubscribe()
+          resolve(user)
+        },
+        error => {
+          unsubscribe()
+          reject(error)
+        }
+      )
+    })
+
+    // Lógica de navegación simplificada
+    if (requiresAuth && !user) {
+      return next(ROUTES.LOGIN)
+    } else if (to.path === `/${ROUTES.LOGIN}` && user) {
+      return next(ROUTES.HOME)
+    }
+
+    return next()
+  } catch (error) {
+    console.error('Error al verificar estado de autenticación:', error)
+    return requiresAuth ? next(ROUTES.LOGIN) : next()
   }
 })
 

@@ -39,6 +39,7 @@ import {
 } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useRouter } from 'vue-router'
+import { ROUTES } from '@/router/routes'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
@@ -63,7 +64,7 @@ onMounted(() => {
       userId.value = user.uid
       loadCounters()
     } else {
-      router.push('/login')
+      router.push(ROUTES.LOGIN)
     }
   })
 })
