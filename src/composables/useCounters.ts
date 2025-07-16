@@ -2,6 +2,7 @@ import { ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import { collection, query, where, getDocs } from 'firebase/firestore'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
+import { Collection } from '@/plugins/firebase/collections'
 
 export interface Counter {
   id: string
@@ -30,7 +31,7 @@ export function useCounters(userId: Ref<string | null>) {
 
     try {
       // Usar la subcolección de contadores para cada usuario
-      const userCountersRef = collection(db, `users/${userId.value}/counters`)
+      const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
       const q = query(userCountersRef, where('favorite', '==', true))
       const querySnapshot = await getDocs(q)
 

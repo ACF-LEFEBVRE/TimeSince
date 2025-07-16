@@ -31,6 +31,7 @@ import { ref, onMounted } from 'vue'
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useAuth } from '@/composables/useAuth'
+import { Collection } from '@/plugins/firebase/collections'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
@@ -63,7 +64,7 @@ const loadCounters = async () => {
 
   try {
     // Usar la subcolección de contadores para cada usuario
-    const userCountersRef = collection(db, `users/${userId.value}/counters`)
+    const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
     const querySnapshot = await getDocs(userCountersRef)
 
     counters.value = querySnapshot.docs.map(doc => ({
@@ -85,7 +86,7 @@ const handleCounterSubmit = async (formData: any) => {
     const startDate = new Date(formData.date).getTime()
 
     // Usar la subcolección de contadores para cada usuario
-    const userCountersRef = collection(db, `users/${userId.value}/counters`)
+    const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
 
     await addDoc(userCountersRef, {
       name: formData.name,
@@ -108,7 +109,7 @@ const toggleFavorite = async (counter: Counter) => {
     if (!userId.value) return
 
     // Actualizar en Firestore usando la ruta de la subcolección
-    const counterRef = doc(db, `users/${userId.value}/counters`, counter.id)
+    const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), counter.id)
     await updateDoc(counterRef, {
       favorite: !counter.favorite,
     })
@@ -127,7 +128,7 @@ const deleteCounter = async (counterId: string) => {
 
   try {
     // Usar la ruta de la subcolección para eliminar el contador
-    await deleteDoc(doc(db, `users/${userId.value}/counters`, counterId))
+    await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
     loadCounters()
   } catch (error) {
     console.error('Error al eliminar contador:', error)
