@@ -19,13 +19,13 @@ const props = defineProps<{
   isAuthenticated: boolean
 }>()
 
+// COMPOSABLES
+const router = useRouter()
+
 // EMITS
 const emit = defineEmits<{
   logout: []
 }>()
-
-// COMPOSABLES
-const router = useRouter()
 
 // METHODS
 const navigateToHome = () => {

@@ -11,7 +11,7 @@
 import { useAuth } from '@/composables/useAuth.ts'
 import AppNavBar from '@/components/navigation/AppNavBar.vue'
 
-// Usar el composable de autenticación
+// COMPOSABLES
 const { isAuthenticated, logout } = useAuth()
 </script>
 
