@@ -24,7 +24,6 @@ import { ref } from 'vue'
 import '@/plugins/firebase/firebase'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth'
 import { getFirestore, doc, setDoc } from 'firebase/firestore'
-import { FirebaseError } from 'firebase/app' // Importar FirebaseError
 import { useRouter } from 'vue-router'
 import LoginForm from '@/views/login/components/LoginForm.vue'
 import RegisterForm from '@/views/login/components/RegisterForm.vue'
@@ -32,6 +31,7 @@ import AuthAlert from '@/views/login/components/AuthAlert.vue'
 import type { Credentials } from '@/views/login/types/login'
 import { ROUTES } from '@/router/routes'
 import { Collection } from '@/plugins/firebase/collections'
+import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors.ts'
 
 // DATA
 const activeTab = ref('login')
@@ -39,6 +39,7 @@ const error = ref('')
 
 // COMPOSABLES
 const router = useRouter()
+const { getErrorMessage } = useFirebaseErrors()
 
 // METHODS
 const handleLogin = async (credentials: Credentials) => {
@@ -66,11 +67,7 @@ const handleLogin = async (credentials: Credentials) => {
 
     router.push(ROUTES.HOME)
   } catch (e: unknown) {
-    if (e instanceof FirebaseError) {
-      error.value = e.message
-    } else {
-      error.value = 'Error desconocido'
-    }
+    error.value = getErrorMessage(e)
   }
 }
 
@@ -97,11 +94,7 @@ const handleRegister = async (credentials: Credentials) => {
 
     router.push(ROUTES.HOME)
   } catch (e: unknown) {
-    if (e instanceof FirebaseError) {
-      error.value = e.message
-    } else {
-      error.value = 'Error desconocido'
-    }
+    error.value = getErrorMessage(e)
   }
 }
 </script>
