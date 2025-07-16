@@ -14,34 +14,25 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { onAuthStateChanged } from 'firebase/auth'
 import { useAuth } from '@/composables/useAuth.ts'
-import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import AppNavBar from '@/components/navigation/AppNavBar.vue'
 
 // REF
 const isAuthReady = ref(false)
 
 // COMPOSABLES
-const { isAuthenticated, logout } = useAuth()
-const { auth } = useFirebase()
+const { isAuthenticated, logout, subscribeToAuthChanges } = useAuth()
 
 // Verificar el estado de autenticación antes de mostrar contenido
 onMounted(() => {
-  onAuthStateChanged(auth, () => {
+  subscribeToAuthChanges(() => {
     isAuthReady.value = true
   })
 })
 </script>
 
 <style scoped>
-.v-application {
-  width: 100%;
-  height: 100%;
-}
-
 .v-main {
-  width: 100%;
   min-height: calc(100vh - 64px);
 }
 </style>

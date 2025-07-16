@@ -12,6 +12,7 @@ import { useRouter } from 'vue-router'
 import { Collection } from '@/plugins/firebase/collections'
 import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
+import { useDateCalculation } from '@/composables/useDateCalculation'
 
 export interface AuthCredentials {
   email: string
@@ -23,6 +24,7 @@ export function useAuth() {
   const router = useRouter()
   const { getErrorMessage } = useFirebaseErrors()
   const { auth, db } = useFirebase()
+  const { formatDate, calculateDays } = useDateCalculation()
 
   // DATA
   const isAuthenticated = ref(false)
@@ -34,26 +36,6 @@ export function useAuth() {
   // Datos de registro
   const daysRegistered = ref<number | null>(null)
   const registrationDate = ref<string>('')
-
-  // METHODS
-  // Calcular días desde registro
-  const calculateDaysSinceRegistration = (creationTime: number) => {
-    const creationDate = new Date(creationTime)
-    const today = new Date()
-    const diffTime = Math.abs(today.getTime() - creationDate.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-    return diffDays
-  }
-
-  // Formatear fecha para mostrar
-  const formatDate = (timestamp: number) => {
-    const date = new Date(timestamp)
-    return date.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-  }
 
   const logout = async () => {
     try {
@@ -131,7 +113,10 @@ export function useAuth() {
     }
   }
 
-  // Método para verificar si el usuario está autenticado (útil para guards de rutas)
+  /**
+   * Método para verificar si el usuario está autenticado (útil para guards de rutas)
+   * @returns Promise<boolean> - true si el usuario está autenticado, false en caso contrario
+   */
   const checkAuth = async (): Promise<boolean> => {
     if (currentUser.value) return true
 
@@ -141,6 +126,18 @@ export function useAuth() {
         resolve(!!user)
       })
     })
+  }
+
+  /**
+   * Método que permite suscribirse a cambios en el estado de autenticación
+   * @param callback - Función a ejecutar cuando cambia el estado de autenticación
+   * @returns Función para cancelar la suscripción
+   */
+  const subscribeToAuthChanges = (callback: (isAuthenticated: boolean) => void): () => void => {
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      callback(!!user)
+    })
+    return unsubscribe
   }
 
   // HOOKS
@@ -154,7 +151,9 @@ export function useAuth() {
     // Obtener metadata de creación de cuenta
     if (user && user.metadata && user.metadata.creationTime) {
       const creationTime = Date.parse(user.metadata.creationTime)
-      daysRegistered.value = calculateDaysSinceRegistration(creationTime)
+      // Extraer solo el número de días del texto "X días"
+      const daysText = calculateDays(creationTime)
+      daysRegistered.value = parseInt(daysText.split(' ')[0], 10)
       registrationDate.value = formatDate(creationTime)
     } else {
       daysRegistered.value = null
@@ -174,5 +173,6 @@ export function useAuth() {
     login,
     register,
     checkAuth,
+    subscribeToAuthChanges,
   }
 }

@@ -1,3 +1,4 @@
+import '@/plugins/firebase/firebase'
 import { getAuth, type Auth } from 'firebase/auth'
 import { getFirestore, type Firestore } from 'firebase/firestore'
 

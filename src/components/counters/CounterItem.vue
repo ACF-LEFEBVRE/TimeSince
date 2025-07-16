@@ -18,7 +18,7 @@
       <VChip color="primary" size="large" class="days-chip">
         {{ calculateDays(counter.startDate) }}
       </VChip>
-      <div v-if="!hideActions" class="d-flex align-center counnter-actions">
+      <div v-if="!hideActions" class="d-flex align-center counter-actions">
         <VBtn
           icon
           variant="text"

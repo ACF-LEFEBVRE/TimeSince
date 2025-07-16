@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
-import { onAuthStateChanged } from 'firebase/auth'
-import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
+import { useAuth } from '@/composables/useAuth'
 import LoginView from '@/views/login/LoginView.vue'
 import HomeView from '@/views/home/HomeView.vue'
 import { ROUTES } from '@/router/routes'
@@ -38,36 +37,28 @@ const router = createRouter({
 
 // Navegación protegida - versión simplificada
 router.beforeEach(async (to, _from, next) => {
-  const { auth } = useFirebase()
+  const { checkAuth } = useAuth()
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
 
   try {
-    // Convertir onAuthStateChanged en una promesa para usar async/await
-    const user = await new Promise((resolve, reject) => {
-      const unsubscribe = onAuthStateChanged(
-        auth,
-        user => {
-          unsubscribe()
-          resolve(user)
-        },
-        error => {
-          unsubscribe()
-          reject(error)
-        }
-      )
-    })
+    const isAuthenticated = await checkAuth()
+    const user = isAuthenticated ? true : null
 
-    // Lógica de navegación simplificada
-    if (requiresAuth && !user) {
-      return next(ROUTES.LOGIN)
-    } else if (to.path === `/${ROUTES.LOGIN}` && user) {
-      return next(ROUTES.HOME)
+    // Si va a login y está autenticado, redirigir a home
+    if (to.path === `/${ROUTES.LOGIN}` && user) {
+      return next(`/${ROUTES.HOME}`)
     }
 
+    // Si requiere auth y no está autenticado
+    if (requiresAuth && !user) {
+      return next(`/${ROUTES.LOGIN}`)
+    }
+
+    // Permitir navegación normal en todos los demás casos
     return next()
   } catch (error) {
     console.error('Error al verificar estado de autenticación:', error)
-    return requiresAuth ? next(ROUTES.LOGIN) : next()
+    return requiresAuth ? next(`/${ROUTES.LOGIN}`) : next()
   }
 })
 

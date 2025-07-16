@@ -21,7 +21,6 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import '@/plugins/firebase/firebase'
 import LoginForm from '@/views/login/components/LoginForm.vue'
 import RegisterForm from '@/views/login/components/RegisterForm.vue'
 import AuthAlert from '@/views/login/components/AuthAlert.vue'

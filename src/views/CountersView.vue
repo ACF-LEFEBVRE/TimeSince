@@ -29,34 +29,30 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
-import { onAuthStateChanged } from 'firebase/auth'
-import { useRouter } from 'vue-router'
-import { ROUTES } from '@/router/routes'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
+import { useAuth } from '@/composables/useAuth'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
 
 // COMPOSABLE
-const router = useRouter()
-const { auth, db } = useFirebase()
+const { db } = useFirebase()
+const { userId, checkAuth } = useAuth()
 
 // DATA
 const counters = ref<Counter[]>([])
 const showNewCounterDialog = ref(false)
-const userId = ref<string | null>(null)
 const isLoading = ref(false)
 
 // HOOKS
-onMounted(() => {
-  onAuthStateChanged(auth, user => {
-    if (user) {
-      userId.value = user.uid
-      loadCounters()
-    } else {
-      router.push(ROUTES.LOGIN)
-    }
-  })
+onMounted(async () => {
+  // Comprobar autenticación sin redirigir (el router guard se encargará de esto)
+  await checkAuth()
+  
+  // Si hay un userId, cargar los contadores
+  if (userId.value) {
+    loadCounters()
+  }
 })
 
 // METHODS
