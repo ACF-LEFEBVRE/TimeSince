@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
 import { getAuth } from 'firebase/auth'
 import LoginView from '@/views/login/LoginView.vue'
-import HomeView from '@/views/HomeView.vue'
+import HomeView from '@/views/home/HomeView.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
