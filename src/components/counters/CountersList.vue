@@ -7,8 +7,9 @@
         v-for="counter in counters"
         :key="counter.id"
         :counter="counter"
-        @toggle-favorite="$emit('toggle-favorite', counter)"
-        @delete="$emit('delete', $event)"
+        :hide-actions="hideActions"
+        @toggle-favorite="toggleFavorite"
+        @delete="deleteCounter"
       />
     </VList>
   </div>
@@ -25,7 +26,24 @@ defineProps({
     type: Array as () => Counter[],
     default: () => [],
   },
+  hideActions: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-defineEmits(['toggle-favorite', 'delete'])
+// EMITS
+const emit = defineEmits<{
+  (e: 'toggle-favorite', counter: Counter): void
+  (e: 'delete', id: string): void
+}>()
+
+// METHODS
+const toggleFavorite = (counter: Counter) => {
+  emit('toggle-favorite', counter)
+}
+
+const deleteCounter = (id: string) => {
+  emit('delete', id)
+}
 </script>

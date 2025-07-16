@@ -18,7 +18,7 @@
       <VChip color="primary" size="large" class="days-chip">
         {{ calculateDays(counter.startDate) }}
       </VChip>
-      <div class="d-flex align-center">
+      <div v-if="!hideActions" class="d-flex align-center counnter-actions">
         <VBtn
           icon
           variant="text"
@@ -45,6 +45,10 @@ defineProps({
   counter: {
     type: Object as () => Counter,
     required: true,
+  },
+  hideActions: {
+    type: Boolean,
+    default: false,
   },
 })
 
