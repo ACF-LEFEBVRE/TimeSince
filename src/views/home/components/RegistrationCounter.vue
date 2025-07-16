@@ -1,15 +1,26 @@
 <template>
   <VCard class="registration-counter">
-    <VCardTitle class="text-h5">Días como usuario de TimeSince</VCardTitle>
+    <VCardTitle class="text-h5">{{ text.daysAsUser }}</VCardTitle>
     <div class="counter-display">
       <div class="counter-value">{{ days }}</div>
-      <div class="counter-label">días</div>
+      <div class="counter-label">{{ text.days }}</div>
     </div>
-    <VCardText>Te registraste el {{ formattedDate }}</VCardText>
+    <VCardText>{{ text.registered }} {{ formattedDate }}</VCardText>
   </VCard>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  daysAsUser: 'Días como usuario de TimeSince',
+  days: t('counters.days'),
+  registered: 'Te registraste el',
+}
+
 // PROPS
 const { days, formattedDate } = defineProps({
   days: {

@@ -2,7 +2,7 @@
   <VForm @submit.prevent="onSubmit">
     <VTextField
       v-model="email"
-      label="Email"
+      :label="text.email"
       type="email"
       required
       prepend-inner-icon="mdi-email"
@@ -11,22 +11,34 @@
     />
     <VTextField
       v-model="password"
-      label="Contraseña"
+      :label="text.password"
       type="password"
       required
       prepend-inner-icon="mdi-lock"
       class="mb-4"
-      hint="Mínimo 6 caracteres"
+      :hint="text.minChars"
       :disabled="loading"
     />
     <VBtn type="submit" color="success" block size="large" :loading="loading">
-      {{ loading ? 'Registrando...' : 'Registrarse' }}
+      {{ loading ? text.registering : text.register }}
     </VBtn>
   </VForm>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  email: t('auth.email'),
+  password: t('auth.password'),
+  minChars: 'Mínimo 6 caracteres', // Agregamos esta traducción
+  registering: 'Registrando...', // Agregamos esta traducción
+  register: t('auth.register'),
+}
 
 // PROPS
 defineProps({

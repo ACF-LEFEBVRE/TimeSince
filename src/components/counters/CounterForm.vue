@@ -1,30 +1,30 @@
 <template>
   <VDialog v-model="dialogVisible" max-width="500px">
     <VCard>
-      <VCardTitle class="text-h5">Nuevo Contador</VCardTitle>
+      <VCardTitle class="text-h5">{{ text.newCounter }}</VCardTitle>
       <VCardText>
         <VForm @submit.prevent="submit" ref="form">
           <VTextField
             v-model="counterData.name"
-            label="Nombre del contador"
+            :label="text.name"
             required
-            :rules="[(v: string) => !!v || 'El nombre es obligatorio']"
+            :rules="[(v: string) => !!v || text.nameRequired]"
           />
 
           <VRow>
             <VCol cols="12" sm="6">
               <VTextField
                 v-model="counterData.date"
-                label="Fecha de inicio"
+                :label="text.startDate"
                 type="date"
                 required
-                :rules="[(v: string) => !!v || 'La fecha es obligatoria']"
+                :rules="[(v: string) => !!v || text.dateRequired]"
               />
             </VCol>
             <VCol cols="12" sm="6">
               <VSelect
                 v-model="counterData.color"
-                label="Color"
+                :label="text.color"
                 :items="colorOptions"
                 item-title="text"
                 item-value="value"
@@ -34,7 +34,7 @@
 
           <VSelect
             v-model="counterData.icon"
-            label="Icono"
+            :label="text.icon"
             :items="iconOptions"
             item-title="text"
             item-value="value"
@@ -44,8 +44,8 @@
 
       <VCardActions>
         <VSpacer />
-        <VBtn color="grey-darken-1" text @click="closeDialog">Cancelar</VBtn>
-        <VBtn color="primary" @click="submit" :disabled="!isFormValid">Crear</VBtn>
+        <VBtn color="grey-darken-1" text @click="closeDialog">{{ text.cancel }}</VBtn>
+        <VBtn color="primary" @click="submit" :disabled="!isFormValid">{{ text.create }}</VBtn>
       </VCardActions>
     </VCard>
   </VDialog>
@@ -53,6 +53,33 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  newCounter: t('counters.newCounter'),
+  name: t('counters.name'),
+  nameRequired: 'El nombre es obligatorio',
+  startDate: t('counters.startDate'),
+  dateRequired: 'La fecha es obligatoria',
+  color: t('counters.color'),
+  icon: t('counters.icon'),
+  cancel: t('common.cancel'),
+  create: 'Crear',
+  blue: 'Azul',
+  green: 'Verde',
+  red: 'Rojo',
+  orange: 'Naranja',
+  purple: 'Morado',
+  calendar: 'Calendario',
+  star: 'Estrella',
+  heart: 'Corazón',
+  trophy: 'Trofeo',
+  gift: 'Regalo',
+  sport: 'Deporte',
+}
 
 // PROPS
 const props = defineProps({
@@ -80,20 +107,20 @@ const emit = defineEmits(['update:modelValue', 'submit'])
 
 // CONSTS
 const colorOptions = [
-  { text: 'Azul', value: 'primary' },
-  { text: 'Verde', value: 'success' },
-  { text: 'Rojo', value: 'error' },
-  { text: 'Naranja', value: 'warning' },
-  { text: 'Morado', value: 'purple' },
+  { text: text.blue, value: 'primary' },
+  { text: text.green, value: 'success' },
+  { text: text.red, value: 'error' },
+  { text: text.orange, value: 'warning' },
+  { text: text.purple, value: 'purple' },
 ]
 
 const iconOptions = [
-  { text: 'Calendario', value: 'mdi-calendar-clock' },
-  { text: 'Estrella', value: 'mdi-star' },
-  { text: 'Corazón', value: 'mdi-heart' },
-  { text: 'Trofeo', value: 'mdi-trophy' },
-  { text: 'Regalo', value: 'mdi-gift' },
-  { text: 'Deporte', value: 'mdi-run' },
+  { text: text.calendar, value: 'mdi-calendar-clock' },
+  { text: text.star, value: 'mdi-star' },
+  { text: text.heart, value: 'mdi-heart' },
+  { text: text.trophy, value: 'mdi-trophy' },
+  { text: text.gift, value: 'mdi-gift' },
+  { text: text.sport, value: 'mdi-run' },
 ]
 
 // COMPUTED

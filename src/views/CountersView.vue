@@ -4,10 +4,10 @@
       <VCol cols="12">
         <VCard class="mb-5">
           <VCardTitle class="d-flex align-center">
-            <h2 class="text-h5">Mis Contadores</h2>
+            <h2 class="text-h5">{{ text.myCounters }}</h2>
             <VSpacer />
             <VBtn color="primary" @click="showNewCounterDialog = true" prepend-icon="mdi-plus">
-              Nuevo contador
+              {{ text.newCounter }}
             </VBtn>
           </VCardTitle>
 
@@ -29,12 +29,26 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import { useI18n } from 'vue-i18n'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useAuth } from '@/composables/useAuth'
 import { Collection } from '@/plugins/firebase/collections'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
+
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  createError: t('counters.createError'),
+  deleteConfirmation: t('counters.deleteConfirmation'),
+  deleteError: t('counters.deleteError'),
+  loadError: t('counters.loadError'),
+  myCounters: t('counters.myCounters'),
+  newCounter: t('counters.newCounter'),
+  updateError: t('counters.updateError'),
+}
 
 // COMPOSABLE
 const { db } = useFirebase()
@@ -49,7 +63,7 @@ const isLoading = ref(false)
 onMounted(async () => {
   // Comprobar autenticación sin redirigir (el router guard se encargará de esto)
   await checkAuth()
-  
+
   // Si hay un userId, cargar los contadores
   if (userId.value) {
     loadCounters()
@@ -72,7 +86,7 @@ const loadCounters = async () => {
       ...doc.data(),
     })) as Counter[]
   } catch (error) {
-    console.error('Error al cargar contadores:', error)
+    console.error(text.loadError, error)
   } finally {
     isLoading.value = false
   }
@@ -99,7 +113,7 @@ const handleCounterSubmit = async (formData: any) => {
 
     loadCounters()
   } catch (error) {
-    console.error('Error al crear contador:', error)
+    console.error(text.createError, error)
   }
 }
 
@@ -117,13 +131,13 @@ const toggleFavorite = async (counter: Counter) => {
     // Actualizar en la vista local
     counter.favorite = !counter.favorite
   } catch (error) {
-    console.error('Error al actualizar favorito:', error)
+    console.error(text.updateError, error)
   }
 }
 
 // Eliminar contador
 const deleteCounter = async (counterId: string) => {
-  if (!confirm('¿Estás seguro de que quieres eliminar este contador?')) return
+  if (!confirm(text.deleteConfirmation)) return
   if (!userId.value) return
 
   try {
@@ -131,7 +145,7 @@ const deleteCounter = async (counterId: string) => {
     await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
     loadCounters()
   } catch (error) {
-    console.error('Error al eliminar contador:', error)
+    console.error(text.deleteError, error)
   }
 }
 </script>

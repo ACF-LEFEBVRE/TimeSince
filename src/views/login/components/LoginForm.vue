@@ -2,7 +2,7 @@
   <VForm @submit.prevent="onSubmit">
     <VTextField
       v-model="email"
-      label="Email"
+      :label="text.email"
       type="email"
       required
       prepend-inner-icon="mdi-email"
@@ -11,7 +11,7 @@
     />
     <VTextField
       v-model="password"
-      label="Contraseña"
+      :label="text.password"
       type="password"
       required
       prepend-inner-icon="mdi-lock"
@@ -19,13 +19,25 @@
       :disabled="loading"
     />
     <VBtn type="submit" color="primary" block size="large" :loading="loading">
-      {{ loading ? 'Iniciando sesión...' : 'Entrar' }}
+      {{ loading ? text.loggingIn : text.enter }}
     </VBtn>
   </VForm>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  email: t('auth.email'),
+  password: t('auth.password'),
+  loading: t('common.loading'),
+  enter: t('auth.login'),
+  loggingIn: t('auth.loginSuccess'),
+}
 
 // PROPS
 defineProps({
