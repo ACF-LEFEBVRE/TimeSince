@@ -7,6 +7,7 @@
       required
       prepend-inner-icon="mdi-email"
       class="mb-4"
+      :disabled="loading"
     />
     <VTextField
       v-model="password"
@@ -16,19 +17,33 @@
       prepend-inner-icon="mdi-lock"
       class="mb-4"
       hint="Mínimo 6 caracteres"
+      :disabled="loading"
     />
-    <VBtn type="submit" color="success" block size="large">Registrarse</VBtn>
+    <VBtn type="submit" color="success" block size="large" :loading="loading">
+      {{ loading ? 'Registrando...' : 'Registrarse' }}
+    </VBtn>
   </VForm>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
+// PROPS
+defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+// DATA
 const email = ref('')
 const password = ref('')
 
+// EMITS
 const emit = defineEmits(['submit'])
 
+// METHODS
 const onSubmit = () => {
   emit('submit', { email: email.value, password: password.value })
 }

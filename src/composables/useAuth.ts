@@ -1,18 +1,34 @@
-import { ref } from 'vue'
+import { ref, readonly } from 'vue'
 import { ROUTES } from '@/router/routes'
-import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from 'firebase/auth'
 import type { User } from 'firebase/auth'
+import { getFirestore, doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
+import { Collection } from '@/plugins/firebase/collections'
+import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
+
+export interface AuthCredentials {
+  email: string
+  password: string
+}
 
 export function useAuth() {
   // COMPOSABLES
   const router = useRouter()
+  const { getErrorMessage } = useFirebaseErrors()
 
   // DATA
   const isAuthenticated = ref(false)
   const currentUser = ref<User | null>(null)
   const userId = ref<string | null>(null)
   const isLoading = ref(true)
+  const error = ref<string | null>(null)
 
   // Datos de registro
   const daysRegistered = ref<number | null>(null)
@@ -42,10 +58,96 @@ export function useAuth() {
     try {
       const auth = getAuth()
       await signOut(auth)
-      router.push(ROUTES.LOGIN)
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error)
+      router.push(`/${ROUTES.LOGIN}`)
+    } catch (err) {
+      error.value = getErrorMessage(err)
+      console.error('Error al cerrar sesión:', err)
     }
+  }
+
+  // Método para iniciar sesión
+  const login = async (credentials: AuthCredentials) => {
+    error.value = null
+    isLoading.value = true
+
+    try {
+      const auth = getAuth()
+      const db = getFirestore()
+
+      // Iniciar sesión con Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        credentials.email,
+        credentials.password
+      )
+      const user = userCredential.user
+
+      // Actualizar la fecha de último acceso
+      await setDoc(
+        doc(db, Collection.USERS, user.uid),
+        {
+          lastLogin: Date.now(),
+        },
+        { merge: true }
+      )
+
+      router.push(`/${ROUTES.HOME}`)
+      return true
+    } catch (err) {
+      error.value = getErrorMessage(err)
+      console.error('Error al iniciar sesión:', err)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  // Método para registrarse
+  const register = async (credentials: AuthCredentials) => {
+    error.value = null
+    isLoading.value = true
+
+    try {
+      const auth = getAuth()
+      const db = getFirestore()
+
+      // Crear el usuario en Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        credentials.email,
+        credentials.password
+      )
+      const user = userCredential.user
+
+      // Crear el documento del usuario en Firestore
+      await setDoc(doc(db, Collection.USERS, user.uid), {
+        email: user.email,
+        createdAt: Date.now(),
+        lastLogin: Date.now(),
+      })
+
+      router.push(`/${ROUTES.HOME}`)
+      return true
+    } catch (err) {
+      error.value = getErrorMessage(err)
+      console.error('Error al registrar usuario:', err)
+      return false
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  // Método para verificar si el usuario está autenticado (útil para guards de rutas)
+  const checkAuth = async (): Promise<boolean> => {
+    if (currentUser.value) return true
+
+    return new Promise(resolve => {
+      const auth = getAuth()
+      const unsubscribe = onAuthStateChanged(auth, user => {
+        unsubscribe()
+        resolve(!!user)
+      })
+    })
   }
 
   // HOOKS
@@ -69,12 +171,16 @@ export function useAuth() {
   })
 
   return {
-    isAuthenticated,
-    currentUser,
-    userId,
-    isLoading,
-    daysRegistered,
-    registrationDate,
+    isAuthenticated: readonly(isAuthenticated),
+    currentUser: readonly(currentUser),
+    userId: readonly(userId),
+    isLoading: readonly(isLoading),
+    error: readonly(error),
+    daysRegistered: readonly(daysRegistered),
+    registrationDate: readonly(registrationDate),
     logout,
+    login,
+    register,
+    checkAuth,
   }
 }
