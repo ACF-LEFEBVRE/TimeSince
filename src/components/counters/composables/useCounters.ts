@@ -1,6 +1,6 @@
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import type { Ref } from 'vue'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, getDocs } from 'firebase/firestore'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { Collection } from '@/plugins/firebase/collections'
 import type { Counter } from '@/components/counters/types/counters'
@@ -10,12 +10,15 @@ export function useCounters(userId: Ref<string | null>) {
   const { db } = useFirebase()
 
   // DATA
-  const favoriteCounters = ref<Counter[]>([])
+  const allCounters = ref<Counter[]>([])
+  const favoriteCounters = computed(() => 
+    allCounters.value.filter(counter => counter.favorite)
+  )
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 
   // METHODS
-  const loadFavoriteCounters = async () => {
+  const loadAllCounters = async () => {
     if (!userId.value) return
 
     isLoading.value = true
@@ -24,16 +27,15 @@ export function useCounters(userId: Ref<string | null>) {
     try {
       // Usar la subcolección de contadores para cada usuario
       const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
-      const q = query(userCountersRef, where('favorite', '==', true))
-      const querySnapshot = await getDocs(q)
+      const querySnapshot = await getDocs(userCountersRef)
 
-      favoriteCounters.value = querySnapshot.docs.map(doc => ({
+      allCounters.value = querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       })) as Counter[]
     } catch (err) {
-      console.error('Error al cargar contadores favoritos:', err)
-      error.value = 'Error al cargar los contadores favoritos'
+      console.error('Error al cargar contadores:', err)
+      error.value = 'Error al cargar los contadores'
     } finally {
       isLoading.value = false
     }
@@ -44,18 +46,19 @@ export function useCounters(userId: Ref<string | null>) {
     userId,
     newUserId => {
       if (newUserId) {
-        loadFavoriteCounters()
+        loadAllCounters()
       } else {
-        favoriteCounters.value = []
+        allCounters.value = []
       }
     },
     { immediate: true }
   )
 
   return {
+    allCounters,
     favoriteCounters,
     isLoading,
     error,
-    loadFavoriteCounters,
+    loadAllCounters,
   }
 }

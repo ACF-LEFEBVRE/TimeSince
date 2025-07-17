@@ -64,10 +64,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
+import { collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { useI18n } from 'vue-i18n'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useAuth } from '@/composables/useAuth'
+import { useCounters } from '@/components/counters/composables/useCounters'
 import { Collection } from '@/plugins/firebase/collections'
 import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
@@ -92,11 +93,10 @@ const text = {
 // COMPOSABLE
 const { db } = useFirebase()
 const { userId, checkAuth } = useAuth()
+const { allCounters, isLoading, loadAllCounters } = useCounters(userId)
 
 // DATA
-const counters = ref<Counter[]>([])
 const showCounterDialog = ref(false)
-const isLoading = ref(false)
 const counterToEdit = ref<Counter | null>(null)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 const searchQuery = ref('')
@@ -114,16 +114,16 @@ const sortOrderTooltip = computed(() =>
 
 // Función para filtrar contadores según la búsqueda
 const filteredCounters = computed(() => {
-  if (!counters.value.length) return []
+  if (!allCounters.value.length) return []
 
   // Si no hay búsqueda, devolver todos los contadores
   if (!searchQuery.value.trim()) {
-    return [...counters.value]
+    return [...allCounters.value]
   }
 
   // Filtrar por nombre, categoría o descripción
   const query = searchQuery.value.toLowerCase().trim()
-  return counters.value.filter(counter => {
+  return allCounters.value.filter((counter: Counter) => {
     return (
       counter.name.toLowerCase().includes(query) ||
       (counter.category && counter.category.toLowerCase().includes(query)) ||
@@ -166,15 +166,12 @@ const loadMockData = async () => {
   )
   if (!confirmed) return
 
-  isLoading.value = true
   try {
     await loadMockCountersForUser(userId.value)
     // Recargar los contadores después de añadir los mocks
-    await loadCounters()
+    await loadAllCounters()
   } catch (error) {
     console.error('Error al cargar los datos mock:', error)
-  } finally {
-    isLoading.value = false
   }
 }
 
@@ -182,35 +179,9 @@ const loadMockData = async () => {
 onMounted(async () => {
   // Comprobar autenticación sin redirigir (el router guard se encargará de esto)
   await checkAuth()
-
-  // Si hay un userId, cargar los contadores
-  if (userId.value) {
-    loadCounters()
-  }
 })
 
 // METHODS
-// Cargar contadores
-const loadCounters = async () => {
-  if (!userId.value) return
-  isLoading.value = true
-
-  try {
-    // Usar la subcolección de contadores para cada usuario
-    const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
-    const querySnapshot = await getDocs(userCountersRef)
-
-    counters.value = querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Counter[]
-  } catch (error) {
-    console.error(text.loadError, error)
-  } finally {
-    isLoading.value = false
-  }
-}
-
 // Procesar los datos del formulario
 const handleCounterSubmit = async (formData: any) => {
   if (!userId.value) return
@@ -244,7 +215,8 @@ const handleCounterSubmit = async (formData: any) => {
       })
     }
 
-    loadCounters()
+    // Recargar los contadores
+    await loadAllCounters()
     counterToEdit.value = null
   } catch (error) {
     console.error(formData.isEditing ? text.updateError : text.createError, error)
@@ -277,7 +249,7 @@ const deleteCounter = async (counterId: string) => {
   try {
     // Usar la ruta de la subcolección para eliminar el contador
     await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
-    loadCounters()
+    await loadAllCounters()
   } catch (error) {
     console.error(text.deleteError, error)
   }
