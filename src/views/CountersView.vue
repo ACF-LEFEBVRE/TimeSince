@@ -6,8 +6,22 @@
           <VCardTitle class="d-flex align-center">
             <h2 class="text-h5">{{ text.myCounters }}</h2>
             <VSpacer />
-            <VBtn color="primary" @click="showNewCounterDialog = true" prepend-icon="mdi-plus">
+            <VBtn
+              color="primary"
+              @click="showNewCounterDialog = true"
+              prepend-icon="mdi-plus"
+              class="mr-2"
+            >
               {{ text.newCounter }}
+            </VBtn>
+            <VBtn
+              v-if="isDevelopment"
+              color="secondary"
+              @click="loadMockData"
+              prepend-icon="mdi-database-import"
+              variant="outlined"
+            >
+              Cargar Mock Data
             </VBtn>
           </VCardTitle>
 
@@ -27,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { useI18n } from 'vue-i18n'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
@@ -36,6 +50,7 @@ import { Collection } from '@/plugins/firebase/collections'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import type { Counter } from '@/components/counters/types/counters'
+import { loadMockCountersForUser } from '@/utils/mockData'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -58,6 +73,30 @@ const { userId, checkAuth } = useAuth()
 const counters = ref<Counter[]>([])
 const showNewCounterDialog = ref(false)
 const isLoading = ref(false)
+
+// Verificar si estamos en entorno de desarrollo
+const isDevelopment = computed(() => import.meta.env.MODE === 'development')
+
+// Función para cargar datos mock
+const loadMockData = async () => {
+  if (!userId.value) return
+
+  const confirmed = confirm(
+    '¿Estás seguro de que quieres cargar 20 contadores aleatorios? Esta acción no se puede deshacer.'
+  )
+  if (!confirmed) return
+
+  isLoading.value = true
+  try {
+    await loadMockCountersForUser(userId.value)
+    // Recargar los contadores después de añadir los mocks
+    await loadCounters()
+  } catch (error) {
+    console.error('Error al cargar los datos mock:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
 
 // HOOKS
 onMounted(async () => {
