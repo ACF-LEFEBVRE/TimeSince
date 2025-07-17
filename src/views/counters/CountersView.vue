@@ -41,11 +41,15 @@
             <SearchCounter :initial-query="searchQuery" @search="handleSearch" />
           </VCardText>
 
+          <VCardText>
+            <CategoryFilterBar v-model="selectedCategory" :categories="uniqueCategories" />
+          </VCardText>
+
           <VDivider />
 
           <CountersList
             :counters="sortedCounters"
-            :is-searching="!!searchQuery.trim()"
+            :is-searching="!!searchQuery.trim() || !!selectedCategory"
             @toggle-favorite="toggleFavorite"
             @delete="deleteCounter"
             @edit="editCounter"
@@ -71,6 +75,7 @@ import { useCountersCRUD } from '@/components/counters/composables/useCountersCR
 import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import SearchCounter from '@/views/counters/components/SearchCounter.vue'
+import CategoryFilterBar from '@/views/counters/components/CategoryFilterBar.vue'
 import type { Counter } from '@/components/counters/types/counters'
 import { loadMockCountersForUser } from '@/utils/mockData'
 
@@ -98,6 +103,7 @@ const showCounterDialog = ref(false)
 const counterToEdit = ref<Counter | null>(null)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 const searchQuery = ref('')
+const selectedCategory = ref<string | null>(null)
 
 // Verificar si estamos en entorno de desarrollo
 const isDevelopment = computed(() => import.meta.env.MODE === 'development')
@@ -110,18 +116,37 @@ const sortOrderTooltip = computed(() =>
   sortNewestFirst.value ? t('counters.sortByOldest') : t('counters.sortByNewest')
 )
 
-// Función para filtrar contadores según la búsqueda
+// Obtener todas las categorías únicas
+const uniqueCategories = computed(() => {
+  if (!allCounters.value.length) return []
+
+  // Extraer todas las categorías y filtrar las únicas
+  const categories = allCounters.value.map(counter => counter.category).filter(Boolean) as string[] // Filtrar null/undefined y convertir a string[]
+
+  // Eliminar duplicados
+  return [...new Set(categories)]
+})
+
+// Función para filtrar contadores según la búsqueda y la categoría
 const filteredCounters = computed(() => {
   if (!allCounters.value.length) return []
 
-  // Si no hay búsqueda, devolver todos los contadores
-  if (!searchQuery.value.trim()) {
-    return [...allCounters.value]
+  // Primero aplicamos el filtro de categoría
+  let filtered = [...allCounters.value]
+
+  // Si hay una categoría seleccionada, filtrar por ella
+  if (selectedCategory.value) {
+    filtered = filtered.filter(counter => counter.category === selectedCategory.value)
   }
 
-  // Filtrar por nombre, categoría o descripción
+  // Si no hay búsqueda, devolvemos los contadores filtrados por categoría
+  if (!searchQuery.value.trim()) {
+    return filtered
+  }
+
+  // Aplicar filtro de búsqueda
   const query = searchQuery.value.toLowerCase().trim()
-  return allCounters.value.filter((counter: Counter) => {
+  return filtered.filter((counter: Counter) => {
     return (
       counter.name.toLowerCase().includes(query) ||
       (counter.category && counter.category.toLowerCase().includes(query)) ||
@@ -179,17 +204,15 @@ onMounted(async () => {
   await checkAuth()
 })
 
+// METHODS
 // Al enviar el formulario, actualizar la referencia al contador que se está editando
 const handleCounterSubmitAndClear = async (formData: any) => {
-  const result = await handleCounterSubmit(formData);
+  const result = await handleCounterSubmit(formData)
   if (result) {
-    counterToEdit.value = null;
+    counterToEdit.value = null
   }
-  return result;
+  return result
 }
-
-// METHODS
-// Los métodos CRUD se han movido al composable useCountersCRUD
 
 // Abrir diálogo para crear un nuevo contador
 const openNewCounterDialog = () => {

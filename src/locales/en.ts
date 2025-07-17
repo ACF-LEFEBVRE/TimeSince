@@ -91,6 +91,7 @@ export default {
     sortByOldest: 'Sort by oldest',
     searchCounters: 'Search counters',
     searchNoResults: 'No counters found matching your search',
+    allCategories: 'All Categories',
   },
   home: {
     welcome: 'Welcome',

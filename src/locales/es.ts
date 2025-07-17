@@ -91,6 +91,7 @@ export default {
     sortByOldest: 'Ordenar por más antiguos',
     searchCounters: 'Buscar contadores',
     searchNoResults: 'No se encontraron contadores que coincidan con tu búsqueda',
+    allCategories: 'Todas las Categorías',
   },
   home: {
     welcome: 'Bienvenido/a',
