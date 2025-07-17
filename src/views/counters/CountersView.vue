@@ -188,35 +188,53 @@ const handleCounterSubmit = async (formData: any) => {
 
   try {
     const startDate = new Date(formData.date).getTime()
-
-    if (formData.isEditing) {
-      // Actualizar contador existente
-      const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)
-      await updateDoc(counterRef, {
-        name: formData.name,
-        startDate: startDate,
-        color: formData.color,
-        icon: formData.icon,
-        favorite: formData.favorite,
-        category: formData.category || null,
-        description: formData.description || null,
-      })
-    } else {
-      // Crear nuevo contador
-      const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
-      await addDoc(userCountersRef, {
-        name: formData.name,
-        startDate: startDate,
-        color: formData.color,
-        icon: formData.icon,
-        favorite: formData.favorite,
-        category: formData.category || null,
-        description: formData.description || null,
-      })
+    
+    // Crear el objeto de datos del contador
+    const counterData = {
+      name: formData.name,
+      startDate: startDate,
+      color: formData.color,
+      icon: formData.icon,
+      favorite: formData.favorite,
+      category: formData.category || null,
+      description: formData.description || null,
     }
 
-    // Recargar los contadores
-    await loadAllCounters()
+    if (formData.isEditing) {
+      // Para edición: actualizar optimistamente en la UI primero
+      const counterIndex = allCounters.value.findIndex(c => c.id === formData.id)
+      if (counterIndex !== -1) {
+        // Guardar backup por si acaso
+        const counterBackup = { ...allCounters.value[counterIndex] }
+        
+        // Actualizar en la UI
+        allCounters.value[counterIndex] = { 
+          ...allCounters.value[counterIndex], 
+          ...counterData 
+        }
+        
+        try {
+          // Actualizar contador existente en Firestore
+          const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)
+          await updateDoc(counterRef, counterData)
+        } catch (error) {
+          // Restaurar el backup si falla
+          allCounters.value[counterIndex] = counterBackup
+          throw error; // Propagar el error para el catch externo
+        }
+      }
+    } else {
+      // Para nuevo contador: crear en Firestore primero
+      const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
+      const docRef = await addDoc(userCountersRef, counterData)
+      
+      // Luego añadir a la UI con el ID generado
+      allCounters.value.push({
+        id: docRef.id,
+        ...counterData
+      } as Counter)
+    }
+
     counterToEdit.value = null
   } catch (error) {
     console.error(formData.isEditing ? text.updateError : text.createError, error)
@@ -225,18 +243,23 @@ const handleCounterSubmit = async (formData: any) => {
 
 // Marcar/desmarcar como favorito
 const toggleFavorite = async (counter: Counter) => {
+  if (!userId.value) return
+  
+  // Guardar el estado original en caso de que necesitemos revertir
+  const originalValue = counter.favorite
+  
+  // Actualizar en la vista local inmediatamente (optimista)
+  counter.favorite = !originalValue
+  
   try {
-    if (!userId.value) return
-
     // Actualizar en Firestore usando la ruta de la subcolección
     const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), counter.id)
     await updateDoc(counterRef, {
-      favorite: !counter.favorite,
+      favorite: counter.favorite,
     })
-
-    // Actualizar en la vista local
-    counter.favorite = !counter.favorite
   } catch (error) {
+    // Si hay un error, revertir a su estado original
+    counter.favorite = originalValue
     console.error(text.updateError, error)
   }
 }
@@ -246,11 +269,23 @@ const deleteCounter = async (counterId: string) => {
   if (!confirm(text.deleteConfirmation)) return
   if (!userId.value) return
 
+  // Encontrar el contador a eliminar para actualización optimista
+  const counterIndex = allCounters.value.findIndex(counter => counter.id === counterId)
+  
+  if (counterIndex === -1) return
+  
+  // Guardar una copia del contador para restaurar en caso de error
+  const counterBackup = { ...allCounters.value[counterIndex] }
+  
+  // Eliminar optimistamente de la UI
+  allCounters.value.splice(counterIndex, 1)
+  
   try {
-    // Usar la ruta de la subcolección para eliminar el contador
+    // Eliminar en Firestore
     await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
-    await loadAllCounters()
   } catch (error) {
+    // Si falla, restaurar el contador a la lista
+    allCounters.value.splice(counterIndex, 0, counterBackup)
     console.error(text.deleteError, error)
   }
 }
