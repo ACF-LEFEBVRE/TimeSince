@@ -2,7 +2,7 @@
   <div>
     <EmptyState v-if="!counters || counters.length === 0" />
 
-    <VList v-else>
+    <VExpansionPanels v-else multiple variant="accordion">
       <CounterItem
         v-for="counter in counters"
         :key="counter.id"
@@ -10,8 +10,9 @@
         :hide-actions="hideActions"
         @toggle-favorite="toggleFavorite"
         @delete="deleteCounter"
+        @edit="editCounter"
       />
-    </VList>
+    </VExpansionPanels>
   </div>
 </template>
 
@@ -36,6 +37,7 @@ defineProps({
 const emit = defineEmits<{
   (e: 'toggle-favorite', counter: Counter): void
   (e: 'delete', id: string): void
+  (e: 'edit', counter: Counter): void
 }>()
 
 // METHODS
@@ -45,5 +47,9 @@ const toggleFavorite = (counter: Counter) => {
 
 const deleteCounter = (id: string) => {
   emit('delete', id)
+}
+
+const editCounter = (counter: Counter) => {
+  emit('edit', counter)
 }
 </script>

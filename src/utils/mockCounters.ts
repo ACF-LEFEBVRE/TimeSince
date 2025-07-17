@@ -48,6 +48,20 @@ const icons = [
   'mdi-bike',
 ]
 
+// Categorías para los contadores
+const categories = [
+  'Personal',
+  'Trabajo',
+  'Salud',
+  'Educación',
+  'Viajes',
+  'Finanzas',
+  'Hobbies',
+  'Familia',
+  'Tecnología',
+  'Hábitos'
+]
+
 // Nombres de eventos para los contadores
 const eventNames = [
   'Graduación',
@@ -80,6 +94,25 @@ const eventNames = [
   'Cambio de look',
 ]
 
+// Descripciones aleatorias para los contadores
+const descriptions = [
+  'Un momento importante que marcó un antes y un después',
+  'No olvidar esta fecha clave para mi desarrollo personal',
+  'Un acontecimiento que cambió mi perspectiva sobre las cosas',
+  'Un recuerdo muy especial que quiero mantener presente',
+  'Una fecha importante para medir mi progreso',
+  'Fue un día que empezó como cualquier otro pero terminó siendo especial',
+  'Momento decisivo en mi vida que quiero recordar siempre',
+  'Un punto de inflexión en mi trayectoria personal',
+  'Una experiencia que me hizo crecer como persona',
+  'Quiero ver cuánto tiempo ha pasado desde este momento importante',
+  'Una fecha para no olvidar y celebrar cada año',
+  'Un evento que me trae buenos recuerdos',
+  'Un objetivo alcanzado después de mucho esfuerzo',
+  'Una decisión importante que tomé y de la que no me arrepiento',
+  'Un evento que me ayuda a mantenerme motivado/a'
+]
+
 // Función para generar una fecha aleatoria en los últimos 2 años
 const randomDate = (): number => {
   // Entre ahora y hace 2 años
@@ -102,6 +135,8 @@ const generateRandomCounter = (): Counter => {
     color: colors[Math.floor(Math.random() * colors.length)],
     icon: icons[Math.floor(Math.random() * icons.length)],
     favorite: Math.random() > 0.7, // 30% de probabilidad de ser favorito
+    category: categories[Math.floor(Math.random() * categories.length)],
+    description: descriptions[Math.floor(Math.random() * descriptions.length)]
   }
 }
 

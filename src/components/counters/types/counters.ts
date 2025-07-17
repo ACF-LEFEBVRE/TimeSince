@@ -5,4 +5,6 @@ export interface Counter {
   color?: string
   icon?: string
   favorite: boolean
+  category?: string
+  description?: string
 }

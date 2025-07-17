@@ -8,7 +8,7 @@
             <VSpacer />
             <VBtn
               color="primary"
-              @click="showNewCounterDialog = true"
+              @click="openNewCounterDialog"
               prepend-icon="mdi-plus"
               class="mr-2"
             >
@@ -31,12 +31,17 @@
             :counters="counters"
             @toggle-favorite="toggleFavorite"
             @delete="deleteCounter"
+            @edit="editCounter"
           />
         </VCard>
       </VCol>
     </VRow>
 
-    <CounterForm v-model="showNewCounterDialog" @submit="handleCounterSubmit" />
+    <CounterForm 
+      v-model="showCounterDialog" 
+      :edit-counter="counterToEdit" 
+      @submit="handleCounterSubmit" 
+    />
   </VContainer>
 </template>
 
@@ -71,8 +76,9 @@ const { userId, checkAuth } = useAuth()
 
 // DATA
 const counters = ref<Counter[]>([])
-const showNewCounterDialog = ref(false)
+const showCounterDialog = ref(false)
 const isLoading = ref(false)
+const counterToEdit = ref<Counter | null>(null)
 
 // Verificar si estamos en entorno de desarrollo
 const isDevelopment = computed(() => import.meta.env.MODE === 'development')
@@ -137,22 +143,39 @@ const handleCounterSubmit = async (formData: any) => {
 
   try {
     const startDate = new Date(formData.date).getTime()
-
-    // Usar la subcolección de contadores para cada usuario
-    const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
-
-    await addDoc(userCountersRef, {
-      name: formData.name,
-      startDate: startDate,
-      color: formData.color,
-      icon: formData.icon,
-      favorite: formData.favorite,
-      createdAt: Date.now(),
-    })
+    
+    if (formData.isEditing) {
+      // Actualizar contador existente
+      const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)
+      await updateDoc(counterRef, {
+        name: formData.name,
+        startDate: startDate,
+        color: formData.color,
+        icon: formData.icon,
+        favorite: formData.favorite,
+        category: formData.category || null,
+        description: formData.description || null,
+        updatedAt: Date.now(),
+      })
+    } else {
+      // Crear nuevo contador
+      const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
+      await addDoc(userCountersRef, {
+        name: formData.name,
+        startDate: startDate,
+        color: formData.color,
+        icon: formData.icon,
+        favorite: formData.favorite,
+        category: formData.category || null,
+        description: formData.description || null,
+        createdAt: Date.now(),
+      })
+    }
 
     loadCounters()
+    counterToEdit.value = null
   } catch (error) {
-    console.error(text.createError, error)
+    console.error(formData.isEditing ? text.updateError : text.createError, error)
   }
 }
 
@@ -186,5 +209,17 @@ const deleteCounter = async (counterId: string) => {
   } catch (error) {
     console.error(text.deleteError, error)
   }
+}
+
+// Abrir diálogo para crear un nuevo contador
+const openNewCounterDialog = () => {
+  counterToEdit.value = null
+  showCounterDialog.value = true
+}
+
+// Preparar edición de contador
+const editCounter = (counter: Counter) => {
+  counterToEdit.value = counter
+  showCounterDialog.value = true
 }
 </script>
