@@ -57,19 +57,17 @@
     <CounterForm
       v-model="showCounterDialog"
       :edit-counter="counterToEdit"
-      @submit="handleCounterSubmit"
+      @submit="handleCounterSubmitAndClear"
     />
   </VContainer>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestore'
 import { useI18n } from 'vue-i18n'
-import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useAuth } from '@/composables/useAuth'
 import { useCounters } from '@/components/counters/composables/useCounters'
-import { Collection } from '@/plugins/firebase/collections'
+import { useCountersCRUD } from '@/components/counters/composables/useCountersCRUD'
 import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import SearchCounter from '@/views/counters/components/SearchCounter.vue'
@@ -90,10 +88,10 @@ const text = {
   updateError: t('counters.updateError'),
 }
 
-// COMPOSABLE
-const { db } = useFirebase()
+// COMPOSABLES
 const { userId, checkAuth } = useAuth()
-const { allCounters, isLoading, loadAllCounters } = useCounters(userId)
+const { allCounters, loadAllCounters } = useCounters(userId)
+const { handleCounterSubmit, toggleFavorite, deleteCounter } = useCountersCRUD(userId, allCounters)
 
 // DATA
 const showCounterDialog = ref(false)
@@ -181,114 +179,17 @@ onMounted(async () => {
   await checkAuth()
 })
 
+// Al enviar el formulario, actualizar la referencia al contador que se está editando
+const handleCounterSubmitAndClear = async (formData: any) => {
+  const result = await handleCounterSubmit(formData);
+  if (result) {
+    counterToEdit.value = null;
+  }
+  return result;
+}
+
 // METHODS
-// Procesar los datos del formulario
-const handleCounterSubmit = async (formData: any) => {
-  if (!userId.value) return
-
-  try {
-    const startDate = new Date(formData.date).getTime()
-    
-    // Crear el objeto de datos del contador
-    const counterData = {
-      name: formData.name,
-      startDate: startDate,
-      color: formData.color,
-      icon: formData.icon,
-      favorite: formData.favorite,
-      category: formData.category || null,
-      description: formData.description || null,
-    }
-
-    if (formData.isEditing) {
-      // Para edición: actualizar optimistamente en la UI primero
-      const counterIndex = allCounters.value.findIndex(c => c.id === formData.id)
-      if (counterIndex !== -1) {
-        // Guardar backup por si acaso
-        const counterBackup = { ...allCounters.value[counterIndex] }
-        
-        // Actualizar en la UI
-        allCounters.value[counterIndex] = { 
-          ...allCounters.value[counterIndex], 
-          ...counterData 
-        }
-        
-        try {
-          // Actualizar contador existente en Firestore
-          const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)
-          await updateDoc(counterRef, counterData)
-        } catch (error) {
-          // Restaurar el backup si falla
-          allCounters.value[counterIndex] = counterBackup
-          throw error; // Propagar el error para el catch externo
-        }
-      }
-    } else {
-      // Para nuevo contador: crear en Firestore primero
-      const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
-      const docRef = await addDoc(userCountersRef, counterData)
-      
-      // Luego añadir a la UI con el ID generado
-      allCounters.value.push({
-        id: docRef.id,
-        ...counterData
-      } as Counter)
-    }
-
-    counterToEdit.value = null
-  } catch (error) {
-    console.error(formData.isEditing ? text.updateError : text.createError, error)
-  }
-}
-
-// Marcar/desmarcar como favorito
-const toggleFavorite = async (counter: Counter) => {
-  if (!userId.value) return
-  
-  // Guardar el estado original en caso de que necesitemos revertir
-  const originalValue = counter.favorite
-  
-  // Actualizar en la vista local inmediatamente (optimista)
-  counter.favorite = !originalValue
-  
-  try {
-    // Actualizar en Firestore usando la ruta de la subcolección
-    const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), counter.id)
-    await updateDoc(counterRef, {
-      favorite: counter.favorite,
-    })
-  } catch (error) {
-    // Si hay un error, revertir a su estado original
-    counter.favorite = originalValue
-    console.error(text.updateError, error)
-  }
-}
-
-// Eliminar contador
-const deleteCounter = async (counterId: string) => {
-  if (!confirm(text.deleteConfirmation)) return
-  if (!userId.value) return
-
-  // Encontrar el contador a eliminar para actualización optimista
-  const counterIndex = allCounters.value.findIndex(counter => counter.id === counterId)
-  
-  if (counterIndex === -1) return
-  
-  // Guardar una copia del contador para restaurar en caso de error
-  const counterBackup = { ...allCounters.value[counterIndex] }
-  
-  // Eliminar optimistamente de la UI
-  allCounters.value.splice(counterIndex, 1)
-  
-  try {
-    // Eliminar en Firestore
-    await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
-  } catch (error) {
-    // Si falla, restaurar el contador a la lista
-    allCounters.value.splice(counterIndex, 0, counterBackup)
-    console.error(text.deleteError, error)
-  }
-}
+// Los métodos CRUD se han movido al composable useCountersCRUD
 
 // Abrir diálogo para crear un nuevo contador
 const openNewCounterDialog = () => {
