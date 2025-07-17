@@ -1,12 +1,6 @@
 <template>
-  <VChipGroup
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
-    column
-    class="category-filter mb-3"
-    show-arrows
-  >
-    <VChip filter variant="elevated" :value="null" @click="$emit('update:modelValue', null)">
+  <VChipGroup v-model="selectedCategory" column class="category-filter mb-3" show-arrows>
+    <VChip filter variant="elevated" :value="null">
       {{ text.allCategories }}
     </VChip>
     <VChip
@@ -15,7 +9,6 @@
       filter
       variant="elevated"
       :value="category"
-      @click="$emit('update:modelValue', category)"
     >
       {{ getCategoryLabel(category) }}
     </VChip>
@@ -23,44 +16,39 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+// COMPOSABLES
+const { t } = useI18n()
+
+const text = {
+  allCategories: t('counters.allCategories'),
+}
+
 // PROPS
-defineProps<{
+const props = defineProps<{
   categories: string[]
   modelValue: string | null
 }>()
 
 // EMITS
-defineEmits<{
+const emit = defineEmits<{
   (e: 'update:modelValue', value: string | null): void
 }>()
 
-// TRANSLATION
-const { t } = useI18n()
-
-const text = {
-  allCategories: t('counters.allCategories'),
-  categories: {
-    education: t('counters.categories.education'),
-    family: t('counters.categories.family'),
-    finance: t('counters.categories.finance'),
-    hobbies: t('counters.categories.hobbies'),
-    habits: t('counters.categories.habits'),
-    personal: t('counters.categories.personal'),
-    health: t('counters.categories.health'),
-    technology: t('counters.categories.technology'),
-    work: t('counters.categories.work'),
-    travel: t('counters.categories.travel'),
-  },
-}
+// COMPUTED
+// Two-way binding for v-model
+const selectedCategory = computed({
+  get: () => props.modelValue,
+  set: value => emit('update:modelValue', value),
+})
 
 // METHODS
-// Función para obtener la etiqueta traducida de una categoría
+// More type-safe implementation
 const getCategoryLabel = (category: string): string => {
-  // Cast to any to avoid TypeScript index signature error
-  const categoriesDict = text.categories as any
-  return categoriesDict[category] || category
+  const categoryKey = `counters.categories.${category.toLowerCase()}`
+  return t(categoryKey) !== categoryKey ? t(categoryKey) : category
 }
 </script>
 
