@@ -56,6 +56,8 @@ export default {
     oldestFirst: 'Más antiguos primero',
     sortByNewest: 'Ordenar por más recientes',
     sortByOldest: 'Ordenar por más antiguos',
+    searchCounters: 'Buscar contadores',
+    searchNoResults: 'No se encontraron contadores que coincidan con tu búsqueda',
   },
   home: {
     welcome: 'Bienvenido/a',

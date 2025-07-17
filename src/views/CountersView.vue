@@ -36,9 +36,19 @@
           </VCardTitle>
 
           <VDivider />
+          
+          <VCardText>
+            <SearchCounter
+              :initial-query="searchQuery"
+              @search="handleSearch"
+            />
+          </VCardText>
+
+          <VDivider />
 
           <CountersList
             :counters="sortedCounters"
+            :is-searching="!!searchQuery.trim()"
             @toggle-favorite="toggleFavorite"
             @delete="deleteCounter"
             @edit="editCounter"
@@ -64,6 +74,7 @@ import { useAuth } from '@/composables/useAuth'
 import { Collection } from '@/plugins/firebase/collections'
 import CountersList from '@/components/counters/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
+import SearchCounter from '@/components/counters/SearchCounter.vue'
 import type { Counter } from '@/components/counters/types/counters'
 import { loadMockCountersForUser } from '@/utils/mockData'
 
@@ -77,6 +88,7 @@ const text = {
   loadError: t('counters.loadError'),
   myCounters: t('counters.myCounters'),
   newCounter: t('counters.newCounter'),
+  searchNoResults: t('counters.searchNoResults'),
   updateError: t('counters.updateError'),
 }
 
@@ -90,6 +102,7 @@ const showCounterDialog = ref(false)
 const isLoading = ref(false)
 const counterToEdit = ref<Counter | null>(null)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
+const searchQuery = ref('')
 
 // Verificar si estamos en entorno de desarrollo
 const isDevelopment = computed(() => import.meta.env.MODE === 'development')
@@ -100,12 +113,32 @@ const sortOrderTooltip = computed(() => sortNewestFirst.value
   ? t('counters.sortByOldest') 
   : t('counters.sortByNewest'))
 
-// Función para ordenar los contadores
-const sortedCounters = computed(() => {
+// Función para filtrar contadores según la búsqueda
+const filteredCounters = computed(() => {
   if (!counters.value.length) return []
   
+  // Si no hay búsqueda, devolver todos los contadores
+  if (!searchQuery.value.trim()) {
+    return [...counters.value]
+  }
+  
+  // Filtrar por nombre, categoría o descripción
+  const query = searchQuery.value.toLowerCase().trim()
+  return counters.value.filter(counter => {
+    return (
+      counter.name.toLowerCase().includes(query) || 
+      (counter.category && counter.category.toLowerCase().includes(query)) ||
+      (counter.description && counter.description.toLowerCase().includes(query))
+    )
+  })
+})
+
+// Función para ordenar los contadores después de filtrar
+const sortedCounters = computed(() => {
+  if (!filteredCounters.value.length) return []
+  
   // Crear una copia para no modificar el original
-  const sorted = [...counters.value]
+  const sorted = [...filteredCounters.value]
   
   return sorted.sort((a, b) => {
     // Ordenar según la preferencia del usuario usando solo startDate
@@ -114,6 +147,11 @@ const sortedCounters = computed(() => {
       : a.startDate - b.startDate // Más antiguos primero
   })
 })
+
+// Función para manejar la búsqueda
+const handleSearch = (query: string) => {
+  searchQuery.value = query
+}
 
 // Función para cambiar el orden
 const toggleSortOrder = () => {

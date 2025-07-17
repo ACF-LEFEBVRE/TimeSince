@@ -56,6 +56,8 @@ export default {
     oldestFirst: 'Oldest First',
     sortByNewest: 'Sort by newest',
     sortByOldest: 'Sort by oldest',
+    searchCounters: 'Search counters',
+    searchNoResults: 'No counters found matching your search',
   },
   home: {
     welcome: 'Welcome',

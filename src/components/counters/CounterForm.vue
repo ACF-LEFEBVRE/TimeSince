@@ -85,6 +85,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import type { Counter } from '@/components/counters/types/counters'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -123,8 +124,8 @@ const props = defineProps({
     default: false,
   },
   editCounter: {
-    type: Object,
-    default: null,
+    type: Object as () => Counter | null | undefined,
+    default: undefined,
   },
 })
 
@@ -232,8 +233,8 @@ watch(
         id: props.editCounter.id,
         name: props.editCounter.name,
         date: editDate,
-        color: props.editCounter.color,
-        icon: props.editCounter.icon,
+        color: props.editCounter.color || 'primary',
+        icon: props.editCounter.icon || 'mdi-calendar-clock',
         favorite: props.editCounter.favorite,
         category: props.editCounter.category || '',
         description: props.editCounter.description || '',
