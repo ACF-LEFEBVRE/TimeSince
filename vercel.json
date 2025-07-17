@@ -1,0 +1,15 @@
+{
+  "rewrites": [
+    { "source": "/:path*", "destination": "/index.html" }
+  ],
+  "env": {
+    "VITE_API_MODE": "production",
+    "VITE_APP_TITLE": "TimeSince"
+  },
+  "build": {
+    "env": {
+      "VITE_API_MODE": "production",
+      "VITE_APP_TITLE": "TimeSince"
+    }
+  }
+}
