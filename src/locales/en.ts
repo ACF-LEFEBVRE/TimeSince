@@ -52,6 +52,10 @@ export default {
     createError: 'Error creating counter',
     updateError: 'Error updating counter',
     deleteError: 'Error deleting counter',
+    newestFirst: 'Newest First',
+    oldestFirst: 'Oldest First',
+    sortByNewest: 'Sort by newest',
+    sortByOldest: 'Sort by oldest',
   },
   home: {
     welcome: 'Welcome',

@@ -52,6 +52,10 @@ export default {
     createError: 'Error al crear contador',
     updateError: 'Error al actualizar contador',
     deleteError: 'Error al eliminar contador',
+    newestFirst: 'Más recientes primero',
+    oldestFirst: 'Más antiguos primero',
+    sortByNewest: 'Ordenar por más recientes',
+    sortByOldest: 'Ordenar por más antiguos',
   },
   home: {
     welcome: 'Bienvenido/a',

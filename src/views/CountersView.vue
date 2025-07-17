@@ -7,6 +7,16 @@
             <h2 class="text-h5">{{ text.myCounters }}</h2>
             <VSpacer />
             <VBtn
+              color="secondary"
+              @click="toggleSortOrder"
+              prepend-icon="mdi-sort"
+              variant="outlined"
+              class="mr-2"
+              :title="sortOrderTooltip"
+            >
+              {{ sortOrderText }}
+            </VBtn>
+            <VBtn
               color="primary"
               @click="openNewCounterDialog"
               prepend-icon="mdi-plus"
@@ -28,7 +38,7 @@
           <VDivider />
 
           <CountersList
-            :counters="counters"
+            :counters="sortedCounters"
             @toggle-favorite="toggleFavorite"
             @delete="deleteCounter"
             @edit="editCounter"
@@ -79,9 +89,36 @@ const counters = ref<Counter[]>([])
 const showCounterDialog = ref(false)
 const isLoading = ref(false)
 const counterToEdit = ref<Counter | null>(null)
+const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 
 // Verificar si estamos en entorno de desarrollo
 const isDevelopment = computed(() => import.meta.env.MODE === 'development')
+
+// Texto para el botón de ordenación
+const sortOrderText = computed(() => sortNewestFirst.value ? t('counters.newestFirst') : t('counters.oldestFirst'))
+const sortOrderTooltip = computed(() => sortNewestFirst.value 
+  ? t('counters.sortByOldest') 
+  : t('counters.sortByNewest'))
+
+// Función para ordenar los contadores
+const sortedCounters = computed(() => {
+  if (!counters.value.length) return []
+  
+  // Crear una copia para no modificar el original
+  const sorted = [...counters.value]
+  
+  return sorted.sort((a, b) => {
+    // Ordenar según la preferencia del usuario usando solo startDate
+    return sortNewestFirst.value
+      ? b.startDate - a.startDate // Más recientes primero
+      : a.startDate - b.startDate // Más antiguos primero
+  })
+})
+
+// Función para cambiar el orden
+const toggleSortOrder = () => {
+  sortNewestFirst.value = !sortNewestFirst.value
+}
 
 // Función para cargar datos mock
 const loadMockData = async () => {
@@ -155,7 +192,6 @@ const handleCounterSubmit = async (formData: any) => {
         favorite: formData.favorite,
         category: formData.category || null,
         description: formData.description || null,
-        updatedAt: Date.now(),
       })
     } else {
       // Crear nuevo contador
@@ -168,7 +204,6 @@ const handleCounterSubmit = async (formData: any) => {
         favorite: formData.favorite,
         category: formData.category || null,
         description: formData.description || null,
-        createdAt: Date.now(),
       })
     }
 
