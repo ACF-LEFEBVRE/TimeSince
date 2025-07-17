@@ -21,23 +21,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import WelcomeCard from '@/views/home/components/WelcomeCard.vue'
 import RegistrationCounter from '@/views/home/components/RegistrationCounter.vue'
 import FavoriteCounters from '@/views/home/components/FavoriteCounters.vue'
 import { useAuth } from '@/composables/useAuth'
 import { useCounters } from '@/composables/useCounters'
-
-// TRANSLATION
-const { t } = useI18n()
-
-const text = {
-  welcome: t('home.welcome'),
-  favoriteCounters: t('home.favoriteCounters'),
-  noFavorites: t('home.noFavorites'),
-  registrationCounter: t('home.registrationCounter'),
-  daysRegistered: t('home.daysRegistered'),
-}
 
 // COMPOSABLES
 const { currentUser, userId, daysRegistered, registrationDate, logout } = useAuth()
