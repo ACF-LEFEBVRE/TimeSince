@@ -21,7 +21,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: `/${ROUTES.COUNTERS}`,
     name: 'Counters',
-    component: () => import('@/views/CountersView.vue'),
+    component: () => import('@/views/counters/CountersView.vue'),
     meta: { requiresAuth: true },
   },
   {

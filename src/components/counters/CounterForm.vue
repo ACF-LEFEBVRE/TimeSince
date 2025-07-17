@@ -2,15 +2,7 @@
   <VDialog v-model="dialogVisible" max-width="500px">
     <VCard>
       <VCardTitle class="text-h5">{{ isEditing ? text.editCounter : text.newCounter }}</VCardTitle>
-  })
-  
-  // Solo resetear el formulario si no estamos editando
-  if (!isEditing.value) {
-    resetForm()
-  }
-  
-  closeDialog()
-} <VCardText>
+      <VCardText>
         <VForm @submit.prevent="submit" ref="form">
           <VRow>
             <VCol cols="12" sm="8">
@@ -76,7 +68,9 @@
       <VCardActions>
         <VSpacer />
         <VBtn color="grey-darken-1" text @click="closeDialog">{{ text.cancel }}</VBtn>
-        <VBtn color="primary" @click="submit" :disabled="!isFormValid">{{ isEditing ? text.update : text.create }}</VBtn>
+        <VBtn color="primary" @click="submit" :disabled="!isFormValid">{{
+          isEditing ? text.update : text.create
+        }}</VBtn>
       </VCardActions>
     </VCard>
   </VDialog>
@@ -86,36 +80,29 @@
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Counter } from '@/components/counters/types/counters'
+import { useCounterForm } from '@/components/counters/composables/useCounterForm'
 
 // TRANSLATION
 const { t } = useI18n()
 
 const text = {
-  newCounter: t('counters.newCounter'),
-  editCounter: 'Editar contador',
-  name: t('counters.name'),
-  nameRequired: 'El nombre es obligatorio',
-  startDate: t('counters.startDate'),
-  dateRequired: 'La fecha es obligatoria',
-  color: t('counters.color'),
-  icon: t('counters.icon'),
   cancel: t('common.cancel'),
-  create: 'Crear',
-  update: 'Actualizar',
-  category: 'Categoría',
-  description: 'Descripción',
-  blue: 'Azul',
-  green: 'Verde',
-  red: 'Rojo',
-  orange: 'Naranja',
-  purple: 'Morado',
-  calendar: 'Calendario',
-  star: 'Estrella',
-  heart: 'Corazón',
-  trophy: 'Trofeo',
-  gift: 'Regalo',
-  sport: 'Deporte',
+  category: t('counters.categoryLabel'),
+  color: t('counters.color'),
+  create: t('counters.create'),
+  dateRequired: t('counters.dateRequired'),
+  description: t('counters.description'),
+  editCounter: t('counters.editCounter'),
+  icon: t('counters.icon'),
+  name: t('counters.name'),
+  nameRequired: t('counters.nameRequired'),
+  newCounter: t('counters.newCounter'),
+  startDate: t('counters.startDate'),
+  update: t('counters.update'),
 }
+
+// COMPOSABLES
+const { categoryOptions, colorOptions, iconOptions } = useCounterForm()
 
 // PROPS
 const props = defineProps({
@@ -146,59 +133,28 @@ const counterData = ref({
   description: '',
 })
 
-// EMITS
-const emit = defineEmits(['update:modelValue', 'submit'])
-
-// CONSTS
-const categoryOptions = [
-  'Personal',
-  'Trabajo',
-  'Salud',
-  'Educación',
-  'Viajes',
-  'Finanzas',
-  'Hobbies',
-  'Familia',
-  'Tecnología',
-  'Hábitos'
-]
-
-const colorOptions = [
-  { text: text.blue, value: 'primary' },
-  { text: text.green, value: 'success' },
-  { text: text.red, value: 'error' },
-  { text: text.orange, value: 'warning' },
-  { text: text.purple, value: 'purple' },
-]
-
-const iconOptions = [
-  { text: text.calendar, value: 'mdi-calendar-clock' },
-  { text: text.star, value: 'mdi-star' },
-  { text: text.heart, value: 'mdi-heart' },
-  { text: text.trophy, value: 'mdi-trophy' },
-  { text: text.gift, value: 'mdi-gift' },
-  { text: text.sport, value: 'mdi-run' },
-]
-
 // COMPUTED
 const isFormValid = computed(() => {
   return counterData.value.name && counterData.value.date
 })
 
+// EMITS
+const emit = defineEmits(['update:modelValue', 'submit'])
+
 // METHODS
 const submit = () => {
   if (!isFormValid.value) return
 
-  emit('submit', { 
-    ...counterData.value, 
-    isEditing: isEditing.value
+  emit('submit', {
+    ...counterData.value,
+    isEditing: isEditing.value,
   })
-  
+
   // Solo resetear el formulario si no estamos editando
   if (!isEditing.value) {
     resetForm()
   }
-  
+
   closeDialog()
 }
 

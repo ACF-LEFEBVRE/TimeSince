@@ -36,12 +36,9 @@
           </VCardTitle>
 
           <VDivider />
-          
+
           <VCardText>
-            <SearchCounter
-              :initial-query="searchQuery"
-              @search="handleSearch"
-            />
+            <SearchCounter :initial-query="searchQuery" @search="handleSearch" />
           </VCardText>
 
           <VDivider />
@@ -57,10 +54,10 @@
       </VCol>
     </VRow>
 
-    <CounterForm 
-      v-model="showCounterDialog" 
-      :edit-counter="counterToEdit" 
-      @submit="handleCounterSubmit" 
+    <CounterForm
+      v-model="showCounterDialog"
+      :edit-counter="counterToEdit"
+      @submit="handleCounterSubmit"
     />
   </VContainer>
 </template>
@@ -72,9 +69,9 @@ import { useI18n } from 'vue-i18n'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useAuth } from '@/composables/useAuth'
 import { Collection } from '@/plugins/firebase/collections'
-import CountersList from '@/components/counters/CountersList.vue'
+import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
-import SearchCounter from '@/components/counters/SearchCounter.vue'
+import SearchCounter from '@/views/counters/components/SearchCounter.vue'
 import type { Counter } from '@/components/counters/types/counters'
 import { loadMockCountersForUser } from '@/utils/mockData'
 
@@ -108,25 +105,27 @@ const searchQuery = ref('')
 const isDevelopment = computed(() => import.meta.env.MODE === 'development')
 
 // Texto para el botón de ordenación
-const sortOrderText = computed(() => sortNewestFirst.value ? t('counters.newestFirst') : t('counters.oldestFirst'))
-const sortOrderTooltip = computed(() => sortNewestFirst.value 
-  ? t('counters.sortByOldest') 
-  : t('counters.sortByNewest'))
+const sortOrderText = computed(() =>
+  sortNewestFirst.value ? t('counters.newestFirst') : t('counters.oldestFirst')
+)
+const sortOrderTooltip = computed(() =>
+  sortNewestFirst.value ? t('counters.sortByOldest') : t('counters.sortByNewest')
+)
 
 // Función para filtrar contadores según la búsqueda
 const filteredCounters = computed(() => {
   if (!counters.value.length) return []
-  
+
   // Si no hay búsqueda, devolver todos los contadores
   if (!searchQuery.value.trim()) {
     return [...counters.value]
   }
-  
+
   // Filtrar por nombre, categoría o descripción
   const query = searchQuery.value.toLowerCase().trim()
   return counters.value.filter(counter => {
     return (
-      counter.name.toLowerCase().includes(query) || 
+      counter.name.toLowerCase().includes(query) ||
       (counter.category && counter.category.toLowerCase().includes(query)) ||
       (counter.description && counter.description.toLowerCase().includes(query))
     )
@@ -136,10 +135,10 @@ const filteredCounters = computed(() => {
 // Función para ordenar los contadores después de filtrar
 const sortedCounters = computed(() => {
   if (!filteredCounters.value.length) return []
-  
+
   // Crear una copia para no modificar el original
   const sorted = [...filteredCounters.value]
-  
+
   return sorted.sort((a, b) => {
     // Ordenar según la preferencia del usuario usando solo startDate
     return sortNewestFirst.value
@@ -218,7 +217,7 @@ const handleCounterSubmit = async (formData: any) => {
 
   try {
     const startDate = new Date(formData.date).getTime()
-    
+
     if (formData.isEditing) {
       // Actualizar contador existente
       const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)

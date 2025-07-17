@@ -17,19 +17,23 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 
+// PRPOS
 const props = defineProps({
   initialQuery: {
     type: String,
-    default: ''
-  }
+    default: '',
+  },
 })
 
+// DATA
+const searchQuery = ref(props.initialQuery)
+
+// EMITS
 const emit = defineEmits<{
   (e: 'search', query: string): void
 }>()
 
-const searchQuery = ref(props.initialQuery)
-
+// METHODS
 const emitSearch = () => {
   emit('search', searchQuery.value)
 }
@@ -39,10 +43,14 @@ const clearSearch = () => {
   emit('search', '')
 }
 
+// WATCHERS
 // Actualizar la búsqueda si cambia el prop initialQuery
-watch(() => props.initialQuery, (newValue) => {
-  searchQuery.value = newValue
-})
+watch(
+  () => props.initialQuery,
+  newValue => {
+    searchQuery.value = newValue
+  }
+)
 </script>
 
 <style scoped>

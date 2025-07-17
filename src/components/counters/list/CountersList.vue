@@ -1,6 +1,6 @@
 <template>
   <div>
-    <EmptyState v-if="(!counters || counters.length === 0) && !isSearching" />
+    <CounterListEmptyState v-if="(!counters || counters.length === 0) && !isSearching" />
     <SearchEmptyState v-else-if="(!counters || counters.length === 0) && isSearching" />
 
     <VExpansionPanels v-else multiple variant="accordion">
@@ -19,8 +19,8 @@
 
 <script setup lang="ts">
 import CounterItem from '@/components/counters/CounterItem.vue'
-import EmptyState from '@/components/counters/EmptyState.vue'
-import SearchEmptyState from '@/components/counters/SearchEmptyState.vue'
+import CounterListEmptyState from '@/components/counters/list/CounterListEmptyState.vue'
+import SearchEmptyState from '@/views/counters/components/SearchEmptyState.vue'
 import type { Counter } from '@/components/counters/types/counters'
 
 // PROPS
@@ -35,8 +35,8 @@ defineProps({
   },
   isSearching: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 // EMITS
