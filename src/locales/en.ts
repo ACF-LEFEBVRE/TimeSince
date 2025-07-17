@@ -9,6 +9,7 @@ export default {
     confirm: 'Are you sure?',
     yes: 'Yes',
     no: 'No',
+    or: 'Or',
   },
   auth: {
     login: 'Log in',
@@ -23,6 +24,13 @@ export default {
     loginError: 'Error logging in',
     registerError: 'Error registering',
     passwordMismatch: 'Passwords do not match',
+    noAccount: "Don't have an account?",
+    alreadyAccount: 'Already have an account?',
+    rememberMe: 'Remember me',
+    continueWithGoogle: 'Continue with Google',
+    continueWithFacebook: 'Continue with Facebook',
+    passwordMinChars: 'Minimum 6 characters',
+    registering: 'Registering...',
   },
   counters: {
     myCounters: 'My Counters',
