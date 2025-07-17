@@ -7,12 +7,13 @@ import {
   createUserWithEmailAndPassword,
 } from 'firebase/auth'
 import type { User } from 'firebase/auth'
-import { doc, setDoc } from 'firebase/firestore'
+import { doc, setDoc, collection } from 'firebase/firestore'
 import { useRouter } from 'vue-router'
 import { Collection } from '@/plugins/firebase/collections'
 import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useDateCalculation } from '@/composables/useDateCalculation'
+import type { Counter } from '@/components/counters/types/counters'
 
 export interface AuthCredentials {
   email: string
@@ -94,13 +95,30 @@ export function useAuth() {
         credentials.password
       )
       const user = userCredential.user
-
+      
+      const now = Date.now()
+      
       // Crear el documento del usuario en Firestore
       await setDoc(doc(db, Collection.USERS, user.uid), {
         email: user.email,
-        createdAt: Date.now(),
-        lastLogin: Date.now(),
+        createdAt: now,
+        lastLogin: now,
       })
+      
+      // Crear un CounterItem para registrar la fecha de registro del usuario
+      const registrationCounter = {
+        name: 'Registro en TimeSince',
+        startDate: now,
+        color: '#4285f4',
+        icon: 'mdi-account-plus',
+        favorite: true, // Lo marcamos como favorito para que aparezca en la sección de favoritos
+      } as Counter
+      
+      // Añadir el contador a la subcolección de contadores del usuario
+      await setDoc(
+        doc(collection(db, Collection.USER_COUNTERS(user.uid))),
+        registrationCounter
+      )
 
       router.push(`/${ROUTES.HOME}`)
       return true
