@@ -79,7 +79,7 @@ const onSubmit = () => {
 
 <style lang="scss" scoped>
 .login-btn {
-  background-color: $paco;
+  background-color: $main-1000;
   color: white;
 }
 </style>

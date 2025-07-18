@@ -1,42 +1,120 @@
-// Colors
-$primary-color: #1976d2;
-$secondary-color: #424242;
-$accent-color: #82b1ff;
-$error-color: #ff5252;
-$info-color: #2196f3;
-$success-color: #4caf50;
-$warning-color: #ffc107;
-$paco: pink;
+//-------- COLORS ---------//
+// PRIMARY //
+$main-1000: #001978;
+$main-900: #193085;
+$main-800: #334793;
+$main-700: #4c5ea0;
+$main-600: #6170ab;
+$main-500: #7f8cbb;
+$main-400: #99a3c9;
+$main-300: #b2bad6;
+$main-200: #ccd1e4;
+$main-100: #e5e8f1;
+$main-050: #f2f3f8;
+// SECONDARY //
+$highlight-200: #d50057;
+$highlight-100: #db2670;
+$highlight-050: #ea80ab;
+// NEUTRAL //
+$neutral-grey-900: #050505;
+$neutral-grey-800: #262626;
+$neutral-grey-700: #464646;
+$neutral-grey-600: #717171;
+$neutral-grey-500: #969696;
+$neutral-grey-400: #b4b3b3;
+$neutral-grey-300: #dddcdc;
+$neutral-grey-200: #ebeaea;
+$neutral-grey-100: #f7f7f7;
+$neutral-grey-050: #fafafa;
+$neutral-white-000: #ffffff;
+// TERTIARY //
+$tertiary-persianRed-200: #d12d30;
+$tertiary-persianRed-100: #e16668;
+$tertiary-persianRed-050: #fcdedf;
+$tertiary-princetonOrange-200: #ff9000;
+$tertiary-princetonOrange-100: #ffb759;
+$tertiary-princetonOrange-050: #ffd092;
+$tertiary-saffron-200: #f0bc00;
+$tertiary-saffron-100: #f5d359;
+$tertiary-saffron-050: #fff2c2;
+$tertiary-seaGreen-200: #128851;
+$tertiary-seaGreen-100: #59ac85;
+$tertiary-seaGreen-050: #c8f9e2;
+$tertiary-byzantineBlue-200: #2e53d6;
+$tertiary-byzantineBlue-100: #8298e6;
+$tertiary-byzantineBlue-050: #d9e1fc;
+$tertiary-silver-100: #b2b4b2;
+$tertiary-silver-50: #c9cac9;
+$tertiary-ecru-100: #d8b982;
+$tertiary-ecru-050: #e5d6b8;
+$tertiary-citron-100: #d9c756;
+$tertiary-citron-050: #e8dd9a;
+$tertiary-tiffanyBlue-100: #aae5d9;
+$tertiary-tiffanyBlue-050: #c2f0e8;
+$tertiary-marianBlue-100: #768fc2;
+$tertiary-marianBlue-050: #d1daeb;
 
-// Typography
-$font-family-base: 'Roboto', sans-serif;
-$font-size-base: 1rem;
-$line-height-base: 1.5;
+// TEXT COLORS //
+$text-weak: #363942;
 
-// Breakpoints
-$breakpoints: (
-  'xs': 0,
-  'sm': 600px,
-  'md': 960px,
-  'lg': 1280px,
-  'xl': 1920px,
-);
+// OTHER //
+$secondary-pumpkin-100: #f38d39;
+$secondary-pumpkin-200: #f26d00;
+$subject-fireEngineRed: #d90021;
 
-// Spacing
-$spacing-unit: 8px;
-$spacing: (
-  'xs': $spacing-unit,
-  'sm': $spacing-unit * 2,
-  'md': $spacing-unit * 3,
-  'lg': $spacing-unit * 4,
-  'xl': $spacing-unit * 5,
-);
+//-------- SPACING ---------//
+$spacing-nule: 0px;
+$spacing-xxxs: 2px;
+$spacing-xxs: 4px;
+$spacing-xs: 8px;
+$spacing-sm: 12px;
+$spacing-md: 16px;
+$spacing-lg: 20px;
+$spacing-xl: 24px;
+$spacing-xxl: 32px;
+$spacing-xxxl: 40px;
 
-// Border radius
-$border-radius-sm: 4px;
-$border-radius-md: 8px;
-$border-radius-lg: 12px;
+//-------- CORNER RADIUS ---------//
+$cornerRadius-0: 0px;
+$cornerRadius-xs: 2px;
+$cornerRadius-sm: 4px;
+$cornerRadius-md: 8px;
+$cornerRadius-lg: 12px;
+$cornerRadius-xl: 20px;
+$cornerRadius-100: 100px;
 
-// Transitions
-$transition-duration: 0.3s;
-$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+//-------- ELEVATION ---------//
+$shadow-sm: 0px 1px 3px 0px rgba(113, 113, 113, 0.25);
+$shadow-md: 0px 2px 9px 0px rgba(113, 113, 113, 0.25);
+$shadow-lg: 0px 2px 12px 0px rgba(113, 113, 113, 0.35);
+$shadow-xl: 0px 5px 15px 0px rgba(113, 113, 113, 0.4);
+
+//-------- FONTS ---------//
+$milano-font: MTTMilano, Lato, Arial, sans-serif;
+$milano-font-medium: MTTMilano-Medium, Lato, Arial, sans-serif;
+$milano-font-bold: MTTMilano-Bold, Lato, Arial, sans-serif;
+$milano-font-black: MTTMilano-Black, Lato, Arial, sans-serif;
+$arial-font: Arial, Helvetica, sans-serif;
+$poppins-font: poppins, Lato, Arial, sans-serif;
+$poppins-font-medium: poppins-medium, Lato, Arial, sans-serif;
+$poppins-font-bold: poppins-bold, Lato, Arial, sans-serif;
+$poppins-font-black: poppins-black, Lato, Arial, sans-serif;
+$inter-font: 'Inter', sans-serif;
+
+//-------- FONTS SIZES ---------//
+$fontSize-xxxs: 10px;
+$fontSize-xxs: 12px;
+$fontSize-xs: 14px;
+$fontSize-sm: 16px;
+$fontSize-md: 18px;
+$fontSize-lg: 20px;
+$fontSize-xl: 24px;
+
+//---------- MOBILE --------------//
+$mobile-border: 1px solid $main-200;
+
+//-------- STROKE ---------//
+$stroke-weak-color: #b6b7bb;
+
+//-------- GRADIENT ---------//
+$horizontal-gradient: linear-gradient(90deg, $main-1000 0%, #2134f1 50%, #f81bbd 95%);
