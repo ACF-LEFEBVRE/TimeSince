@@ -1,7 +1,10 @@
 <template>
   <div>
     <h1 class="text-h4 text-center font-weight-bold mb-4">{{ text.login }}</h1>
-    <p class="text-center mb-6">{{ text.noAccount }} <a @click="$emit('switchTab')" class="text-primary font-weight-medium">{{ text.signUp }}</a></p>
+    <p class="text-center mb-6">
+      {{ text.noAccount }}
+      <a @click="$emit('switchTab')" class="text-primary font-weight-medium">{{ text.signUp }}</a>
+    </p>
     <VForm @submit.prevent="onSubmit">
       <VTextField
         v-model="email"
@@ -26,14 +29,7 @@
       <div class="d-flex justify-end align-center mb-6">
         <a class="text-primary text-decoration-none text-caption">{{ text.forgotPassword }}</a>
       </div>
-      <VBtn 
-        type="submit" 
-        color="primary" 
-        block 
-        size="large" 
-        :loading="loading"
-        rounded="lg"
-      >
+      <VBtn type="submit" class="login-btn" block size="large" :loading="loading" rounded="lg">
         {{ loading ? text.loggingIn : text.login }}
       </VBtn>
     </VForm>
@@ -80,3 +76,10 @@ const onSubmit = () => {
   emit('submit', { email: email.value, password: password.value })
 }
 </script>
+
+<style lang="scss" scoped>
+.login-btn {
+  background-color: $paco;
+  color: white;
+}
+</style>

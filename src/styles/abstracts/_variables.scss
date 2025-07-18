@@ -1,0 +1,42 @@
+// Colors
+$primary-color: #1976d2;
+$secondary-color: #424242;
+$accent-color: #82b1ff;
+$error-color: #ff5252;
+$info-color: #2196f3;
+$success-color: #4caf50;
+$warning-color: #ffc107;
+$paco: pink;
+
+// Typography
+$font-family-base: 'Roboto', sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+
+// Breakpoints
+$breakpoints: (
+  'xs': 0,
+  'sm': 600px,
+  'md': 960px,
+  'lg': 1280px,
+  'xl': 1920px,
+);
+
+// Spacing
+$spacing-unit: 8px;
+$spacing: (
+  'xs': $spacing-unit,
+  'sm': $spacing-unit * 2,
+  'md': $spacing-unit * 3,
+  'lg': $spacing-unit * 4,
+  'xl': $spacing-unit * 5,
+);
+
+// Border radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+
+// Transitions
+$transition-duration: 0.3s;
+$transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
