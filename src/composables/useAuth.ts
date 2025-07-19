@@ -31,7 +31,7 @@ export function useAuth() {
   const isAuthenticated = ref(false)
   const currentUser = ref<User | null>(null)
   const userId = ref<string | null>(null)
-  const isLoading = ref(true)
+  const isLoading = ref(false)
   const error = ref<string | null>(null)
 
   // Datos de registro
@@ -95,16 +95,16 @@ export function useAuth() {
         credentials.password
       )
       const user = userCredential.user
-      
+
       const now = Date.now()
-      
+
       // Crear el documento del usuario en Firestore
       await setDoc(doc(db, Collection.USERS, user.uid), {
         email: user.email,
         createdAt: now,
         lastLogin: now,
       })
-      
+
       // Crear un CounterItem para registrar la fecha de registro del usuario
       const registrationCounter = {
         name: 'Registro en TimeSince',
@@ -113,12 +113,9 @@ export function useAuth() {
         icon: 'mdi-account-plus',
         favorite: true, // Lo marcamos como favorito para que aparezca en la sección de favoritos
       } as Counter
-      
+
       // Añadir el contador a la subcolección de contadores del usuario
-      await setDoc(
-        doc(collection(db, Collection.USER_COUNTERS(user.uid))),
-        registrationCounter
-      )
+      await setDoc(doc(collection(db, Collection.USER_COUNTERS(user.uid))), registrationCounter)
 
       router.push(`/${ROUTES.HOME}`)
       return true
@@ -151,7 +148,7 @@ export function useAuth() {
    * @param callback - Función a ejecutar cuando cambia el estado de autenticación
    * @returns Función para cancelar la suscripción
    */
-  const subscribeToAuthChanges = (callback: (isAuthenticated: boolean) => void): () => void => {
+  const subscribeToAuthChanges = (callback: (isAuthenticated: boolean) => void): (() => void) => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       callback(!!user)
     })
@@ -164,7 +161,7 @@ export function useAuth() {
     isAuthenticated.value = !!user
     currentUser.value = user
     userId.value = user ? user.uid : null
-    isLoading.value = false
+    // isLoading.value = false
 
     // Obtener metadata de creación de cuenta
     if (user && user.metadata && user.metadata.creationTime) {
