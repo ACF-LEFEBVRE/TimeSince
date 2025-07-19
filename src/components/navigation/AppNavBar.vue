@@ -2,7 +2,7 @@
   <VAppBar class="app-bar" height="64">
     <VToolbarTitle class="title-container" @click="navigateToHome">
       <ClockLogo :size="32" />
-      <span class="app-name" v-if="!mdAndDown">{{ text.appNName }}</span>
+      <span class="app-name" v-if="!smAndDown">{{ text.appNName }}</span>
     </VToolbarTitle>
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
@@ -42,9 +42,7 @@ const text = {
 
 // COMPOSABLES
 const router = useRouter()
-const { mdAndDown } = useDisplay()
-
-console.log('Vuetify display:', { mdAndDown })
+const { smAndDown } = useDisplay()
 
 // EMITS
 const emit = defineEmits<{
