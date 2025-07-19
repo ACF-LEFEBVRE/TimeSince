@@ -8,19 +8,19 @@ import { ROUTES } from '@/router/routes'
 const routes: Array<RouteRecordRaw> = [
   {
     path: `/${ROUTES.LOGIN}`,
-    name: 'Login',
+    name: ROUTES.LOGIN,
     component: LoginView,
     meta: { requiresAuth: false },
   },
   {
     path: `/${ROUTES.HOME}`,
-    name: 'Home',
+    name: ROUTES.HOME,
     component: HomeView,
     meta: { requiresAuth: true },
   },
   {
     path: `/${ROUTES.COUNTERS}`,
-    name: 'Counters',
+    name: ROUTES.COUNTERS,
     component: () => import('@/views/counters/CountersView.vue'),
     meta: { requiresAuth: true },
   },

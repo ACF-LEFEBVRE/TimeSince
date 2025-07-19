@@ -1,5 +1,6 @@
-import es from './es'
-import en from './en'
+// Import JSON locale files
+import es from './es.json'
+import en from './en.json'
 
 export const messages = {
   es,
@@ -10,12 +11,12 @@ export const supportedLocales = [
   {
     code: 'es',
     name: 'Español',
-    flag: 'es', // Código ISO del país para la bandera
+    flag: 'es',
   },
   {
     code: 'en',
     name: 'English',
-    flag: 'gb', // Usamos GB (Gran Bretaña) para inglés
+    flag: 'gb',
   },
 ]
 

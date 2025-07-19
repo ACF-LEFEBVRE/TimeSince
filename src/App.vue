@@ -1,8 +1,8 @@
 <template>
   <VApp>
     <div v-if="isAuthReady">
-      <AppNavBar v-if="!isLoginPage" :isAuthenticated="isAuthenticated" @logout="logout" />
-      <VMain :class="{ 'login-main': isLoginPage, 'fill-height': true }">
+      <AppNavBar v-if="!isLoginView" :isAuthenticated="isAuthenticated" @logout="logout" />
+      <VMain :class="{ 'fill-height': true }">
         <router-view />
       </VMain>
     </div>
@@ -13,23 +13,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuth } from '@/composables/useAuth.ts'
 import AppNavBar from '@/components/navigation/AppNavBar.vue'
-import { useRoute } from 'vue-router'
-import { ROUTES } from '@/router/routes'
+import { useViews } from './composables/useViews'
 
 // REF
 const isAuthReady = ref(false)
-const route = useRoute()
-
-// COMPUTED
-const isLoginPage = computed(() => {
-  return route.path === `/${ROUTES.LOGIN}`
-})
 
 // COMPOSABLES
 const { isAuthenticated, logout, subscribeToAuthChanges } = useAuth()
+const { isLoginView } = useViews()
 
 // Verificar el estado de autenticación antes de mostrar contenido
 onMounted(() => {

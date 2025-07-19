@@ -1,2 +1,29 @@
+@forward 'abstracts';
 // Main styles index file
 @forward 'abstracts';
+
+// Quitar fondo azul de autocompletado en todos los inputs (Chrome/Safari)
+:root {
+  --custom-autofill-bg: $neutral-white-000; // Cambia por el color de fondo real de tus campos
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--custom-autofill-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--custom-autofill-bg) inset !important;
+  -webkit-text-fill-color: #222 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+// Para Vuetify, fuerza el selector dentro de los componentes
+:global(.v-input input:-webkit-autofill),
+:global(.v-input input:-webkit-autofill:focus),
+:global(.v-input input:-webkit-autofill:hover),
+:global(.v-input input:-webkit-autofill:active) {
+  -webkit-box-shadow: 0 0 0 1000px var(--custom-autofill-bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--custom-autofill-bg) inset !important;
+  -webkit-text-fill-color: #222 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}

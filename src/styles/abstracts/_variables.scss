@@ -53,9 +53,13 @@ $tertiary-tiffanyBlue-100: #aae5d9;
 $tertiary-tiffanyBlue-050: #c2f0e8;
 $tertiary-marianBlue-100: #768fc2;
 $tertiary-marianBlue-050: #d1daeb;
+$main-color: $main-1000;
+$text-color: $neutral-grey-900;
+$highlight-color: $highlight-200;
 
 // TEXT COLORS //
 $text-weak: #363942;
+$primary-text: $neutral-grey-900;
 
 // OTHER //
 $secondary-pumpkin-100: #f38d39;
@@ -100,15 +104,19 @@ $poppins-font-medium: poppins-medium, Lato, Arial, sans-serif;
 $poppins-font-bold: poppins-bold, Lato, Arial, sans-serif;
 $poppins-font-black: poppins-black, Lato, Arial, sans-serif;
 $inter-font: 'Inter', sans-serif;
+$text-font: $inter-font;
+$title-font: $poppins-font;
 
 //-------- FONTS SIZES ---------//
-$fontSize-xxxs: 10px;
-$fontSize-xxs: 12px;
-$fontSize-xs: 14px;
-$fontSize-sm: 16px;
-$fontSize-md: 18px;
-$fontSize-lg: 20px;
-$fontSize-xl: 24px;
+$font-size-xxxs: 10px;
+$font-size-xxs: 12px;
+$font-size-xs: 14px;
+$font-size-sm: 16px;
+$font-size-md: 18px;
+$font-size-lg: 20px;
+$font-size-xl: 24px;
+$font-size-xxl: 28px;
+$font-size-xxxl: 32px;
 
 //---------- MOBILE --------------//
 $mobile-border: 1px solid $main-200;
@@ -118,3 +126,4 @@ $stroke-weak-color: #b6b7bb;
 
 //-------- GRADIENT ---------//
 $horizontal-gradient: linear-gradient(90deg, $main-1000 0%, #2134f1 50%, #f81bbd 95%);
+$vertical-gradient: linear-gradient(180deg, #f81bbd 0%, #2134f1 30%, $main-1000 55%);

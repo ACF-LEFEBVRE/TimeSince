@@ -23,7 +23,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale } from '@/plugins/i18n'
-import { supportedLocales } from '@/locales'
+import { supportedLocales } from '@/plugins/i18n/locales'
 
 // Composables
 const i18n = useI18n()

@@ -1,5 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import { messages, defaultLocale } from '@/locales'
+import { messages, defaultLocale } from './locales'
 
 // Tipo para los idiomas soportados
 type SupportedLocale = keyof typeof messages
@@ -8,7 +8,7 @@ type SupportedLocale = keyof typeof messages
 const getBrowserLocale = (): SupportedLocale => {
   const browserLocale = navigator.language.split('-')[0] as SupportedLocale
   // Comprobar si el idioma del navegador está soportado
-  return messages[browserLocale] ? browserLocale : defaultLocale as SupportedLocale
+  return messages[browserLocale] ? browserLocale : (defaultLocale as SupportedLocale)
 }
 
 // Obtener el idioma guardado en localStorage o usar el del navegador

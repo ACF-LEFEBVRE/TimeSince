@@ -1,23 +1,26 @@
 <template>
-  <VAppBar color="primary" dark flat>
-    <VToolbarTitle class="cursor-pointer" @click="navigateToHome">TimeSince</VToolbarTitle>
+  <VAppBar class="app-bar" height="64">
+    <VToolbarTitle class="title-container" @click="navigateToHome">
+      <ClockLogo :size="32" />
+      <span class="app-name" v-if="!mdAndDown">{{ text.appNName }}</span>
+    </VToolbarTitle>
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
-      <VBtn :to="ROUTES.HOME" variant="text">{{ $t('navigation.home') }}</VBtn>
-      <VBtn :to="ROUTES.COUNTERS" variant="text">{{ $t('navigation.counters') }}</VBtn>
-      <VBtn @click="onLogout" variant="text" prepend-icon="mdi-logout">{{ $t('auth.logout') }}</VBtn>
+      <VBtn :to="ROUTES.HOME" variant="text">{{ text.home }}</VBtn>
+      <VBtn :to="ROUTES.COUNTERS" variant="text">{{ text.counters }}</VBtn>
+      <VBtn @click="onLogout" variant="text" prepend-icon="mdi-logout">{{ text.logout }}</VBtn>
       <VDivider vertical class="mx-2 my-auto" />
-      <LocaleSwitcher />
-    </div>
-    <div v-else class="d-flex align-center">
       <LocaleSwitcher />
     </div>
   </VAppBar>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { ROUTES } from '@/router/routes'
+import { useRouter } from 'vue-router'
+import { useDisplay } from 'vuetify'
+import { useI18n } from 'vue-i18n'
+import ClockLogo from '@/components/common/ClockLogo.vue'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 
 // PROPS
@@ -25,8 +28,23 @@ const props = defineProps<{
   isAuthenticated: boolean
 }>()
 
+// TRANSLATION
+const { t } = useI18n()
+
+// TRANSITION
+const text = {
+  appNName: t('common.appName'),
+  home: t('navigation.home'),
+  counters: t('navigation.counters'),
+  settings: t('navigation.settings'),
+  logout: t('auth.logout'),
+}
+
 // COMPOSABLES
 const router = useRouter()
+const { mdAndDown } = useDisplay()
+
+console.log('Vuetify display:', { mdAndDown })
 
 // EMITS
 const emit = defineEmits<{
@@ -42,3 +60,26 @@ const onLogout = () => {
   emit('logout')
 }
 </script>
+
+<style lang="scss" scoped>
+.app-bar {
+  box-shadow: $shadow-md !important;
+
+  .title-container {
+    @include flex($justify: flex-start);
+    cursor: pointer;
+
+    :deep(.v-toolbar-title__placeholder) {
+      @include flex;
+
+      .app-name {
+        font-family: $inter-font;
+        font-size: $font-size-xl;
+        color: $main-color;
+        font-weight: bold;
+        padding-left: $spacing-xs;
+      }
+    }
+  }
+}
+</style>

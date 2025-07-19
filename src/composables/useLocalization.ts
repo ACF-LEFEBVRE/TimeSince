@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { setLocale as changeLocale } from '@/plugins/i18n'
-import { supportedLocales } from '@/locales'
+import { supportedLocales } from '@/plugins/i18n/locales'
 
 export function useLocalization() {
   const i18n = useI18n()
