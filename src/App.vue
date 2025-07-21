@@ -2,7 +2,7 @@
   <VApp>
     <div v-if="isAuthReady">
       <AppNavBar v-if="!isLoginView" :isAuthenticated="isAuthenticated" @logout="logout" />
-      <VMain :class="{ 'fill-height': true }">
+      <VMain :class="['fill-height', 'd-flex', 'justify-center', 'align-center']">
         <router-view />
       </VMain>
     </div>

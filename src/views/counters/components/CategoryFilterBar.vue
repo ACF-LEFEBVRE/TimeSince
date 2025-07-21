@@ -1,14 +1,15 @@
 <template>
-  <VChipGroup v-model="selectedCategory" column class="category-filter mb-3" show-arrows>
-    <VChip filter variant="elevated" :value="null">
+  <VChipGroup v-model="selectedCategory" column class="category-filter pa-0">
+    <VChip class="category-chip" filter :value="null" density="compact">
       {{ text.allCategories }}
     </VChip>
     <VChip
       v-for="category in categories"
       :key="category"
+      class="category-chip"
       filter
-      variant="elevated"
       :value="category"
+      density="compact"
     >
       {{ getCategoryLabel(category) }}
     </VChip>
@@ -33,9 +34,7 @@ const props = defineProps<{
 }>()
 
 // EMITS
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: string | null): void
-}>()
+const emit = defineEmits<(e: 'update:modelValue', value: string | null) => void>()
 
 // COMPUTED
 // Two-way binding for v-model
@@ -52,11 +51,38 @@ const getCategoryLabel = (category: string): string => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .category-filter {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   padding: 0 8px;
+
+  :deep(.v-slide-group__content) {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .category-chip {
+    background-color: transparent;
+    font-family: $text-font;
+    font-size: $font-size-xxs;
+    border: 1px solid $main-600;
+    color: $main-color;
+
+    :deep(.v-chip__underlay) {
+      display: none;
+    }
+
+    &.v-chip--selected {
+      background-color: $main-900;
+      color: $white;
+
+      :deep(i) {
+        display: none;
+      }
+    }
+  }
 }
 </style>

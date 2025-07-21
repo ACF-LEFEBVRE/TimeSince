@@ -1,8 +1,7 @@
 <template>
-  <div class="search-container mb-3">
+  <div class="search-container mt-3">
     <VTextField
-      v-model="searchQuery"
-      :label="$t('counters.searchCounters')"
+      :placeholder="text.searchCounters"
       prepend-inner-icon="mdi-magnify"
       clearable
       hide-details
@@ -16,8 +15,16 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 
-// PRPOS
+// TRANSLATION
+const { t } = useI18n()
+
+const text = {
+  searchCounters: t('counters.searchCounters'),
+}
+
+// PROPS
 const props = defineProps({
   initialQuery: {
     type: String,
@@ -29,9 +36,7 @@ const props = defineProps({
 const searchQuery = ref(props.initialQuery)
 
 // EMITS
-const emit = defineEmits<{
-  (e: 'search', query: string): void
-}>()
+const emit = defineEmits<(e: 'search', query: string) => void>()
 
 // METHODS
 const emitSearch = () => {
@@ -53,8 +58,14 @@ watch(
 )
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .search-container {
   width: 100%;
+  color: $text-color;
+  font-family: $text-font;
+
+  :deep(.v-icon--clickable) {
+    color: $text-color;
+  }
 }
 </style>

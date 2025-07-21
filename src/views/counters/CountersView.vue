@@ -1,69 +1,41 @@
 <template>
-  <VContainer>
-    <VRow>
-      <VCol cols="12">
-        <VCard class="mb-5">
-          <VCardTitle class="d-flex align-center">
-            <h2 class="text-h5">{{ text.myCounters }}</h2>
-            <VSpacer />
-            <VBtn
-              color="secondary"
-              @click="toggleSortOrder"
-              prepend-icon="mdi-sort"
-              variant="outlined"
-              class="mr-2"
-              :title="sortOrderTooltip"
-            >
-              {{ sortOrderText }}
-            </VBtn>
-            <VBtn
-              color="primary"
-              @click="openNewCounterDialog"
-              prepend-icon="mdi-plus"
-              class="mr-2"
-            >
-              {{ text.newCounter }}
-            </VBtn>
-            <VBtn
-              v-if="isDevelopment"
-              color="secondary"
-              @click="loadMockData"
-              prepend-icon="mdi-database-import"
-              variant="outlined"
-            >
-              Cargar Mock Data
-            </VBtn>
-          </VCardTitle>
+  <section class="counters-view pa-8">
+    <VCard class="mb-5 pa-2 card-container">
+      <VCardTitle class="d-flex align-center">
+        <h2 class="counters-title">{{ text.myCounters }}</h2>
+        <VSpacer />
+        <VBtn class="add-btn" @click="openNewCounterDialog" variant="outlined">
+          {{ text.newCounter }}
+        </VBtn>
+        <CreateMockButton v-if="!allCounters.length" @mock-loaded="loadAllCounters" />
+      </VCardTitle>
 
-          <VDivider />
+      <VCardText class="pb-0">
+        <SearchCounter :initial-query="searchQuery" @search="handleSearch" />
+      </VCardText>
 
-          <VCardText>
-            <SearchCounter :initial-query="searchQuery" @search="handleSearch" />
-          </VCardText>
+      <VCardText class="d-flex align-center justify-space-between">
+        <SortOrderButton :sortDirection="sortNewestFirst" @toggle="toggleSortOrder" />
+        <CategoryFilterBar v-model="selectedCategory" :categories="uniqueCategories" />
+      </VCardText>
 
-          <VCardText>
-            <CategoryFilterBar v-model="selectedCategory" :categories="uniqueCategories" />
-          </VCardText>
+      <VDivider />
 
-          <VDivider />
-
-          <CountersList
-            :counters="sortedCounters"
-            :is-searching="!!searchQuery.trim() || !!selectedCategory"
-            @toggle-favorite="toggleFavorite"
-            @delete="deleteCounter"
-            @edit="editCounter"
-          />
-        </VCard>
-      </VCol>
-    </VRow>
+      <CountersList
+        :counters="sortedCounters"
+        :is-searching="!!searchQuery.trim() || !!selectedCategory"
+        @toggle-favorite="toggleFavorite"
+        @delete="deleteCounter"
+        @edit="editCounter"
+      />
+    </VCard>
 
     <CounterForm
       v-model="showCounterDialog"
       :edit-counter="counterToEdit"
       @submit="handleCounterSubmitAndClear"
     />
-  </VContainer>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -77,7 +49,8 @@ import CounterForm from '@/components/counters/CounterForm.vue'
 import SearchCounter from '@/views/counters/components/SearchCounter.vue'
 import CategoryFilterBar from '@/views/counters/components/CategoryFilterBar.vue'
 import type { Counter } from '@/components/counters/types/counters'
-import { loadMockCountersForUser } from '@/utils/mockData'
+import CreateMockButton from './components/CreateMockButton.vue'
+import SortOrderButton from './components/SortOrderButton.vue'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -104,17 +77,6 @@ const counterToEdit = ref<Counter | null>(null)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 const searchQuery = ref('')
 const selectedCategory = ref<string | null>(null)
-
-// Verificar si estamos en entorno de desarrollo
-const isDevelopment = computed(() => import.meta.env.MODE === 'development')
-
-// Texto para el botón de ordenación
-const sortOrderText = computed(() =>
-  sortNewestFirst.value ? t('counters.newestFirst') : t('counters.oldestFirst')
-)
-const sortOrderTooltip = computed(() =>
-  sortNewestFirst.value ? t('counters.sortByOldest') : t('counters.sortByNewest')
-)
 
 // Obtener todas las categorías únicas
 const uniqueCategories = computed(() => {
@@ -180,24 +142,6 @@ const toggleSortOrder = () => {
   sortNewestFirst.value = !sortNewestFirst.value
 }
 
-// Función para cargar datos mock
-const loadMockData = async () => {
-  if (!userId.value) return
-
-  const confirmed = confirm(
-    '¿Estás seguro de que quieres cargar 20 contadores aleatorios? Esta acción no se puede deshacer.'
-  )
-  if (!confirmed) return
-
-  try {
-    await loadMockCountersForUser(userId.value)
-    // Recargar los contadores después de añadir los mocks
-    await loadAllCounters()
-  } catch (error) {
-    console.error('Error al cargar los datos mock:', error)
-  }
-}
-
 // HOOKS
 onMounted(async () => {
   // Comprobar autenticación sin redirigir (el router guard se encargará de esto)
@@ -226,3 +170,34 @@ const editCounter = (counter: Counter) => {
   showCounterDialog.value = true
 }
 </script>
+
+<style lang="scss" scoped>
+.counters-view {
+  width: 80%;
+
+  .counters-title {
+    font-family: $title-font;
+    color: $main-color;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+
+  .card-container {
+    border: 1px solid $main-1000;
+  }
+
+  .add-btn {
+    font-size: 14px;
+    font-family: $text-font;
+    text-transform: uppercase;
+    color: $main-color;
+    font-weight: bold;
+
+    &:hover {
+      color: $white;
+      background-color: $main-700;
+      border-color: $main-700;
+    }
+  }
+}
+</style>

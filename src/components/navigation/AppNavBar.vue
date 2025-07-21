@@ -6,11 +6,9 @@
     </VToolbarTitle>
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
-      <VBtn :to="ROUTES.HOME" variant="text">{{ text.home }}</VBtn>
-      <VBtn :to="ROUTES.COUNTERS" variant="text">{{ text.counters }}</VBtn>
-      <VBtn @click="onLogout" variant="text" prepend-icon="mdi-logout">{{ text.logout }}</VBtn>
-      <VDivider vertical class="mx-2 my-auto" />
-      <LocaleSwitcher />
+      <VBtn :to="ROUTES.COUNTERS" :ripple="false" class="mr-4">{{ text.counters }}</VBtn>
+      <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large" :ripple="false"></VBtn>
+      <VBtn @click="onLogout" size="large" icon="mdi-logout" :ripple="false" class="mr-4"></VBtn>
     </div>
   </VAppBar>
 </template>
@@ -21,7 +19,6 @@ import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import ClockLogo from '@/components/common/ClockLogo.vue'
-import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 
 // PROPS
 const props = defineProps<{
@@ -71,12 +68,48 @@ const onLogout = () => {
       @include flex;
 
       .app-name {
-        font-family: $inter-font;
+        font-family: $title-font;
         font-size: $font-size-xl;
         color: $main-color;
         font-weight: bold;
         padding-left: $spacing-xs;
       }
+    }
+  }
+
+  .v-btn {
+    color: $text-color;
+    font-family: $text-font;
+
+    &.v-btn--active {
+      color: $main-color;
+      border: 1px solid $main-color;
+
+      :deep(.v-btn__overlay) {
+        display: none;
+      }
+
+      &:hover {
+        color: $white;
+        background-color: $main-700;
+      }
+    }
+
+    &:hover {
+      color: $main-color;
+
+      :deep(.v-btn__overlay) {
+        display: none;
+      }
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.v-btn--icon {
+      border: none;
+      color: $main-color;
     }
   }
 }

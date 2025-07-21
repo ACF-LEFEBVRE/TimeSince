@@ -7,8 +7,8 @@ type SupportedLocale = keyof typeof messages
 // Detectar el idioma del navegador
 const getBrowserLocale = (): SupportedLocale => {
   const browserLocale = navigator.language.split('-')[0] as SupportedLocale
-  // Comprobar si el idioma del navegador está soportado
-  return messages[browserLocale] ? browserLocale : (defaultLocale as SupportedLocale)
+  // Si es 'es', usar 'es'; si no, usar 'en'
+  return browserLocale === 'es' ? 'es' : 'en'
 }
 
 // Obtener el idioma guardado en localStorage o usar el del navegador
@@ -18,6 +18,7 @@ const getSavedLocale = (): SupportedLocale => {
 }
 
 const currentLocale = getSavedLocale()
+console.log(`Current locale: ${currentLocale}`)
 
 const i18n = createI18n({
   legacy: false, // Usar la API de Composition para Vue 3
