@@ -1,32 +1,21 @@
 <template>
-  <VExpansionPanel :value="counter.id">
-    <!-- Panel header - Visible siempre -->
+  <VExpansionPanel :value="counter.id" class="my-1 counter-item">
     <VExpansionPanelTitle>
       <div class="d-flex align-center w-100">
-        <!-- Icono y color del contador -->
-        <VIcon :color="counter.color || 'primary'" size="large" class="mr-3">
-          {{ counter.icon || 'mdi-calendar-clock' }}
-        </VIcon>
-
-        <!-- Información principal -->
-        <div class="flex-grow-1">
-          <!-- Categoría como badge pequeño -->
+        <div class="chip-container">
+          <div>{{ counter.name }}</div>
           <VChip
             v-if="counter.category"
             size="x-small"
-            class="mb-1 category-chip"
+            class="category-chip ml-2"
             :color="counter.color || 'primary'"
             variant="outlined"
           >
             {{ counter.category }}
           </VChip>
-
-          <!-- Nombre del contador -->
-          <div class="text-h6">{{ counter.name }}</div>
         </div>
 
-        <!-- Días transcurridos - Siempre visible -->
-        <VChip :color="counter.color || 'primary'" size="large" class="days-chip ml-auto">
+        <VChip class="date-chip ml-auto mr-2">
           {{ calculateDays(counter.startDate) }}
         </VChip>
       </div>
@@ -35,11 +24,10 @@
     <!-- Panel de contenido - Visible al expandir -->
     <VExpansionPanelText>
       <div class="pa-2">
-        <!-- Fecha de inicio -->
         <div class="text-subtitle-2 mb-2">
           <VIcon size="small" class="mr-1">mdi-calendar</VIcon>
           Iniciado el {{ formatDate(counter.startDate) }}
-          <!-- Acciones -->
+
           <div v-if="!hideActions" class="d-flex justify-end">
             <VBtn
               icon
@@ -53,13 +41,7 @@
                 {{ counter.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
               </VTooltip>
             </VBtn>
-            <VBtn
-              icon
-              variant="text"
-              color="primary"
-              @click.stop="handleEdit"
-              class="mr-2"
-            >
+            <VBtn icon variant="text" color="primary" @click.stop="handleEdit" class="mr-2">
               <VIcon>mdi-pencil</VIcon>
               <VTooltip activator="parent" location="top">Editar contador</VTooltip>
             </VBtn>
@@ -115,32 +97,66 @@ const handleEdit = (event: Event) => {
 }
 </script>
 
-<style scoped>
-.days-chip {
-  font-weight: bold;
-  min-width: 100px;
-  max-width: 180px;
-  justify-content: center;
-  text-align: center;
-  line-height: 1.3;
-  white-space: normal;
-  height: auto;
-  padding: 8px 12px;
-  font-size: 0.875rem;
-}
+<style lang="scss" scoped>
+.counter-item {
+  &.v-expansion-panel--active {
+    border: $highlight-border;
+  }
 
-.category-chip {
-  font-size: 0.7rem;
-  height: 20px;
-  font-weight: 500;
-}
+  .v-expansion-panel-title {
+    &:hover {
+      background-color: $main-050;
+    }
 
-.description {
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 0.9rem;
-  line-height: 1.5;
-  padding: 0.5rem;
-  background-color: rgba(0, 0, 0, 0.03);
-  border-radius: 4px;
+    &:focus {
+      outline: none;
+    }
+
+    :deep(.v-expansion-panel-title__overlay) {
+      display: none;
+    }
+  }
+
+  .chip-container {
+    @include flex;
+    font-family: $title-font;
+    font-size: $font-size-md;
+    font-weight: bold;
+    color: $main-color;
+  }
+
+  .date-chip {
+    font-family: $text-font;
+    font-size: 14px;
+    color: $white;
+    background-color: $highlight-200;
+  }
 }
+// .days-chip {
+//   font-weight: bold;
+//   min-width: 100px;
+//   max-width: 180px;
+//   justify-content: center;
+//   text-align: center;
+//   line-height: 1.3;
+//   white-space: normal;
+//   height: auto;
+//   padding: 8px 12px;
+//   font-size: 0.875rem;
+// }
+
+// .category-chip {
+//   font-size: 0.7rem;
+//   height: 20px;
+//   font-weight: 500;
+// }
+
+// .description {
+//   color: rgba(0, 0, 0, 0.7);
+//   font-size: 0.9rem;
+//   line-height: 1.5;
+//   padding: 0.5rem;
+//   background-color: rgba(0, 0, 0, 0.03);
+//   border-radius: 4px;
+// }
 </style>

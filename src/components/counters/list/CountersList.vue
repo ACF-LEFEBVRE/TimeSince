@@ -3,7 +3,7 @@
     <CounterListEmptyState v-if="(!counters || counters.length === 0) && !isSearching" />
     <SearchEmptyState v-else-if="(!counters || counters.length === 0) && isSearching" />
 
-    <VExpansionPanels v-else multiple variant="accordion">
+    <VExpansionPanels v-else variant="accordion" class="px-4">
       <CounterItem
         v-for="counter in counters"
         :key="counter.id"

@@ -34,7 +34,11 @@
     "no": "No",
     "or": "O",
     "save": "Guardar",
-    "yes": "Sí"
+    "yes": "Sí",
+    "label": {
+      "sort": "Orden",
+      "category": "Filtrar por"
+    }
   },
   "counters": {
     "addYourFirst": "Agrega tu primer contador",

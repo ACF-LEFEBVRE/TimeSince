@@ -128,3 +128,7 @@ $stroke-weak-color: #b6b7bb;
 //-------- GRADIENT ---------//
 $horizontal-gradient: linear-gradient(90deg, $main-1000 0%, #2134f1 50%, #f81bbd 95%);
 $vertical-gradient: linear-gradient(180deg, #f81bbd 0%, #2134f1 30%, $main-1000 55%);
+
+//-------- BORDER ---------//
+$custom-border: 1px solid $main-color;
+$highlight-border: 2px solid $main-color;

@@ -6,9 +6,9 @@
     </VToolbarTitle>
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
-      <VBtn :to="ROUTES.COUNTERS" :ripple="false" class="mr-4">{{ text.counters }}</VBtn>
-      <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large" :ripple="false"></VBtn>
-      <VBtn @click="onLogout" size="large" icon="mdi-logout" :ripple="false" class="mr-4"></VBtn>
+      <VBtn :to="ROUTES.COUNTERS" class="mr-4">{{ text.counters }}</VBtn>
+      <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large"></VBtn>
+      <VBtn @click="onLogout" size="large" icon="mdi-logout" class="mr-4"></VBtn>
     </div>
   </VAppBar>
 </template>

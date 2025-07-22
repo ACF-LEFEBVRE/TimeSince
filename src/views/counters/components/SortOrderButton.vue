@@ -1,16 +1,23 @@
 <template>
   <section class="search-order-button-container">
-    <span class="search-label mr-2">Orden:</span>
+    <SearchLabel :text="'Orden'" />
     <VChip class="sort-chip" clickable @click="handleToggle" size="small" density="compact">
-      <VIcon start>{{ sortDirection ? 'mdi-arrow-up' : 'mdi-arrow-down' }}</VIcon>
-      {{ sortDirection ? 'Ascendente' : 'Descendente' }}
+      <VIcon start>{{ props.sortDirection ? 'mdi-arrow-up' : 'mdi-arrow-down' }}</VIcon>
+      {{ props.sortDirection ? 'Ascendente' : 'Descendente' }}
     </VChip>
   </section>
 </template>
 
 <script setup lang="ts">
+import SearchLabel from '@/components/common/SearchLabel.vue'
+
 // PROPS
-defineProps<{ sortDirection: boolean }>()
+const props = defineProps({
+  sortDirection: {
+    type: Boolean,
+    default: true, // true for ascending, false for descending
+  },
+})
 
 // EMITS
 const emit = defineEmits(['toggle'])

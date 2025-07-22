@@ -1,37 +1,47 @@
 <template>
-  <VChipGroup v-model="selectedCategory" column class="category-filter pa-0">
-    <VChip class="category-chip" filter :value="null" density="compact">
-      {{ text.allCategories }}
-    </VChip>
-    <VChip
-      v-for="category in categories"
-      :key="category"
-      class="category-chip"
-      filter
-      :value="category"
-      density="compact"
-    >
-      {{ getCategoryLabel(category) }}
-    </VChip>
-  </VChipGroup>
+  <section class="category-filter-bar-container">
+    <SearchLabel :text="text.label" />
+    <VChipGroup v-model="selectedCategory" column class="category-filter pa-0">
+      <VChip class="category-chip" :value="null" density="compact">
+        {{ text.allCategories }}
+      </VChip>
+      <VChip
+        v-for="category in categories"
+        :key="category"
+        class="category-chip"
+        :value="category"
+        density="compact"
+      >
+        {{ getCategoryLabel(category) }}
+      </VChip>
+    </VChipGroup>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import SearchLabel from '@/components/common/SearchLabel.vue'
+
+// PROPS
+const props = defineProps({
+  modelValue: {
+    type: String,
+    default: null, // Default to null for all categories
+  },
+  categories: {
+    type: Array as () => string[],
+    required: true,
+  },
+})
 
 // COMPOSABLES
 const { t } = useI18n()
 
 const text = {
   allCategories: t('counters.allCategories'),
+  label: t('common.label.category'),
 }
-
-// PROPS
-const props = defineProps<{
-  categories: string[]
-  modelValue: string | null
-}>()
 
 // EMITS
 const emit = defineEmits<(e: 'update:modelValue', value: string | null) => void>()
@@ -52,35 +62,30 @@ const getCategoryLabel = (category: string): string => {
 </script>
 
 <style lang="scss" scoped>
-.category-filter {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 8px;
+.category-filter-bar-container {
+  @include flex;
 
-  :deep(.v-slide-group__content) {
+  .category-filter {
     display: flex;
-    justify-content: flex-end;
-  }
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 8px;
 
-  .category-chip {
-    background-color: transparent;
-    font-family: $text-font;
-    font-size: $font-size-xxs;
-    border: 1px solid $main-600;
-    color: $main-color;
-
-    :deep(.v-chip__underlay) {
-      display: none;
+    :deep(.v-slide-group__content) {
+      display: flex;
+      justify-content: flex-end;
     }
 
-    &.v-chip--selected {
-      background-color: $main-900;
-      color: $white;
+    .category-chip {
+      background-color: transparent;
+      font-family: $text-font;
+      font-size: $font-size-xxs;
+      color: $main-color;
 
-      :deep(i) {
-        display: none;
+      &.v-chip--selected {
+        background-color: $main-color;
+        color: $white;
       }
     }
   }

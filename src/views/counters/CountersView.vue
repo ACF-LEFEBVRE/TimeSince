@@ -19,8 +19,6 @@
         <CategoryFilterBar v-model="selectedCategory" :categories="uniqueCategories" />
       </VCardText>
 
-      <VDivider />
-
       <CountersList
         :counters="sortedCounters"
         :is-searching="!!searchQuery.trim() || !!selectedCategory"

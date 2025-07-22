@@ -2,7 +2,14 @@ import { createVuetify } from 'vuetify'
 import 'vuetify/styles'
 
 const vuetify = createVuetify({
-  // You can customize the theme or add options here
+  defaults: {
+    VChip: {
+      ripple: false,
+    },
+    VBtn: {
+      ripple: false,
+    },
+  },
 })
 
 export default vuetify

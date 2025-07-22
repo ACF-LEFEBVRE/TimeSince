@@ -1,8 +1,8 @@
 <template>
-  <VApp>
+  <VApp class="app-container">
     <div v-if="isAuthReady">
       <AppNavBar v-if="!isLoginView" :isAuthenticated="isAuthenticated" @logout="logout" />
-      <VMain :class="['fill-height', 'd-flex', 'justify-center', 'align-center']">
+      <VMain :class="['fill-height', 'd-flex', 'justify-center']">
         <router-view />
       </VMain>
     </div>
@@ -33,8 +33,13 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
-.v-main {
-  min-height: calc(100vh - 64px);
+<style lang="scss" scoped>
+.app-container {
+  width: 100vw;
+  height: 100vh;
+
+  .v-main {
+    min-height: calc(100vh - 64px);
+  }
 }
 </style>

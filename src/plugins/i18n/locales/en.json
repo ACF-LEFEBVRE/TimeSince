@@ -34,7 +34,11 @@
     "no": "No",
     "or": "Or",
     "save": "Save",
-    "yes": "Yes"
+    "yes": "Yes",
+    "label": {
+      "sort": "Sort",
+      "category": "Filter by"
+    }
   },
   "counters": {
     "addYourFirst": "Add your first counter",
