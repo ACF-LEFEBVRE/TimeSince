@@ -46,6 +46,7 @@ const buttons = computed(() => [
     color: props.counter.favorite ? 'amber-darken-2' : 'grey',
     tooltip: props.counter.favorite ? texts.removeFavorite : texts.addFavorite,
     action: () => onToggleFavorite(),
+    class: 'ml-4',
   },
   {
     icon: 'mdi-pencil',
@@ -80,17 +81,25 @@ const onToggleFavorite = () => {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @use '@/styles/abstracts/variables' as *;
 
+.v-btn {
+  &:focus {
+    outline: none;
+  }
+}
+
 .edit-button {
-  color: $tertiary-seaGreen-200;
+  color: $tertiary-seaGreen-200 !important;
 }
 
 .delete-button {
-  color: $highlight-200;
+  color: $highlight-200 !important;
 }
+</style>
 
+<style lang="scss">
 .custom-tooltip {
   font-family: $text-font;
   font-size: $font-size-xxs !important;

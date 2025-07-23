@@ -1,27 +1,31 @@
 <template>
-  <VDialog v-model="dialogVisible" max-width="500px">
+  <VDialog v-model="dialogVisible" max-width="500px" class="counter-form-dialog-container">
     <VCard>
-      <VCardTitle class="text-h5">{{ isEditing ? text.editCounter : text.newCounter }}</VCardTitle>
+      <VCardTitle class="text-title ml-2 mt-1">{{
+        isEditing ? text.editCounter : text.newCounter
+      }}</VCardTitle>
       <VCardText>
         <VForm @submit.prevent="submit" ref="form">
           <VRow>
-            <VCol cols="12" sm="8">
-              <VTextField
+            <VCol cols="12" sm="12">
+              <CustomTextField
                 v-model="counterData.name"
                 :label="text.name"
-                required
                 :rules="[(v: string) => !!v || text.nameRequired]"
               />
             </VCol>
-            <VCol cols="12" sm="4">
+          </VRow>
+          <VRow>
+            <VCol cols="12" sm="12">
               <VSelect
                 v-model="counterData.category"
                 :label="text.category"
                 :items="categoryOptions"
+                item-title="text"
+                item-value="value"
               />
             </VCol>
           </VRow>
-
           <VRow>
             <VCol cols="12" sm="6">
               <VTextField
@@ -81,6 +85,7 @@ import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { Counter } from '@/components/counters/types/counters'
 import { useCounterForm } from '@/components/counters/composables/useCounterForm'
+import CustomTextField from '@/components/form/CustomTextField.vue'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -206,3 +211,13 @@ watch(dialogVisible, newVal => {
   emit('update:modelValue', newVal)
 })
 </script>
+
+<style lang="scss" scoped>
+.counter-form-dialog-container {
+  .text-title {
+    font-family: $title-font;
+    font-weight: bold;
+    color: $main-color;
+  }
+}
+</style>
