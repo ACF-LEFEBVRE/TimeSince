@@ -82,5 +82,12 @@ defineEmits(['update:modelValue'])
   :deep(.v-input__details) {
     padding-left: 0;
   }
+
+  .v-input--disabled {
+    :deep(.v-field__outline) {
+      border-color: red;
+      // background-color: red;
+    }
+  }
 }
 </style>

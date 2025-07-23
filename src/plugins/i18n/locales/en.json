@@ -41,6 +41,10 @@
     }
   },
   "counters": {
+    "category": "Category",
+    "removeCounter": "Remove counter",
+    "addFavorite": "Add to favorites",
+    "removeFavorite": "Remove from favorites",
     "addYourFirst": "Add your first counter",
     "allCategories": "All Categories",
     "categories": {

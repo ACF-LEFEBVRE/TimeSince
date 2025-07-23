@@ -41,6 +41,10 @@
     }
   },
   "counters": {
+    "category": "Categoría",
+    "removeCounter": "Eliminar contador",
+    "addFavorite": "Añadir a favoritos",
+    "removeFavorite": "Eliminar de favoritos",
     "addYourFirst": "Agrega tu primer contador",
     "allCategories": "Todas las Categorías",
     "categories": {

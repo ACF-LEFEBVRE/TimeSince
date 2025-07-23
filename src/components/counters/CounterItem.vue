@@ -1,62 +1,39 @@
 <template>
-  <VExpansionPanel :value="counter.id" class="my-1 counter-item">
-    <VExpansionPanelTitle>
-      <div class="d-flex align-center w-100">
-        <div class="chip-container">
-          <div>{{ counter.name }}</div>
-          <VChip
-            v-if="counter.category"
-            size="x-small"
-            class="category-chip ml-2"
-            :color="counter.color || 'primary'"
-            variant="outlined"
-          >
-            {{ counter.category }}
-          </VChip>
-        </div>
+  <VExpansionPanel :value="counter.id" class="my-1 counter-item" height="70">
+    <CounterTitle :name="counter.name" :start-date="counter.startDate" />
 
-        <VChip class="date-chip ml-auto mr-2">
-          {{ calculateDays(counter.startDate) }}
-        </VChip>
-      </div>
-    </VExpansionPanelTitle>
+    <VExpansionPanelText class="pa-2">
+      <section class="row-1">
+        <!-- Start Date -->
+        <CustomTextField
+          :placeholder="formatDate(counter.startDate)"
+          :label="texts.startDate"
+          class="w-100"
+        />
 
-    <!-- Panel de contenido - Visible al expandir -->
-    <VExpansionPanelText>
-      <div class="pa-2">
-        <div class="text-subtitle-2 mb-2">
-          <VIcon size="small" class="mr-1">mdi-calendar</VIcon>
-          Iniciado el {{ formatDate(counter.startDate) }}
+        <!-- Category -->
+        <CustomTextField
+          :placeholder="counter.category"
+          :label="texts.category"
+          class="w-100 ml-4 mr-2"
+        />
 
-          <div v-if="!hideActions" class="d-flex justify-end">
-            <VBtn
-              icon
-              variant="text"
-              :color="counter.favorite ? 'amber-darken-2' : 'grey'"
-              @click.stop="$emit('toggle-favorite', counter)"
-              class="mr-2"
-            >
-              <VIcon>{{ counter.favorite ? 'mdi-star' : 'mdi-star-outline' }}</VIcon>
-              <VTooltip activator="parent" location="top">
-                {{ counter.favorite ? 'Quitar de favoritos' : 'Añadir a favoritos' }}
-              </VTooltip>
-            </VBtn>
-            <VBtn icon variant="text" color="primary" @click.stop="handleEdit" class="mr-2">
-              <VIcon>mdi-pencil</VIcon>
-              <VTooltip activator="parent" location="top">Editar contador</VTooltip>
-            </VBtn>
-            <VBtn icon variant="text" color="error" @click.stop="handleDelete">
-              <VIcon>mdi-delete</VIcon>
-              <VTooltip activator="parent" location="top">Eliminar contador</VTooltip>
-            </VBtn>
-          </div>
-        </div>
+        <!-- Actions -->
+        <CounterItemActionButtons
+          v-if="!hideActions"
+          :counter="counter"
+          @toggle-favorite="onToggleFavorite"
+          @edit="handleEdit"
+          @delete="handleDelete"
+        />
+      </section>
 
-        <!-- Descripción -->
-        <div v-if="counter.description" class="description mb-4">
-          <p>{{ counter.description }}</p>
-        </div>
-      </div>
+      <!-- Descriptio -->
+      <CustomTextField
+        :placeholder="counter.description"
+        :label="texts.description"
+        class="w-100"
+      />
     </VExpansionPanelText>
   </VExpansionPanel>
 </template>
@@ -64,6 +41,10 @@
 <script setup lang="ts">
 import type { Counter } from '@/components/counters/types/counters'
 import { useDateCalculation } from '@/composables/useDateCalculation'
+import { useI18n } from 'vue-i18n'
+import CustomTextField from '@/components/form/CustomTextField.vue'
+import CounterItemActionButtons from '@/components/counters/CounterItemActionButtons.vue'
+import CounterTitle from '@/components/counters/CounterTitle.vue'
 
 // PROPS
 const props = defineProps({
@@ -77,86 +58,59 @@ const props = defineProps({
   },
 })
 
+// TRANSLATIONS
+
+const { t } = useI18n()
+
+const texts = {
+  startDate: t('counters.startDate'),
+  category: t('counters.category'),
+  description: t('counters.description'),
+}
+
 // EMITS
 const emit = defineEmits(['toggle-favorite', 'delete', 'edit'])
 
 // COMPOSABLES
-const { formatDate, calculateDays } = useDateCalculation()
+const { formatDate } = useDateCalculation()
 
 // METHODS
-const handleDelete = (event: Event) => {
-  event.stopPropagation()
-  if (confirm('¿Estás seguro de que quieres eliminar este contador?')) {
-    emit('delete', props.counter.id)
-  }
+const handleDelete = () => {
+  emit('delete', props.counter.id)
 }
 
-const handleEdit = (event: Event) => {
-  event.stopPropagation()
+const handleEdit = () => {
   emit('edit', props.counter)
+}
+
+const onToggleFavorite = () => {
+  emit('toggle-favorite', props.counter)
 }
 </script>
 
 <style lang="scss" scoped>
 .counter-item {
   &.v-expansion-panel--active {
-    border: $highlight-border;
-  }
-
-  .v-expansion-panel-title {
-    &:hover {
+    .v-expansion-panel-title {
       background-color: $main-050;
+      border: $highlight-border;
+      border-bottom: none;
     }
 
-    &:focus {
-      outline: none;
-    }
-
-    :deep(.v-expansion-panel-title__overlay) {
-      display: none;
+    .v-expansion-panel-text {
+      border: $highlight-border;
+      border-top: none;
     }
   }
 
-  .chip-container {
-    @include flex;
-    font-family: $title-font;
-    font-size: $font-size-md;
-    font-weight: bold;
-    color: $main-color;
+  .row-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .date-chip {
-    font-family: $text-font;
-    font-size: 14px;
-    color: $white;
-    background-color: $highlight-200;
+  :deep(.v-field) {
+    pointer-events: none !important;
   }
 }
-// .days-chip {
-//   font-weight: bold;
-//   min-width: 100px;
-//   max-width: 180px;
-//   justify-content: center;
-//   text-align: center;
-//   line-height: 1.3;
-//   white-space: normal;
-//   height: auto;
-//   padding: 8px 12px;
-//   font-size: 0.875rem;
-// }
-
-// .category-chip {
-//   font-size: 0.7rem;
-//   height: 20px;
-//   font-weight: 500;
-// }
-
-// .description {
-//   color: rgba(0, 0, 0, 0.7);
-//   font-size: 0.9rem;
-//   line-height: 1.5;
-//   padding: 0.5rem;
-//   background-color: rgba(0, 0, 0, 0.03);
-//   border-radius: 4px;
-// }
 </style>

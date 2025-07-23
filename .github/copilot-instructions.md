@@ -29,6 +29,10 @@ Components follow a "Screaming Architecture" pattern, organized by business capa
 - I want to sort all imports alphabetically, and I want to use the `@` alias for the `src` directory.
 - I want to sort typescript objects alphabetically
 
+### Comment rendering in components
+
+If there is no code relevant to a specific section (e.g., EVENTS, HOOKS, etc.), do not include the comment for that section in the `<script setup>` block. Only render section comments when there is actual code below them. This keeps the component files clean and concise.
+
 Standard component template:
 
 ```vue
@@ -37,9 +41,8 @@ Standard component template:
 </template>
 
 <script lang="ts" setup>
-// IMPORTS
 
-// DEFINE PROPS
+// PROPS
 const props = defineProps({...})
 
 // EVENTS
