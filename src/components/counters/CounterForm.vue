@@ -38,7 +38,7 @@
         </VForm>
       </VCardText>
 
-      <VCardActions>
+      <VCardActions class="mr-4">
         <VSpacer />
         <CustomButton :text="text.cancel" @click="closeDialog" secondary />
         <CustomButton

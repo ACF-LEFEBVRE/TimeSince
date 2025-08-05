@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="counter.id" class="my-1 counter-item" height="70">
+  <VExpansionPanel :value="counter.id" class="my-2 counter-item" height="70">
     <CounterTitle :name="counter.name" :start-date="counter.startDate" />
 
     <VExpansionPanelText class="pa-2">

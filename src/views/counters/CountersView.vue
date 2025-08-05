@@ -1,6 +1,6 @@
 <template>
   <section class="counters-view pa-8">
-    <VCard class="mb-5 pa-2 card-container">
+    <VCard class="mb-5 pa-2 pb-4 card-container">
       <VCardTitle class="d-flex align-center">
         <h2 class="counters-title">{{ text.myCounters }}</h2>
         <VSpacer />
@@ -169,18 +169,9 @@ const editCounter = (counter: Counter) => {
 </script>
 
 <style lang="scss" scoped>
+@import '@/styles/shared/counters-container.scss';
+
 .counters-view {
   width: 80%;
-
-  .counters-title {
-    font-family: $title-font;
-    color: $main-color;
-    font-size: 18px;
-    text-transform: uppercase;
-  }
-
-  .card-container {
-    border: 1px solid $main-1000;
-  }
 }
 </style>

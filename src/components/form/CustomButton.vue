@@ -2,7 +2,7 @@
   <VBtn
     :to="props.to"
     :disabled="disabled"
-    class="mr-4 custom-btn"
+    class="custom-btn"
     :class="{ 'secondary-button': secondary }"
     @click="clickAction"
     elevation="0"
@@ -43,6 +43,7 @@ const props = defineProps({
 
   &.secondary-button {
     border: none;
+    margin-right: $spacing-sm;
   }
 
   :deep(.v-btn__overlay) {

@@ -107,10 +107,13 @@
   },
   "home": {
     "daysRegistered": "Days registered",
-    "favoriteCounters": "Favorite Counters",
+    "favoriteCounters": "Favorite",
     "noFavorites": "You have no favorite counters",
     "registrationCounter": "You have been registered for {days} days",
-    "welcome": "Welcome"
+    "welcome": "Welcome",
+    "description": "Welcome to the place where you can create and manage counters to remember how long it has been since important moments.",
+    "hello": "Hello",
+    "recentCounters": "Recent"
   },
   "navigation": {
     "counters": "Counters",

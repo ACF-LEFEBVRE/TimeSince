@@ -1,0 +1,15 @@
+.card-container {
+  border: 1px solid $main-color;
+}
+
+.counters-title {
+  font-family: $title-font;
+  color: $text-color;
+  font-size: 18px;
+  text-transform: uppercase;
+  @include flex($align: center);
+
+  span {
+    padding-top: 4px;
+  }
+}

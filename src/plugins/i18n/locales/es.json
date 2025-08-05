@@ -107,10 +107,13 @@
   },
   "home": {
     "daysRegistered": "Días registrado",
-    "favoriteCounters": "Contadores Favoritos",
+    "favoriteCounters": "Favoritos",
     "noFavorites": "No tienes contadores favoritos",
     "registrationCounter": "Llevas {days} días registrado",
-    "welcome": "Bienvenido/a"
+    "welcome": "Bienvenido a",
+    "description": "Bienvenido al lugar en el que podrás crear y gestionar contadores para recordar cuánto tiempo ha pasado desde momentos importantes.",
+    "hello": "Hola",
+    "recentCounters": "Recientes"
   },
   "navigation": {
     "counters": "Contadores",
