@@ -6,14 +6,14 @@
       <section class="row-1">
         <!-- Start Date -->
         <CustomTextField
-          :placeholder="formatDate(counter.startDate)"
+          :model-value="formatDate(counter.startDate)"
           :label="texts.startDate"
           class="w-100"
         />
 
         <!-- Category -->
         <CustomTextField
-          :placeholder="counter.category"
+          :model-value="counter.category"
           :label="texts.category"
           class="w-100 ml-4 mr-2"
         />
@@ -30,7 +30,7 @@
 
       <!-- Descriptio -->
       <CustomTextField
-        :placeholder="counter.description"
+        :model-value="counter.description"
         :label="texts.description"
         class="w-100"
       />
@@ -111,6 +111,10 @@ const onToggleFavorite = () => {
 
   :deep(.v-field) {
     pointer-events: none !important;
+
+    input {
+      color: $neutral-grey-900 !important;
+    }
   }
 }
 </style>

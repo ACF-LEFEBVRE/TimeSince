@@ -1,69 +1,38 @@
 <template>
   <VDialog v-model="dialogVisible" max-width="500px" class="counter-form-dialog-container">
-    <VCard>
+    <VCard class="px-2 pb-3">
       <VCardTitle class="text-title ml-2 mt-1">{{
         isEditing ? text.editCounter : text.newCounter
       }}</VCardTitle>
-      <VCardText>
+      <VCardText class="py-2">
         <VForm @submit.prevent="submit" ref="form">
-          <VRow>
-            <VCol cols="12" sm="12">
-              <CustomTextField
-                v-model="counterData.name"
-                :label="text.name"
-                :rules="[(v: string) => !!v || text.nameRequired]"
-              />
-            </VCol>
-          </VRow>
-          <VRow>
-            <VCol cols="12" sm="12">
-              <VSelect
-                v-model="counterData.category"
-                :label="text.category"
-                :items="categoryOptions"
-                item-title="text"
-                item-value="value"
-              />
-            </VCol>
-          </VRow>
-          <VRow>
-            <VCol cols="12" sm="6">
-              <VTextField
-                v-model="counterData.date"
-                :label="text.startDate"
-                type="date"
-                required
-                :rules="[(v: string) => !!v || text.dateRequired]"
-              />
-            </VCol>
-            <VCol cols="12" sm="6">
-              <VSelect
-                v-model="counterData.color"
-                :label="text.color"
-                :items="colorOptions"
-                item-title="text"
-                item-value="value"
-              />
-            </VCol>
-          </VRow>
-
-          <VSelect
-            v-model="counterData.icon"
-            :label="text.icon"
-            :items="iconOptions"
-            item-title="text"
-            item-value="value"
+          <CustomTextField
+            v-model="counterData.name"
+            :label="text.name"
+            :rules="[(v: string) => !!v || text.nameRequired]"
           />
 
-          <VTextarea
+          <CustomSelect
+            v-model="counterData.category"
+            :label="text.category"
+            :items="categoryOptions"
+          />
+
+          <div class="date-section">
+            <CustomTextField
+              v-model="counterData.date"
+              :label="text.startDate"
+              type="date"
+              required
+              :rules="[(v: string) => !!v || text.dateRequired]"
+            />
+            <CustomSelect v-model="counterData.color" :label="text.color" :items="colorOptions" />
+          </div>
+          <CustomSelect v-model="counterData.icon" :label="text.icon" :items="iconOptions" />
+
+          <CustomTextArea
             v-model="counterData.description"
             :label="text.description"
-            rows="3"
-            auto-grow
-            variant="outlined"
-            class="mt-3"
-            counter
-            maxlength="200"
             hint="Añade una descripción para recordar detalles de este evento"
           />
         </VForm>
@@ -71,10 +40,12 @@
 
       <VCardActions>
         <VSpacer />
-        <VBtn color="grey-darken-1" text @click="closeDialog">{{ text.cancel }}</VBtn>
-        <VBtn color="primary" @click="submit" :disabled="!isFormValid">{{
-          isEditing ? text.update : text.create
-        }}</VBtn>
+        <CustomButton :text="text.cancel" @click="closeDialog" secondary />
+        <CustomButton
+          :disabled="!isFormValid"
+          :text="isEditing ? text.update : text.create"
+          @click="submit"
+        />
       </VCardActions>
     </VCard>
   </VDialog>
@@ -86,6 +57,9 @@ import { useI18n } from 'vue-i18n'
 import type { Counter } from '@/components/counters/types/counters'
 import { useCounterForm } from '@/components/counters/composables/useCounterForm'
 import CustomTextField from '@/components/form/CustomTextField.vue'
+import CustomSelect from '@/components/form/CustomSelect.vue'
+import CustomTextArea from '@/components/form/CustomTextArea.vue'
+import CustomButton from '@/components/form/CustomButton.vue'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -218,6 +192,18 @@ watch(dialogVisible, newVal => {
     font-family: $title-font;
     font-weight: bold;
     color: $main-color;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  .date-section {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    div {
+      width: 48%;
+    }
   }
 }
 </style>

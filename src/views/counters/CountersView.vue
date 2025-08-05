@@ -4,9 +4,7 @@
       <VCardTitle class="d-flex align-center">
         <h2 class="counters-title">{{ text.myCounters }}</h2>
         <VSpacer />
-        <VBtn class="add-btn" @click="openNewCounterDialog" variant="outlined">
-          {{ text.newCounter }}
-        </VBtn>
+        <CustomButton :text="text.newCounter" :click-action="openNewCounterDialog" />
         <CreateMockButton v-if="!allCounters.length" @mock-loaded="loadAllCounters" />
       </VCardTitle>
 
@@ -49,6 +47,7 @@ import CategoryFilterBar from '@/views/counters/components/CategoryFilterBar.vue
 import type { Counter } from '@/components/counters/types/counters'
 import CreateMockButton from './components/CreateMockButton.vue'
 import SortOrderButton from './components/SortOrderButton.vue'
+import CustomButton from '@/components/form/CustomButton.vue'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -182,20 +181,6 @@ const editCounter = (counter: Counter) => {
 
   .card-container {
     border: 1px solid $main-1000;
-  }
-
-  .add-btn {
-    font-size: 14px;
-    font-family: $text-font;
-    text-transform: uppercase;
-    color: $main-color;
-    font-weight: bold;
-
-    &:hover {
-      color: $white;
-      background-color: $main-700;
-      border-color: $main-700;
-    }
   }
 }
 </style>

@@ -1,0 +1,16 @@
+.custom-field-container {
+  .textfield-label {
+    @include flex($justify: space-between);
+    font-family: $text-font;
+    color: $text-color;
+    font-size: $font-size-xs;
+  }
+
+  :deep(.v-input__details) {
+    padding-left: 0;
+  }
+
+  :deep(input) {
+    height: 40px;
+  }
+}

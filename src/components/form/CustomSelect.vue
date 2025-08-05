@@ -4,10 +4,9 @@
       <div class="textfield-label">{{ label }}</div>
       <slot class="label-append" name="label-append"></slot>
     </div>
-    <VTextField
+    <VSelect
       :model-value="modelValue"
       @update:modelValue="$emit('update:modelValue', $event)"
-      :type="type"
       :required="required"
       :variant="variant"
       :class="inputClass"
@@ -16,6 +15,9 @@
       :density="density"
       :placeholder="placeholder"
       :append-inner-icon="appendInnerIcon"
+      :items="items"
+      item-title="text"
+      item-value="value"
       @click:append-inner="onAppendInnerClick"
     />
   </div>
@@ -30,9 +32,9 @@ defineProps({
     type: String,
     required: false,
   },
-  type: {
-    type: String,
-    default: 'text',
+  items: {
+    type: Array,
+    required: true,
   },
   required: {
     type: Boolean,

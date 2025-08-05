@@ -6,9 +6,9 @@
     </VToolbarTitle>
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
-      <VBtn :to="ROUTES.COUNTERS" class="mr-4">{{ text.counters }}</VBtn>
-      <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large"></VBtn>
-      <VBtn @click="onLogout" size="large" icon="mdi-logout" class="mr-4"></VBtn>
+      <CustomButton :to="ROUTES.COUNTERS" :text="text.counters" />
+      <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large" class="round-btn"></VBtn>
+      <VBtn @click="onLogout" size="large" icon="mdi-logout" class="mr-4 round-btn"></VBtn>
     </div>
   </VAppBar>
 </template>
@@ -19,6 +19,7 @@ import { useRouter } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import { useI18n } from 'vue-i18n'
 import ClockLogo from '@/components/common/ClockLogo.vue'
+import CustomButton from '@/components/form/CustomButton.vue'
 
 // PROPS
 const props = defineProps<{
@@ -77,7 +78,7 @@ const onLogout = () => {
     }
   }
 
-  .v-btn {
+  .round-btn {
     color: $text-color;
     font-family: $text-font;
 
@@ -89,10 +90,10 @@ const onLogout = () => {
         display: none;
       }
 
-      &:hover {
-        color: $white;
-        background-color: $main-700;
-      }
+      // &:hover {
+      //   color: $white;
+      //   background-color: $main-700;
+      // }
     }
 
     &:hover {

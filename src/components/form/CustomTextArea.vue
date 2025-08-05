@@ -4,19 +4,18 @@
       <div class="textfield-label">{{ label }}</div>
       <slot class="label-append" name="label-append"></slot>
     </div>
-    <VTextField
+    <VTextarea
       :model-value="modelValue"
-      @update:modelValue="$emit('update:modelValue', $event)"
-      :type="type"
       :required="required"
       :variant="variant"
       :class="inputClass"
       :disabled="disabled"
       :rules="rules"
-      :density="density"
-      :placeholder="placeholder"
-      :append-inner-icon="appendInnerIcon"
-      @click:append-inner="onAppendInnerClick"
+      :hint="hint"
+      rows="3"
+      auto-grow
+      counter
+      maxlength="200"
     />
   </div>
 </template>
@@ -29,10 +28,6 @@ defineProps({
   label: {
     type: String,
     required: false,
-  },
-  type: {
-    type: String,
-    default: 'text',
   },
   required: {
     type: Boolean,
@@ -54,21 +49,13 @@ defineProps({
     type: Array,
     default: () => [],
   },
-  density: {
-    type: String,
-    default: 'compact',
-  },
   placeholder: {
     type: String,
     default: '',
   },
-  appendInnerIcon: {
+  hint: {
     type: String,
     default: '',
-  },
-  onAppendInnerClick: {
-    type: Function,
-    default: () => {},
   },
 })
 
