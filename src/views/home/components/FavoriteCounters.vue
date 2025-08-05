@@ -6,11 +6,8 @@
         <span> {{ text.myFavorites }}</span>
       </h2>
     </VCardTitle>
-
-    <VProgressLinear v-if="props.loading" indeterminate color="primary"></VProgressLinear>
-
-    <div v-else>
-      <CountersList :counters="props.counters" :hide-actions="true" />
+    <div>
+      <CountersList :counters="props.counters" :hide-actions="true" :loading="props.loading" />
 
       <VCardText v-if="props.counters.length === 0" class="text-center pa-5">
         {{ text.noFavorites }}

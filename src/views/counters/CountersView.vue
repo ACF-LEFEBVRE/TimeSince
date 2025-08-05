@@ -20,6 +20,7 @@
       <CountersList
         :counters="sortedCounters"
         :is-searching="!!searchQuery.trim() || !!selectedCategory"
+        :loading="isLoading"
         @toggle-favorite="toggleFavorite"
         @delete="deleteCounter"
         @edit="editCounter"
@@ -65,7 +66,7 @@ const text = {
 
 // COMPOSABLES
 const { userId, checkAuth } = useAuth()
-const { allCounters, loadAllCounters } = useCounters(userId)
+const { allCounters, loadAllCounters, isLoading } = useCounters(userId)
 const { handleCounterSubmit, toggleFavorite, deleteCounter } = useCountersCRUD(userId, allCounters)
 
 // DATA

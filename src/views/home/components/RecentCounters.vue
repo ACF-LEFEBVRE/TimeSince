@@ -7,10 +7,8 @@
       </h2>
     </VCardTitle>
 
-    <VProgressLinear v-if="props.loading" indeterminate color="primary"></VProgressLinear>
-
-    <div v-else>
-      <CountersList :counters="recentCounters" :hide-actions="true" />
+    <div>
+      <CountersList :counters="recentCounters" :hide-actions="true" :loading="props.loading" />
 
       <VCardText v-if="props.counters.length === 0" class="text-center pa-5">
         {{ text.noCounters }}

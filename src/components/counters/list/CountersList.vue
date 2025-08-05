@@ -1,19 +1,30 @@
 <template>
   <div>
-    <CounterListEmptyState v-if="(!counters || counters.length === 0) && !isSearching" />
-    <SearchEmptyState v-else-if="(!counters || counters.length === 0) && isSearching" />
+    <VSheet v-if="loading" class="pa-5 d-flex justify-center align-center">
+      <VProgressCircular
+        indeterminate
+        color="primary"
+        size="64"
+        width="5"
+        class="ma-5"
+      ></VProgressCircular>
+    </VSheet>
+    <template v-else>
+      <CounterListEmptyState v-if="(!counters || counters.length === 0) && !isSearching" />
+      <SearchEmptyState v-else-if="(!counters || counters.length === 0) && isSearching" />
 
-    <VExpansionPanels v-else variant="accordion" class="px-4">
-      <CounterItem
-        v-for="counter in counters"
-        :key="counter.id"
-        :counter="counter"
-        :hide-actions="hideActions"
-        @toggle-favorite="toggleFavorite"
-        @delete="deleteCounter"
-        @edit="editCounter"
-      />
-    </VExpansionPanels>
+      <VExpansionPanels v-else variant="accordion" class="px-4">
+        <CounterItem
+          v-for="counter in counters"
+          :key="counter.id"
+          :counter="counter"
+          :hide-actions="hideActions"
+          @toggle-favorite="toggleFavorite"
+          @delete="deleteCounter"
+          @edit="editCounter"
+        />
+      </VExpansionPanels>
+    </template>
   </div>
 </template>
 
@@ -34,6 +45,10 @@ defineProps({
     default: false,
   },
   isSearching: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
     type: Boolean,
     default: false,
   },
