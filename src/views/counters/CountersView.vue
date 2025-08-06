@@ -71,10 +71,10 @@ const { handleCounterSubmit, toggleFavorite, deleteCounter } = useCountersCRUD(u
 
 // DATA
 const showCounterDialog = ref(false)
-const counterToEdit = ref<Counter | null>(null)
+const counterToEdit = ref<Counter | undefined>(undefined)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 const searchQuery = ref('')
-const selectedCategory = ref<string | null>(null)
+const selectedCategory = ref<string | undefined>(undefined)
 
 // Obtener todas las categorías únicas
 const uniqueCategories = computed(() => {
@@ -151,18 +151,18 @@ onMounted(async () => {
 const handleCounterSubmitAndClear = async (formData: any) => {
   const result = await handleCounterSubmit(formData)
   if (result) {
-    counterToEdit.value = null
+    counterToEdit.value = undefined
   }
   return result
 }
 
 // Abrir diálogo para crear un nuevo contador
 const openNewCounterDialog = () => {
-  counterToEdit.value = null
+  counterToEdit.value = undefined
   showCounterDialog.value = true
 }
 
-// Preparar edición de contador
+// Preparar edición de contadores
 const editCounter = (counter: Counter) => {
   counterToEdit.value = counter
   showCounterDialog.value = true
