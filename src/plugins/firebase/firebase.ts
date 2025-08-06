@@ -1,6 +1,6 @@
 // src/firebase.ts
 import { initializeApp } from 'firebase/app'
-import { getAuth, setPersistence, browserLocalPersistence } from 'firebase/auth'
+import { getAuth, setPersistence, browserSessionPersistence } from 'firebase/auth'
 import { getFirestore as initFirestore } from 'firebase/firestore'
 
 // Firebase configuration
@@ -21,8 +21,8 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 const db = initFirestore(app)
 
-// Configurar persistencia de sesión (LOCAL)
-setPersistence(auth, browserLocalPersistence)
+// Configurar persistencia de sesión (SESSION)
+setPersistence(auth, browserSessionPersistence)
   .then(() => {
     console.log('Persistencia de sesión configurada correctamente')
   })
