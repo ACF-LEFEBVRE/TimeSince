@@ -44,5 +44,5 @@ const props = defineProps({
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/shared/counters-container.scss';
+@use '@/styles/shared/counters-container.scss';
 </style>

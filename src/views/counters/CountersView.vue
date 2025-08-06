@@ -170,7 +170,7 @@ const editCounter = (counter: Counter) => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/shared/counters-container.scss';
+@use '@/styles/shared/counters-container.scss';
 
 .counters-view {
   width: 80%;

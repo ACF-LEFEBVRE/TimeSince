@@ -76,5 +76,5 @@ defineEmits(['update:modelValue'])
 </script>
 
 <style lang="scss" scoped>
-@import '@/components/form/styles/custom-fields.scss';
+@use '@/components/form/styles/custom-fields.scss';
 </style>

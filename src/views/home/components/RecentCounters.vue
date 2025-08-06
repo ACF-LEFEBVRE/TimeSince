@@ -57,5 +57,5 @@ const recentCounters = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-@import '@/styles/shared/counters-container.scss';
+@use '@/styles/shared/counters-container.scss';
 </style>
