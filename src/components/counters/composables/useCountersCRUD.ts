@@ -20,7 +20,7 @@ export interface CounterFormData {
 export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Counter[]>) {
   const { db } = useFirebase()
   const { t } = useI18n()
-  
+
   const text = {
     createError: t('counters.createError'),
     deleteConfirmation: t('counters.deleteConfirmation'),
@@ -33,10 +33,9 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
     if (!userId.value) return
 
     try {
-      const startDate = typeof formData.date === 'string' 
-        ? new Date(formData.date).getTime()
-        : formData.date
-      
+      const startDate =
+        typeof formData.date === 'string' ? new Date(formData.date).getTime() : formData.date
+
       // Crear el objeto de datos del contador
       // Create counterData object matching Counter type
       const counterData = {
@@ -45,8 +44,8 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
         color: formData.color,
         icon: formData.icon,
         favorite: formData.favorite,
-        category: formData.category || undefined,
-        description: formData.description || undefined,
+        category: formData.category || '',
+        description: formData.description || '',
       }
 
       if (formData.isEditing && formData.id) {
@@ -55,13 +54,13 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
         if (counterIndex !== -1) {
           // Guardar backup por si acaso
           const counterBackup = { ...allCounters.value[counterIndex] }
-          
+
           // Actualizar en la UI
-          allCounters.value[counterIndex] = { 
-            ...allCounters.value[counterIndex], 
-            ...counterData 
+          allCounters.value[counterIndex] = {
+            ...allCounters.value[counterIndex],
+            ...counterData,
           }
-          
+
           try {
             // Actualizar contador existente en Firestore
             const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), formData.id)
@@ -69,18 +68,18 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
           } catch (error) {
             // Restaurar el backup si falla
             allCounters.value[counterIndex] = counterBackup
-            throw error; // Propagar el error para el catch externo
+            throw error // Propagar el error para el catch externo
           }
         }
       } else {
         // Para nuevo contador: crear en Firestore primero
         const userCountersRef = collection(db, Collection.USER_COUNTERS(userId.value))
         const docRef = await addDoc(userCountersRef, counterData)
-        
+
         // Luego añadir a la UI con el ID generado
         allCounters.value.push({
           id: docRef.id,
-          ...counterData
+          ...counterData,
         } as Counter)
       }
 
@@ -94,13 +93,13 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
   // Toggle favorite status
   const toggleFavorite = async (counter: Counter) => {
     if (!userId.value) return false
-    
+
     // Guardar el estado original en caso de que necesitemos revertir
     const originalValue = counter.favorite
-    
+
     // Actualizar en la vista local inmediatamente (optimista)
     counter.favorite = !originalValue
-    
+
     try {
       // Actualizar en Firestore usando la ruta de la subcolección
       const counterRef = doc(db, Collection.USER_COUNTERS(userId.value), counter.id)
@@ -123,15 +122,15 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
 
     // Encontrar el contador a eliminar para actualización optimista
     const counterIndex = allCounters.value.findIndex(counter => counter.id === counterId)
-    
+
     if (counterIndex === -1) return false
-    
+
     // Guardar una copia del contador para restaurar en caso de error
     const counterBackup = { ...allCounters.value[counterIndex] }
-    
+
     // Eliminar optimistamente de la UI
     allCounters.value.splice(counterIndex, 1)
-    
+
     try {
       // Eliminar en Firestore
       await deleteDoc(doc(db, Collection.USER_COUNTERS(userId.value), counterId))
@@ -147,6 +146,6 @@ export function useCountersCRUD(userId: Ref<string | null>, allCounters: Ref<Cou
   return {
     handleCounterSubmit,
     toggleFavorite,
-    deleteCounter
+    deleteCounter,
   }
 }

@@ -10,9 +10,7 @@
       <p class="user-greeting" v-if="email">
         {{ text.hello }}, <span class="user-email">{{ props.email }}</span>
       </p>
-      <p class="welcome-description">
-        {{ text.description }}
-      </p>
+      <p class="welcome-description" v-html="text.description" />
     </VCardText>
   </VCard>
 </template>

@@ -18,6 +18,10 @@ This project serves to create counters to remember significant moments or events
 
 Components follow a "Screaming Architecture" pattern, organized by business capabilities rather than technical function.
 
+### Vuetify components
+
+- They should be created with the VComponents syntax, not v-components.
+
 ### Translations
 
 - I want to use a text variable of object type in which to include all the translations of a particular component.

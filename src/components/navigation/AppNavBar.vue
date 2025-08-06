@@ -7,6 +7,7 @@
     <VSpacer></VSpacer>
     <div v-if="props.isAuthenticated" class="d-flex align-center">
       <CustomButton :to="ROUTES.COUNTERS" :text="text.counters" />
+      <CustomButton :to="ROUTES.CATEGORIES" :text="text.categories" />
       <VBtn :to="ROUTES.HOME" icon="mdi-home" size="large" class="round-btn"></VBtn>
       <VBtn @click="onLogout" size="large" icon="mdi-logout" class="mr-4 round-btn"></VBtn>
     </div>
@@ -33,6 +34,7 @@ const { t } = useI18n()
 const text = {
   appNName: t('common.appName'),
   home: t('navigation.home'),
+  categories: t('navigation.categories'),
   counters: t('navigation.counters'),
   settings: t('navigation.settings'),
   logout: t('auth.logout'),
@@ -89,11 +91,6 @@ const onLogout = () => {
       :deep(.v-btn__overlay) {
         display: none;
       }
-
-      // &:hover {
-      //   color: $white;
-      //   background-color: $main-700;
-      // }
     }
 
     &:hover {

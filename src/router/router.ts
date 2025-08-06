@@ -25,6 +25,12 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
   },
   {
+    path: `/${ROUTES.CATEGORIES}`,
+    name: ROUTES.CATEGORIES,
+    component: () => import('@/views/categories/CategoriesView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/',
     redirect: ROUTES.HOME,
   },

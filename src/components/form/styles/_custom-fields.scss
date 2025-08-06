@@ -2,11 +2,15 @@
 @use '@/styles/abstracts/variables.scss' as *;
 
 .custom-field-container {
-  .textfield-label {
+  .custom-text-label {
     @include flex($justify: space-between);
-    font-family: $text-font;
-    color: $text-color;
-    font-size: $font-size-xs;
+
+    .textfield-label {
+      @include flex($justify: space-between);
+      font-family: $text-font;
+      color: $text-color;
+      font-size: $font-size-xs;
+    }
   }
 
   :deep(.v-input__details) {

@@ -41,6 +41,10 @@ const props = defineProps({
   color: $main-color;
   border: 1px solid $main-color;
 
+  & + .custom-btn {
+    margin-left: $spacing-sm;
+  }
+
   &.secondary-button {
     border: none;
     margin-right: $spacing-sm;
