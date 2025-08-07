@@ -121,6 +121,11 @@
     "settings": "Ajustes",
     "categories": "Categorías"
   },
+  "categories": {
+    "myCategories": "Mis Categorías",
+    "viewCounters": "Ver contadores",
+    "description": "Organiza tus contadores por categorías"
+  },
   "form": {
     "required": "Este campo es obligatorio.",
     "passwordMinChars": "Mínimo 6 caracteres.",

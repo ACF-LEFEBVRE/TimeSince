@@ -121,6 +121,11 @@
     "settings": "Settings",
     "categories": "Categories"
   },
+  "categories": {
+    "myCategories": "My Categories",
+    "viewCounters": "View counters",
+    "description": "Organize your counters by categories"
+  },
   "form": {
     "required": "This field is required.",
     "passwordMinChars": "Minimum 6 characters.",
