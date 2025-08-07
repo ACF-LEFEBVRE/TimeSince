@@ -118,7 +118,8 @@
   "navigation": {
     "counters": "Counters",
     "home": "Home",
-    "settings": "Settings"
+    "settings": "Settings",
+    "categories": "Categories"
   },
   "form": {
     "required": "This field is required.",

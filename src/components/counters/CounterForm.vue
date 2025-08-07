@@ -15,7 +15,7 @@
           <CustomSelect
             v-model="counterData.category"
             :label="text.category"
-            :items="categoryOptions"
+            :items="getCategoryOptions"
           />
 
           <div class="date-section">
@@ -60,6 +60,8 @@ import CustomTextField from '@/components/form/CustomTextField.vue'
 import CustomSelect from '@/components/form/CustomSelect.vue'
 import CustomTextArea from '@/components/form/CustomTextArea.vue'
 import CustomButton from '@/components/form/CustomButton.vue'
+import { useCategoriesStore } from '../categories/store/useCategoriesStore'
+import { storeToRefs } from 'pinia'
 
 // TRANSLATION
 const { t } = useI18n()
@@ -80,8 +82,12 @@ const text = {
   update: t('counters.update'),
 }
 
+// STORE
+const categoriesStore = useCategoriesStore()
+const { getCategoryOptions } = storeToRefs(categoriesStore)
+
 // COMPOSABLES
-const { categoryOptions, colorOptions, iconOptions } = useCounterForm()
+const { colorOptions, iconOptions } = useCounterForm()
 
 // PROPS
 const props = defineProps({

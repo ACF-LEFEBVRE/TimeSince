@@ -4,19 +4,6 @@ export function useCounterForm() {
   // TRANSLATION
   const { t } = useI18n()
 
-  const categoryOptions = [
-    t('counters.categories.education'),
-    t('counters.categories.family'),
-    t('counters.categories.finance'),
-    t('counters.categories.hobbies'),
-    t('counters.categories.habits'),
-    t('counters.categories.personal'),
-    t('counters.categories.health'),
-    t('counters.categories.technology'),
-    t('counters.categories.work'),
-    t('counters.categories.travel'),
-  ]
-
   const colorOptions = [
     { text: t('counters.colors.blue'), value: 'primary' },
     { text: t('counters.colors.green'), value: 'success' },
@@ -35,7 +22,6 @@ export function useCounterForm() {
   ]
 
   return {
-    categoryOptions,
     colorOptions,
     iconOptions,
   }

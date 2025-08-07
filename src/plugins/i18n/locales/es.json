@@ -118,7 +118,8 @@
   "navigation": {
     "counters": "Contadores",
     "home": "Inicio",
-    "settings": "Ajustes"
+    "settings": "Ajustes",
+    "categories": "Categorías"
   },
   "form": {
     "required": "Este campo es obligatorio.",

@@ -11,21 +11,22 @@
     "format": "prettier --write \"src/**/*.{js,ts,vue,json}\""
   },
   "dependencies": {
-    "@mdi/font": "^7.4.47",
-    "firebase": "^11.10.0",
-    "vite-plugin-vuetify": "^2.1.1",
-    "vue": "^3.5.17",
-    "vue-i18n": "^9.14.5",
-    "vue-router": "^4.5.1",
-    "vuetify": "^3.9.0"
+    "@mdi/font": "7.4.47",
+    "firebase": "11.10.0",
+    "pinia": "3.0.3",
+    "vite-plugin-vuetify": "2.1.1",
+    "vue": "3.5.17",
+    "vue-i18n": "9.14.5",
+    "vue-router": "4.5.1",
+    "vuetify": "3.9.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.0",
-    "@vue/tsconfig": "^0.7.0",
-    "prettier": "^3.6.2",
-    "sass": "^1.89.2",
-    "typescript": "~5.8.3",
-    "vite": "^7.0.4",
-    "vue-tsc": "^2.2.12"
+    "@vitejs/plugin-vue": "6.0.0",
+    "@vue/tsconfig": "0.7.0",
+    "prettier": "3.6.2",
+    "sass": "1.89.2",
+    "typescript": "5.8.3",
+    "vite": "7.0.4",
+    "vue-tsc": "2.2.12"
   }
 }
