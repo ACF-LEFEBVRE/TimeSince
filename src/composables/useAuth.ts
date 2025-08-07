@@ -13,6 +13,7 @@ import { Collection } from '@/plugins/firebase/collections'
 import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useDateCalculation } from '@/composables/useDateCalculation'
+import { useCategoriesStore } from '@/components/categories/store/useCategoriesStore'
 import type { Counter } from '@/components/counters/types/counters'
 
 export interface AuthCredentials {
@@ -86,6 +87,9 @@ export function useAuth() {
   const register = async (credentials: AuthCredentials) => {
     error.value = null
     isLoading.value = true
+    
+    // Obtener el store de categorías
+    const categoriesStore = useCategoriesStore()
 
     try {
       // Crear el usuario en Firebase Auth
@@ -104,6 +108,9 @@ export function useAuth() {
         createdAt: now,
         lastLogin: now,
       })
+
+      // Crear las categorías por defecto para el usuario
+      await categoriesStore.createDefaultCategories(user.uid)
 
       // Crear un CounterItem para registrar la fecha de registro del usuario
       const registrationCounter = {
@@ -164,7 +171,7 @@ export function useAuth() {
     // isLoading.value = false
 
     // Obtener metadata de creación de cuenta
-    if (user && user.metadata && user.metadata.creationTime) {
+    if (user?.metadata?.creationTime) {
       const creationTime = Date.parse(user.metadata.creationTime)
       // Extraer solo el número de días del texto "X días"
       const daysText = calculateDays(creationTime)

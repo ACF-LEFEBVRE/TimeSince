@@ -20,7 +20,7 @@ const getSavedLocale = (): SupportedLocale => {
 const currentLocale = getSavedLocale()
 console.log(`Current locale: ${currentLocale}`)
 
-const i18n = createI18n({
+export const i18n = createI18n({
   legacy: false, // Usar la API de Composition para Vue 3
   globalInjection: true, // Inyectar globalmente las propiedades $t y $tc
   locale: currentLocale,
