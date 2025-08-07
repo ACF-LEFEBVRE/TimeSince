@@ -39,7 +39,8 @@ const searchQuery = ref(props.initialQuery)
 const emit = defineEmits<(e: 'search', query: string) => void>()
 
 // METHODS
-const emitSearch = () => {
+const emitSearch = (newValue: string) => {
+  searchQuery.value = newValue
   emit('search', searchQuery.value)
 }
 
