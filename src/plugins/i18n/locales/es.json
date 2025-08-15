@@ -129,6 +129,7 @@
     "deleteCategory": "Eliminar categoría",
     "deleteConfirmation": "¿Estás seguro de que quieres eliminar la categoría",
     "description": "Organiza tus contadores por categorías",
+    "editCategory": "Editar categoría",
     "minLength": "El nombre debe tener al menos 3 caracteres",
     "multipleCounters": "{count} contadores",
     "myCategories": "Mis Categorías",
