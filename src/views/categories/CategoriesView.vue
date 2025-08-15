@@ -64,7 +64,9 @@
                   :style="{ color: colorMap[category.color as keyof typeof colorMap] }"
                   @click="handleCategoryClick(category.name)"
                   :disabled="getCategoryCounterCount(category.name) === 0"
-                  :title="getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''"
+                  :title="
+                    getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''
+                  "
                 >
                   {{ text.viewCounters }}
                 </VBtn>
