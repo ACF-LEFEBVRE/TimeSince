@@ -1,4 +1,4 @@
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 
 // Colores predefinidos para los contadores
 const colors = [
@@ -59,7 +59,7 @@ const categories = [
   'Hobbies',
   'Familia',
   'Tecnología',
-  'Hábitos'
+  'Hábitos',
 ]
 
 // Nombres de eventos para los contadores
@@ -110,7 +110,7 @@ const descriptions = [
   'Un evento que me trae buenos recuerdos',
   'Un objetivo alcanzado después de mucho esfuerzo',
   'Una decisión importante que tomé y de la que no me arrepiento',
-  'Un evento que me ayuda a mantenerme motivado/a'
+  'Un evento que me ayuda a mantenerme motivado/a',
 ]
 
 // Función para generar una fecha aleatoria en los últimos 2 años
@@ -136,7 +136,7 @@ const generateRandomCounter = (): Counter => {
     icon: icons[Math.floor(Math.random() * icons.length)],
     favorite: Math.random() > 0.7, // 30% de probabilidad de ser favorito
     category: categories[Math.floor(Math.random() * categories.length)],
-    description: descriptions[Math.floor(Math.random() * descriptions.length)]
+    description: descriptions[Math.floor(Math.random() * descriptions.length)],
   }
 }
 

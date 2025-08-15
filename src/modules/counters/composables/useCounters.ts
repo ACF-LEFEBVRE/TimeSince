@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { Collection } from '@/plugins/firebase/collections'
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 
 export function useCounters(userId: Ref<string | null>) {
   // COMPOSABLES
@@ -11,9 +11,7 @@ export function useCounters(userId: Ref<string | null>) {
 
   // DATA
   const allCounters = ref<Counter[]>([])
-  const favoriteCounters = computed(() => 
-    allCounters.value.filter(counter => counter.favorite)
-  )
+  const favoriteCounters = computed(() => allCounters.value.filter(counter => counter.favorite))
   const isLoading = ref(false)
   const error = ref<string | null>(null)
 

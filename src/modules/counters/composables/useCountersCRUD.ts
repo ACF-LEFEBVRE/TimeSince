@@ -3,7 +3,7 @@ import { collection, addDoc, doc, deleteDoc, updateDoc } from 'firebase/firestor
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { Collection } from '@/plugins/firebase/collections'
 import { useI18n } from 'vue-i18n'
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 
 export interface CounterFormData {
   id?: string

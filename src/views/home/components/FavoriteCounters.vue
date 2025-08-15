@@ -19,8 +19,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Counter } from '@/components/counters/types/counters'
-import CountersList from '@/components/counters/list/CountersList.vue'
+import type { Counter } from '@/modules/types/counters'
+import CountersList from '@/modules/counters/components/list/CountersList.vue'
 
 // TRANSLATION
 const { t } = useI18n()

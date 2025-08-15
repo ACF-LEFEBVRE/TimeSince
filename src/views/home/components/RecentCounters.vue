@@ -20,8 +20,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import CountersList from '@/components/counters/list/CountersList.vue'
-import type { Counter } from '@/components/counters/types/counters'
+import CountersList from '@/modules/counters/components/list/CountersList.vue'
+import type { Counter } from '@/modules/types/counters'
 
 // TRANSLATION
 const { t } = useI18n()

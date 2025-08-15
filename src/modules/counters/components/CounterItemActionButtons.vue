@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 import { useI18n } from 'vue-i18n'
 
 // TRANSLATION

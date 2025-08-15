@@ -23,7 +23,7 @@ import FavoriteCounters from '@/views/home/components/FavoriteCounters.vue'
 import RecentCounters from '@/views/home/components/RecentCounters.vue'
 import WelcomeCard from '@/views/home/components/WelcomeCard.vue'
 import { useAuth } from '@/composables/useAuth'
-import { useCounters } from '@/components/counters/composables/useCounters'
+import { useCounters } from '@/modules/counters/composables/useCounters'
 
 // COMPOSABLES
 const { currentUser, userId, logout } = useAuth()

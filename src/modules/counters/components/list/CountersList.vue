@@ -29,10 +29,10 @@
 </template>
 
 <script setup lang="ts">
-import CounterItem from '@/components/counters/CounterItem.vue'
-import CounterListEmptyState from '@/components/counters/list/CounterListEmptyState.vue'
+import CounterItem from '@/modules/counters/components/CounterItem.vue'
+import CounterListEmptyState from '@/modules/counters/components/list/CounterListEmptyState.vue'
 import SearchEmptyState from '@/modules/counters/components/SearchEmptyState.vue'
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 
 // PROPS
 defineProps({

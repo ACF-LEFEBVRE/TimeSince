@@ -59,7 +59,7 @@ import {
   type CategoryOption,
 } from '@/modules/categories/store/useCategoriesStore'
 import { useAuth } from '@/composables/useAuth'
-import { useCounters } from '@/components/counters/composables/useCounters'
+import { useCounters } from '@/modules/counters/composables/useCounters'
 import { storeToRefs } from 'pinia'
 import AddOrEditCategoryDialog from '@/modules/categories/components/dialogs/AddOrEditCategoryDialog.vue'
 import CategoryCardsContainerComponent from '@/modules/categories/components/CategoryCardsContainerComponent.vue'

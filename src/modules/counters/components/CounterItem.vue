@@ -39,12 +39,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Counter } from '@/components/counters/types/counters'
+import type { Counter } from '@/modules/types/counters'
 import { useDateCalculation } from '@/composables/useDateCalculation'
 import { useI18n } from 'vue-i18n'
 import CustomTextField from '@/components/form/CustomTextField.vue'
-import CounterItemActionButtons from '@/components/counters/CounterItemActionButtons.vue'
-import CounterTitle from '@/components/counters/CounterTitle.vue'
+import CounterItemActionButtons from '@/modules/counters/components/CounterItemActionButtons.vue'
+import CounterTitle from '@/modules/counters/components/CounterTitle.vue'
 
 // PROPS
 const props = defineProps({

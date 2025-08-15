@@ -55,8 +55,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Counter } from '@/components/counters/types/counters'
-import { useCounterForm } from '@/components/counters/composables/useCounterForm'
+import type { Counter } from '@/modules/types/counters'
+import { useCounterForm } from '@/modules/counters/composables/useCounterForm'
 import CustomTextField from '@/components/form/CustomTextField.vue'
 import CustomSelect from '@/components/form/CustomSelect.vue'
 import CustomTextArea from '@/components/form/CustomTextArea.vue'
