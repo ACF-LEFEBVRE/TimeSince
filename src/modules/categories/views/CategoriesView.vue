@@ -77,103 +77,32 @@
       </VCardText>
     </VCard>
 
-    <!-- Dialog para añadir o editar categoría -->
-    <VDialog v-model="showCategoryDialog" max-width="600px">
-      <VCard>
-        <VCardTitle class="text-h5">{{
-          isEditing ? text.editCategory : text.addNewCategory
-        }}</VCardTitle>
-        <VCardText>
-          <VTextField
-            v-model="categoryForm.name"
-            :label="text.categoryName"
-            :rules="categoryNameRules"
-            :disabled="isEditing && categoryForm.name === originalCategoryName"
-            required
-            autofocus
-            @keyup.enter="saveCategoryChanges"
-          ></VTextField>
+    <AddOrEditCategoryDialog
+      v-model="showCategoryDialog"
+      :is-editing="isEditing"
+      :original-category-name="originalCategoryName"
+      :initial-category="categoryForm"
+      :existing-categories="getCategoryOptions"
+      :available-colors="availableColors"
+      :available-icons="availableIcons"
+      :color-map="colorMap"
+      :loading="formLoading"
+      @save="handleSaveCategoryChanges"
+      @cancel="closeCategoryDialog"
+    />
 
-          <VCardTitle class="pt-4 pb-2">{{ text.selectColor }}</VCardTitle>
-          <div class="color-selector">
-            <div
-              v-for="(color, index) in availableColors"
-              :key="index"
-              class="color-option"
-              :class="{ selected: categoryForm.color === color }"
-              :style="{ backgroundColor: colorMap[color as keyof typeof colorMap] }"
-              @click="categoryForm.color = color"
-            ></div>
-          </div>
-
-          <VCardTitle class="pt-4 pb-2">{{ text.selectIcon }}</VCardTitle>
-          <div class="icon-selector">
-            <div
-              v-for="(icon, index) in availableIcons"
-              :key="index"
-              class="icon-option"
-              :class="{ selected: categoryForm.icon === icon }"
-              @click="categoryForm.icon = icon"
-            >
-              <VIcon
-                :icon="icon"
-                :style="{ color: colorMap[categoryForm.color as keyof typeof colorMap] }"
-              ></VIcon>
-            </div>
-          </div>
-
-          <VCardSubtitle class="pt-4">{{ text.preview }}</VCardSubtitle>
-          <div class="category-preview">
-            <div
-              class="category-icon-wrapper"
-              :style="{ backgroundColor: colorMap[categoryForm.color as keyof typeof colorMap] }"
-            >
-              <VIcon :icon="categoryForm.icon" size="large" color="white" />
-            </div>
-            <span class="preview-text">{{ categoryForm.name || text.categoryName }}</span>
-          </div>
-        </VCardText>
-        <VCardActions>
-          <VSpacer></VSpacer>
-          <VBtn color="primary" variant="text" @click="closeCategoryDialog">
-            {{ text.cancel }}
-          </VBtn>
-          <VBtn
-            color="primary"
-            @click="saveCategoryChanges"
-            :disabled="!isValidCategoryForm"
-            :loading="formLoading"
-          >
-            {{ isEditing ? text.save : text.add }}
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
-
-    <!-- Dialog para confirmar eliminación de categoría -->
-    <VDialog v-model="showDeleteCategoryDialog" max-width="500px">
-      <VCard>
-        <VCardTitle class="text-h5">{{ text.deleteCategory }}</VCardTitle>
-        <VCardText>
-          {{ text.deleteConfirmation }} <b>{{ categoryToDelete }}</b
-          >?
-        </VCardText>
-        <VCardActions>
-          <VSpacer></VSpacer>
-          <VBtn color="primary" variant="text" @click="closeDeleteCategoryDialog">
-            {{ text.cancel }}
-          </VBtn>
-          <VBtn color="error" @click="handleDeleteCategory" :loading="formLoading">
-            {{ text.delete }}
-          </VBtn>
-        </VCardActions>
-      </VCard>
-    </VDialog>
+    <RemoveCategoryDialog
+      v-model="showDeleteCategoryDialog"
+      :category-name="categoryToDelete"
+      :loading="formLoading"
+      @confirm="handleDeleteCategory"
+      @cancel="closeDeleteCategoryDialog"
+    />
   </section>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ROUTES } from '@/router/routes'
@@ -183,7 +112,9 @@ import { useAuth } from '@/composables/useAuth'
 import { useCategorySelection } from '@/composables/useCategorySelection'
 import { useCounters } from '@/components/counters/composables/useCounters'
 import { storeToRefs } from 'pinia'
+import AddOrEditCategoryDialog from '@/modules/categories/components/dialogs/AddOrEditCategoryDialog.vue'
 import CustomButton from '@/components/form/CustomButton.vue'
+import RemoveCategoryDialog from '@/modules/categories/components/dialogs/RemoveCategoryDialog.vue'
 
 // COMPOSABLES
 const router = useRouter()
@@ -240,18 +171,6 @@ const availableColors = [
 
 // Usamos availableIcons del store
 
-// Reglas de validación que tienen en cuenta si estamos editando o creando una categoría
-const categoryNameRules = computed(() => [
-  (v: string) => !!v || t('form.required'),
-  (v: string) => (v && v.length >= 3) || t('categories.minLength'),
-  (v: string) =>
-    // Si estamos editando y el nombre no ha cambiado, es válido
-    (isEditing.value && v === originalCategoryName.value) ||
-    // Si es un nombre nuevo, no debe existir ya
-    !getCategoryOptions.value.some(cat => cat.name === v) ||
-    t('categories.alreadyExists'),
-])
-
 // TRANSLATIONS
 const text = {
   add: t('common.add'),
@@ -279,18 +198,6 @@ const text = {
 }
 
 // COMPUTED
-const isValidCategoryForm = computed(() => {
-  // Si estamos editando y el nombre no ha cambiado, es válido
-  if (isEditing.value && categoryForm.value.name === originalCategoryName.value) {
-    return true
-  }
-
-  // Si el nombre es nuevo, debe tener al menos 3 caracteres y no existir ya
-  return (
-    categoryForm.value.name.length >= 3 &&
-    !getCategoryOptions.value.some(cat => cat.name === categoryForm.value.name)
-  )
-})
 
 // WATCHES
 // No necesitamos actualizar las reglas de validación manualmente
@@ -394,11 +301,10 @@ const handleDeleteCategory = async () => {
   }
 }
 
-// Procesa una nueva categoría o actualiza una existente
-const saveCategoryChanges = async () => {
-  // Validar formulario y usuario
-  if (!isValidCategoryForm.value || !userId.value) {
-    console.error('Invalid form or user not logged in')
+// Maneja el guardado de una categoría desde el diálogo
+const handleSaveCategoryChanges = async (updatedCategory: CategoryOption) => {
+  if (!userId.value) {
+    console.error('User not logged in')
     return
   }
 
@@ -409,9 +315,9 @@ const saveCategoryChanges = async () => {
 
     // Ejecutar la acción correspondiente
     if (isEditing.value) {
-      success = await updateCategory(userId.value, originalCategoryName.value, categoryForm.value)
+      success = await updateCategory(userId.value, originalCategoryName.value, updatedCategory)
     } else {
-      success = await addNewCategory(userId.value, categoryForm.value)
+      success = await addNewCategory(userId.value, updatedCategory)
     }
 
     // Manejar resultado

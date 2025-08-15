@@ -32,6 +32,8 @@ Components follow a "Screaming Architecture" pattern, organized by business capa
 
 - I want to sort all imports alphabetically, and I want to use the `@` alias for the `src` directory.
 - I want to sort typescript objects alphabetically
+- I want to use `defineModel` for two-way data binding in components.
+- I want to use relative paths for imports with `@`.
 
 ### Comment rendering in components
 
