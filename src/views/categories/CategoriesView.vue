@@ -31,10 +31,16 @@
                 :style="{ backgroundColor: colorMap[category.color as keyof typeof colorMap] }"
               >
                 <VIcon :icon="category.icon" size="large" color="white" />
+                <div class="counter-badge" v-if="!countersLoading">
+                  {{ getCategoryCounterCount(category.name) }}
+                </div>
               </div>
               <VCardTitle>
                 {{ category.name }}
               </VCardTitle>
+              <VCardSubtitle class="counter-count">
+                {{ formatCounterText(getCategoryCounterCount(category.name)) }}
+              </VCardSubtitle>
               <VCardActions>
                 <VBtn
                   variant="text"
@@ -171,6 +177,7 @@ import { useCategoriesStore } from '@/components/categories/store/useCategoriesS
 import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
 import { useAuth } from '@/composables/useAuth'
 import { useCategorySelection } from '@/composables/useCategorySelection'
+import { useCounters } from '@/components/counters/composables/useCounters'
 import { storeToRefs } from 'pinia'
 import CustomButton from '@/components/form/CustomButton.vue'
 
@@ -182,6 +189,7 @@ const { getCategoryOptions, isLoading: storeLoading } = storeToRefs(categoriesSt
 const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } =
   categoriesStore
 const { t } = useI18n()
+const { allCounters, isLoading: countersLoading } = useCounters(userId)
 
 // DATA
 const categoryToDelete = ref('')
@@ -253,8 +261,11 @@ const text = {
   edit: t('common.edit'),
   editCategory: t('categories.editCategory'),
   minLength: t('categories.minLength'),
+  multipleCounters: t('categories.multipleCounters'),
   myCategories: t('categories.myCategories'),
   newCategory: t('categories.newCategory'),
+  noCounters: t('categories.noCounters'),
+  oneCounter: t('categories.oneCounter'),
   preview: t('categories.preview'),
   save: t('common.save'),
   selectColor: t('categories.selectColor'),
@@ -338,6 +349,20 @@ const closeCategoryDialog = () => {
 const openDeleteCategoryDialog = (category: string) => {
   categoryToDelete.value = category
   showDeleteCategoryDialog.value = true
+}
+
+// Método para contar cuántos contadores hay de una categoría específica
+const getCategoryCounterCount = (categoryName: string): number => {
+  if (!allCounters.value.length) return 0
+
+  return allCounters.value.filter(counter => counter.category === categoryName).length
+}
+
+// Método para formatear el texto de contadores
+const formatCounterText = (count: number): string => {
+  if (count === 0) return t('categories.noCounters')
+  if (count === 1) return t('categories.oneCounter')
+  return t('categories.multipleCounters', { count })
 }
 
 const closeDeleteCategoryDialog = () => {
@@ -428,6 +453,31 @@ const saveCategoryChanges = async () => {
   align-items: center;
   padding: 16px;
   transition: all 0.3s ease;
+  position: relative;
+
+  .counter-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    background-color: white;
+    color: $main-color;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.counter-count {
+  text-align: center;
+  color: red;
+  font-size: 12px;
+  margin-top: -8px;
 }
 
 .color-selector {
