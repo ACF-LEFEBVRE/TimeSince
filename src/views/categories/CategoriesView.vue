@@ -70,7 +70,9 @@
     <!-- Dialog para añadir o editar categoría -->
     <VDialog v-model="showCategoryDialog" max-width="600px">
       <VCard>
-        <VCardTitle class="text-h5">{{ isEditing ? text.editCategory : text.addNewCategory }}</VCardTitle>
+        <VCardTitle class="text-h5">{{
+          isEditing ? text.editCategory : text.addNewCategory
+        }}</VCardTitle>
         <VCardText>
           <VTextField
             v-model="categoryForm.name"
@@ -168,6 +170,7 @@ import { ROUTES } from '@/router/routes'
 import { useCategoriesStore } from '@/components/categories/store/useCategoriesStore'
 import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
 import { useAuth } from '@/composables/useAuth'
+import { useCategorySelection } from '@/composables/useCategorySelection'
 import { storeToRefs } from 'pinia'
 import CustomButton from '@/components/form/CustomButton.vue'
 
@@ -176,7 +179,8 @@ const router = useRouter()
 const { userId } = useAuth()
 const categoriesStore = useCategoriesStore()
 const { getCategoryOptions, isLoading: storeLoading } = storeToRefs(categoriesStore)
-const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } = categoriesStore
+const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } =
+  categoriesStore
 const { t } = useI18n()
 
 // DATA
@@ -264,7 +268,7 @@ const isValidCategoryForm = computed(() => {
   if (isEditing.value && categoryForm.value.name === originalCategoryName.value) {
     return true
   }
-  
+
   // Si el nombre es nuevo, debe tener al menos 3 caracteres y no existir ya
   return (
     categoryForm.value.name.length >= 3 &&
@@ -281,10 +285,15 @@ watch(getCategoryOptions, (newCategories: CategoryOption[]) => {
 
 // METHODS
 
+const { setSelectedCategory } = useCategorySelection()
+
 const handleCategoryClick = (category: string): void => {
+  // Establecer la categoría seleccionada en el store compartido
+  setSelectedCategory(category)
+
+  // Navegar a la vista de contadores sin pasar parámetros en la URL
   router.push({
     path: `/${ROUTES.COUNTERS}`,
-    query: { category },
   })
 }
 
@@ -362,19 +371,19 @@ const saveCategoryChanges = async () => {
     console.error('Invalid form or user not logged in')
     return
   }
-  
+
   formLoading.value = true
   try {
     let success = false
     const action = isEditing.value ? 'update' : 'add'
-    
+
     // Ejecutar la acción correspondiente
     if (isEditing.value) {
       success = await updateCategory(userId.value, originalCategoryName.value, categoryForm.value)
     } else {
       success = await addNewCategory(userId.value, categoryForm.value)
     }
-    
+
     // Manejar resultado
     if (success) {
       closeCategoryDialog()

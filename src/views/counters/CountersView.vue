@@ -14,7 +14,7 @@
 
       <VCardText class="d-flex align-center justify-space-between">
         <SortOrderButton :sortDirection="sortNewestFirst" @toggle="toggleSortOrder" />
-        <CategoryFilterBar v-model="selectedCategory" :categories="uniqueCategories" />
+        <CategoryFilterBar v-model="selectedCategoryLocal" :categories="uniqueCategories" />
       </VCardText>
 
       <CountersList
@@ -36,11 +36,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuth } from '@/composables/useAuth'
 import { useCounters } from '@/components/counters/composables/useCounters'
 import { useCountersCRUD } from '@/components/counters/composables/useCountersCRUD'
+import { useCategorySelection } from '@/composables/useCategorySelection'
 import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
 import SearchCounter from '@/views/counters/components/SearchCounter.vue'
@@ -68,13 +69,21 @@ const text = {
 const { userId, checkAuth } = useAuth()
 const { allCounters, loadAllCounters, isLoading } = useCounters(userId)
 const { handleCounterSubmit, toggleFavorite, deleteCounter } = useCountersCRUD(userId, allCounters)
+const { selectedCategory, setSelectedCategory } = useCategorySelection()
+
+// Crear un computed para el v-model del CategoryFilterBar
+const selectedCategoryLocal = computed({
+  get: () => selectedCategory.value,
+  set: value => setSelectedCategory(value),
+})
 
 // DATA
 const showCounterDialog = ref(false)
 const counterToEdit = ref<Counter | undefined>(undefined)
 const sortNewestFirst = ref(true) // Por defecto, ordenar de más recientes a más antiguos
 const searchQuery = ref('')
-const selectedCategory = ref<string | undefined>(undefined)
+
+// No necesitamos obtener la categoría de la URL, ya usamos el composable
 
 // Obtener todas las categorías únicas
 const uniqueCategories = computed(() => {
@@ -95,8 +104,8 @@ const filteredCounters = computed(() => {
   let filtered = [...allCounters.value]
 
   // Si hay una categoría seleccionada, filtrar por ella
-  if (selectedCategory.value) {
-    filtered = filtered.filter(counter => counter.category === selectedCategory.value)
+  if (selectedCategoryLocal.value) {
+    filtered = filtered.filter(counter => counter.category === selectedCategoryLocal.value)
   }
 
   // Si no hay búsqueda, devolvemos los contadores filtrados por categoría
@@ -144,6 +153,11 @@ const toggleSortOrder = () => {
 onMounted(async () => {
   // Comprobar autenticación sin redirigir (el router guard se encargará de esto)
   await checkAuth()
+})
+
+// Limpiar la categoría seleccionada al salir de la vista
+onUnmounted(() => {
+  setSelectedCategory(undefined)
 })
 
 // METHODS
