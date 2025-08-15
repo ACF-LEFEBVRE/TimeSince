@@ -1,27 +1,34 @@
 export const availableColors = [
-  'tertiary-persianRed-200',
-  'tertiary-persianRed-100',
-  'tertiary-persianRed-050',
-  'tertiary-princetonOrange-200',
-  'tertiary-princetonOrange-100',
-  'tertiary-princetonOrange-050',
-  'tertiary-saffron-200',
-  'tertiary-saffron-100',
-  'tertiary-saffron-050',
-  'tertiary-seaGreen-200',
-  'tertiary-seaGreen-100',
-  'tertiary-seaGreen-050',
-  'tertiary-byzantineBlue-200',
-  'tertiary-byzantineBlue-100',
-  'tertiary-byzantineBlue-050',
-  'tertiary-silver-100',
-  'tertiary-silver-50',
-  'tertiary-ecru-100',
-  'tertiary-ecru-050',
-  'tertiary-citron-100',
-  'tertiary-citron-050',
-  'tertiary-tiffanyBlue-100',
-  'tertiary-tiffanyBlue-050',
-  'tertiary-marianBlue-100',
-  'tertiary-marianBlue-050',
+  // Azules
+  'blue-deep',
+  'blue-bright',
+  'blue-cyan',
+
+  // Verdes
+  'green-turquoise',
+  'green-emerald',
+  'green-lime',
+
+  // Amarillos y Naranjas
+  'yellow-gold',
+  'yellow-warm',
+  'orange-bright',
+
+  // Rojos
+  'red-coral',
+  'red-intense',
+
+  // Rosas y Morados
+  'pink-magenta',
+  'pink-fuchsia',
+  'purple-deep',
+  'purple-lavender',
+  'pink-soft',
+
+  // Colores adicionales
+  'teal-deep',
+  'cyan-light',
+  'gold-rose',
+  'berry-deep',
+  'mint-bright',
 ]

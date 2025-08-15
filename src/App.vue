@@ -38,6 +38,11 @@ onMounted(() => {
   width: 100vw;
   height: 100vh;
 
+  div {
+    height: 100%;
+    background-color: #e4ecfc;
+  }
+
   .v-main {
     min-height: calc(100vh - 64px);
   }

@@ -5,33 +5,40 @@ import { collection, deleteDoc, doc, getDocs, orderBy, query, setDoc } from 'fir
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { Collection } from '@/plugins/firebase/collections'
 
-// Category color map for direct use without CSS variables
+// Category color map with direct hex values (para mayor compatibilidad)
 export const colorMap = {
-  'tertiary-persianRed-200': '#d12d30',
-  'tertiary-persianRed-100': '#e16668',
-  'tertiary-persianRed-050': '#fcdedf',
-  'tertiary-princetonOrange-200': '#ff9000',
-  'tertiary-princetonOrange-100': '#ffb759',
-  'tertiary-princetonOrange-050': '#ffd092',
-  'tertiary-saffron-200': '#f0bc00',
-  'tertiary-saffron-100': '#f5d359',
-  'tertiary-saffron-050': '#fff2c2',
-  'tertiary-seaGreen-200': '#128851',
-  'tertiary-seaGreen-100': '#59ac85',
-  'tertiary-seaGreen-050': '#c8f9e2',
-  'tertiary-byzantineBlue-200': '#2e53d6',
-  'tertiary-byzantineBlue-100': '#8298e6',
-  'tertiary-byzantineBlue-050': '#d9e1fc',
-  'tertiary-silver-100': '#b2b4b2',
-  'tertiary-silver-50': '#c9cac9',
-  'tertiary-ecru-100': '#d8b982',
-  'tertiary-ecru-050': '#e5d6b8',
-  'tertiary-citron-100': '#d9c756',
-  'tertiary-citron-050': '#e8dd9a',
-  'tertiary-tiffanyBlue-100': '#aae5d9',
-  'tertiary-tiffanyBlue-050': '#c2f0e8',
-  'tertiary-marianBlue-100': '#768fc2',
-  'tertiary-marianBlue-050': '#d1daeb',
+  // Azules
+  'blue-deep': '#001978', // $blue-deep
+  'blue-bright': '#0054ff', // $blue-bright
+  'blue-cyan': '#00c8ff', // $blue-cyan
+
+  // Verdes
+  'green-turquoise': '#00ffd1', // $green-turquoise
+  'green-emerald': '#00c77f', // $green-emerald
+  'green-lime': '#a3ff00', // $green-lime
+
+  // Amarillos y Naranjas
+  'yellow-gold': '#ffd000', // $yellow-gold
+  'yellow-warm': '#ffb400', // $yellow-warm
+  'orange-bright': '#ff7800', // $orange-bright
+
+  // Rojos
+  'red-coral': '#ff4f3e', // $red-coral
+  'red-intense': '#e60026', // $red-intense
+
+  // Rosas y Morados
+  'pink-magenta': '#ff1f6a', // $pink-magenta
+  'pink-fuchsia': '#ff3df5', // $pink-fuchsia
+  'purple-deep': '#8a00ff', // $purple-deep
+  'purple-lavender': '#b26bff', // $purple-lavender
+  'pink-soft': '#ff9ad5', // $pink-soft
+
+  // Colores adicionales
+  'teal-deep': '#008080', // $teal-deep
+  'cyan-light': '#7fffd4', // $cyan-light
+  'gold-rose': '#ffd8a8', // $gold-rose
+  'berry-deep': '#800020', // $berry-deep
+  'mint-bright': '#98ff98', // $mint-bright
 }
 
 // Available icons for categories
@@ -96,7 +103,11 @@ interface CategoriesStoreResult {
   getCategoryOptions: ComputedRef<CategoryOption[]>
   isLoading: ComputedRef<boolean>
   loadCategories: (userId: string) => Promise<void>
-  updateCategory: (userId: string, oldName: string, updatedCategory: CategoryOption) => Promise<boolean>
+  updateCategory: (
+    userId: string,
+    oldName: string,
+    updatedCategory: CategoryOption
+  ) => Promise<boolean>
 }
 
 export const useCategoriesStore = defineStore('categories', (): CategoriesStoreResult => {
@@ -107,52 +118,52 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
   const defaultCategoryOptions = ref([
     {
       name: i18n.global.t('counters.categories.education'),
-      color: 'tertiary-byzantineBlue-200',
+      color: 'blue-bright', // Azul brillante - tradicional para educación y conocimiento
       icon: 'mdi-school',
     },
     {
       name: i18n.global.t('counters.categories.family'),
-      color: 'tertiary-persianRed-100',
+      color: 'pink-soft', // Rosa suave - calidez, amor familiar
       icon: 'mdi-account-group',
     },
     {
       name: i18n.global.t('counters.categories.finance'),
-      color: 'tertiary-seaGreen-200',
+      color: 'green-emerald', // Verde - asociado con dinero y prosperidad
       icon: 'mdi-currency-usd',
     },
     {
       name: i18n.global.t('counters.categories.habits'),
-      color: 'tertiary-citron-100',
+      color: 'purple-deep', // Púrpura - disciplina, transformación
       icon: 'mdi-repeat',
     },
     {
       name: i18n.global.t('counters.categories.health'),
-      color: 'tertiary-persianRed-200',
+      color: 'red-coral', // Rojo coral - vitalidad, salud, corazón
       icon: 'mdi-heart-pulse',
     },
     {
       name: i18n.global.t('counters.categories.hobbies'),
-      color: 'tertiary-tiffanyBlue-100',
+      color: 'cyan-light', // Cian - creatividad, diversión
       icon: 'mdi-palette',
     },
     {
       name: i18n.global.t('counters.categories.personal'),
-      color: 'tertiary-marianBlue-100',
+      color: 'teal-deep', // Verde azulado - introspección, crecimiento personal
       icon: 'mdi-account',
     },
     {
       name: i18n.global.t('counters.categories.technology'),
-      color: 'tertiary-byzantineBlue-100',
+      color: 'blue-cyan', // Azul cian - digital, tecnológico
       icon: 'mdi-laptop',
     },
     {
       name: i18n.global.t('counters.categories.travel'),
-      color: 'tertiary-princetonOrange-100',
+      color: 'orange-bright', // Naranja brillante - aventura, exploración
       icon: 'mdi-airplane',
     },
     {
       name: i18n.global.t('counters.categories.work'),
-      color: 'tertiary-saffron-100',
+      color: 'berry-deep', // Burdeos - profesionalismo, seriedad
       icon: 'mdi-briefcase',
     },
   ])
@@ -244,17 +255,21 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
       return false
     }
   }
-  
+
   // Método para actualizar una categoría existente
-  const updateCategory = async (userId: string, oldName: string, updatedCategory: CategoryOption) => {
+  const updateCategory = async (
+    userId: string,
+    oldName: string,
+    updatedCategory: CategoryOption
+  ) => {
     try {
       const categoriesPath = `${Collection.USERS}/${userId}/categories`
-      
+
       // Si el nombre ha cambiado, eliminamos la categoría anterior y creamos una nueva
       if (oldName !== updatedCategory.name) {
         // Eliminamos el documento anterior
         await deleteDoc(doc(db, categoriesPath, oldName))
-        
+
         // Creamos el nuevo documento
         await setDoc(doc(db, categoriesPath, updatedCategory.name), {
           name: updatedCategory.name,
@@ -264,15 +279,19 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
         })
       } else {
         // Si el nombre no ha cambiado, solo actualizamos los campos
-        await setDoc(doc(db, categoriesPath, updatedCategory.name), {
-          name: updatedCategory.name,
-          color: updatedCategory.color,
-          icon: updatedCategory.icon,
-          // Mantenemos la fecha de creación original
-          // Podríamos añadir un campo updatedAt si quisiéramos controlar la fecha de actualización
-        }, { merge: true }) // Usamos merge para actualizar solo los campos proporcionados
+        await setDoc(
+          doc(db, categoriesPath, updatedCategory.name),
+          {
+            name: updatedCategory.name,
+            color: updatedCategory.color,
+            icon: updatedCategory.icon,
+            // Mantenemos la fecha de creación original
+            // Podríamos añadir un campo updatedAt si quisiéramos controlar la fecha de actualización
+          },
+          { merge: true }
+        ) // Usamos merge para actualizar solo los campos proporcionados
       }
-      
+
       // Actualizamos el array local para mantener la reactividad
       const index = userCategories.value.findIndex(cat => cat.name === oldName)
       if (index !== -1) {
@@ -282,7 +301,7 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
         // Si no la encontramos (debería ser raro), la añadimos
         userCategories.value.push(updatedCategory)
       }
-      
+
       console.log('Category updated successfully')
       return true
     } catch (error) {
@@ -354,6 +373,6 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
     getCategoryOptions,
     isLoading: computed(() => isLoading.value),
     loadCategories,
-    updateCategory
+    updateCategory,
   }
 })

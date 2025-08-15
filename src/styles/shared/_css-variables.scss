@@ -1,7 +1,7 @@
 @use '../abstracts/variables' as *;
 
 :root {
-  // Colores terciarios
+  // Colores terciarios antiguos (mantenidos para compatibilidad)
   --tertiary-persianRed-200: #{$tertiary-persianRed-200};
   --tertiary-persianRed-100: #{$tertiary-persianRed-100};
   --tertiary-persianRed-050: #{$tertiary-persianRed-050};
@@ -27,4 +27,38 @@
   --tertiary-tiffanyBlue-050: #{$tertiary-tiffanyBlue-050};
   --tertiary-marianBlue-100: #{$tertiary-marianBlue-100};
   --tertiary-marianBlue-050: #{$tertiary-marianBlue-050};
+
+  // Nuevos colores GPT
+  // === Azules ===
+  --blue-deep: #{$blue-deep};
+  --blue-bright: #{$blue-bright};
+  --blue-cyan: #{$blue-cyan};
+
+  // === Verdes ===
+  --green-turquoise: #{$green-turquoise};
+  --green-emerald: #{$green-emerald};
+  --green-lime: #{$green-lime};
+
+  // === Amarillos / Naranjas ===
+  --yellow-gold: #{$yellow-gold};
+  --yellow-warm: #{$yellow-warm};
+  --orange-bright: #{$orange-bright};
+
+  // === Rojos ===
+  --red-coral: #{$red-coral};
+  --red-intense: #{$red-intense};
+
+  // === Rosas / Morados ===
+  --pink-magenta: #{$pink-magenta};
+  --pink-fuchsia: #{$pink-fuchsia};
+  --purple-deep: #{$purple-deep};
+  --purple-lavender: #{$purple-lavender};
+  --pink-soft: #{$pink-soft};
+
+  // === Colores adicionales ===
+  --teal-deep: #{$teal-deep};
+  --cyan-light: #{$cyan-light};
+  --gold-rose: #{$gold-rose};
+  --berry-deep: #{$berry-deep};
+  --mint-bright: #{$mint-bright};
 }
