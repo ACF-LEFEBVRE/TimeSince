@@ -63,6 +63,8 @@
                   variant="text"
                   :style="{ color: colorMap[category.color as keyof typeof colorMap] }"
                   @click="handleCategoryClick(category.name)"
+                  :disabled="getCategoryCounterCount(category.name) === 0"
+                  :title="getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''"
                 >
                   {{ text.viewCounters }}
                 </VBtn>
@@ -265,6 +267,7 @@ const text = {
   myCategories: t('categories.myCategories'),
   newCategory: t('categories.newCategory'),
   noCounters: t('categories.noCounters'),
+  noCountersInCategory: t('categories.noCountersInCategory'),
   oneCounter: t('categories.oneCounter'),
   preview: t('categories.preview'),
   save: t('common.save'),

@@ -134,6 +134,7 @@
     "myCategories": "My Categories",
     "newCategory": "New category",
     "noCounters": "No counters",
+    "noCountersInCategory": "This category has no counters",
     "oneCounter": "1 counter",
     "preview": "Preview",
     "selectColor": "Select a color",

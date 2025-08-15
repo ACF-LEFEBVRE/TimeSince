@@ -134,6 +134,7 @@
     "myCategories": "Mis Categorías",
     "newCategory": "Nueva categoría",
     "noCounters": "Sin contadores",
+    "noCountersInCategory": "Esta categoría no tiene contadores",
     "oneCounter": "1 contador",
     "preview": "Vista previa",
     "selectColor": "Selecciona un color",
