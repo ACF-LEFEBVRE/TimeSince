@@ -45,7 +45,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { ROUTES } from '@/router/routes'
 import type { CategoryOption } from '@/modules/categories/store/useCategoriesStore'
-import { useCategorySelection } from '@/composables/useCategorySelection'
+import { useCategorySelection } from '@/modules/categories/composables/useCategorySelection'
 import type { PropType } from 'vue'
 
 // PROPS
