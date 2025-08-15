@@ -60,7 +60,7 @@ import CustomTextField from '@/components/form/CustomTextField.vue'
 import CustomSelect from '@/components/form/CustomSelect.vue'
 import CustomTextArea from '@/components/form/CustomTextArea.vue'
 import CustomButton from '@/components/form/CustomButton.vue'
-import { useCategoriesStore } from '../categories/store/useCategoriesStore'
+import { useCategoriesStore } from '@/modules/categories/store/useCategoriesStore'
 import { storeToRefs } from 'pinia'
 
 // TRANSLATION

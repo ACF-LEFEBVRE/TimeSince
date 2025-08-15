@@ -13,7 +13,7 @@ import { Collection } from '@/plugins/firebase/collections'
 import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErrors'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useDateCalculation } from '@/composables/useDateCalculation'
-import { useCategoriesStore } from '@/components/categories/store/useCategoriesStore'
+import { useCategoriesStore } from '@/modules/categories/store/useCategoriesStore'
 import type { Counter } from '@/components/counters/types/counters'
 
 export interface AuthCredentials {
@@ -87,7 +87,7 @@ export function useAuth() {
   const register = async (credentials: AuthCredentials) => {
     error.value = null
     isLoading.value = true
-    
+
     // Obtener el store de categorías
     const categoriesStore = useCategoriesStore()
 

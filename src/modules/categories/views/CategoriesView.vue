@@ -54,8 +54,10 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useCategoriesStore } from '@/components/categories/store/useCategoriesStore'
-import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
+import {
+  useCategoriesStore,
+  type CategoryOption,
+} from '@/modules/categories/store/useCategoriesStore'
 import { useAuth } from '@/composables/useAuth'
 import { useCounters } from '@/components/counters/composables/useCounters'
 import { storeToRefs } from 'pinia'
