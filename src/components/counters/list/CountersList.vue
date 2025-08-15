@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import CounterItem from '@/components/counters/CounterItem.vue'
 import CounterListEmptyState from '@/components/counters/list/CounterListEmptyState.vue'
-import SearchEmptyState from '@/views/counters/components/SearchEmptyState.vue'
+import SearchEmptyState from '@/modules/counters/components/SearchEmptyState.vue'
 import type { Counter } from '@/components/counters/types/counters'
 
 // PROPS

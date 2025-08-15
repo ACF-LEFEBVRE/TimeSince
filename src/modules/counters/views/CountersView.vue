@@ -44,11 +44,11 @@ import { useCountersCRUD } from '@/components/counters/composables/useCountersCR
 import { useCategorySelection } from '@/modules/categories/composables/useCategorySelection'
 import CountersList from '@/components/counters/list/CountersList.vue'
 import CounterForm from '@/components/counters/CounterForm.vue'
-import SearchCounter from '@/views/counters/components/SearchCounter.vue'
-import CategoryFilterBar from '@/views/counters/components/CategoryFilterBar.vue'
+import SearchCounter from '@/modules/counters/components/SearchCounter.vue'
+import CategoryFilterBar from '@/modules/counters/components/CategoryFilterBar.vue'
 import type { Counter } from '@/components/counters/types/counters'
-import CreateMockButton from './components/CreateMockButton.vue'
-import SortOrderButton from './components/SortOrderButton.vue'
+import CreateMockButton from '@/modules/counters/components/CreateMockButton.vue'
+import SortOrderButton from '@/modules/counters/components/SortOrderButton.vue'
 import CustomButton from '@/components/form/CustomButton.vue'
 
 // TRANSLATION
