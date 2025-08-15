@@ -24,6 +24,7 @@
     "help": "¿Necesitas ayuda?"
   },
   "common": {
+    "add": "Añadir",
     "appName": "TimeSince",
     "cancel": "Cancelar",
     "confirm": "¿Estás seguro?",
@@ -122,9 +123,19 @@
     "categories": "Categorías"
   },
   "categories": {
+    "addNewCategory": "Añadir nueva categoría",
+    "alreadyExists": "Esta categoría ya existe",
+    "categoryName": "Nombre de la categoría",
+    "deleteCategory": "Eliminar categoría",
+    "deleteConfirmation": "¿Estás seguro de que quieres eliminar la categoría",
+    "description": "Organiza tus contadores por categorías",
+    "minLength": "El nombre debe tener al menos 3 caracteres",
     "myCategories": "Mis Categorías",
-    "viewCounters": "Ver contadores",
-    "description": "Organiza tus contadores por categorías"
+    "newCategory": "Nueva categoría",
+    "preview": "Vista previa",
+    "selectColor": "Selecciona un color",
+    "selectIcon": "Selecciona un icono",
+    "viewCounters": "Ver contadores"
   },
   "form": {
     "required": "Este campo es obligatorio.",

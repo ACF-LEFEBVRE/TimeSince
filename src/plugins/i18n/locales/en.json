@@ -24,6 +24,7 @@
     "help": "Need help?"
   },
   "common": {
+    "add": "Add",
     "appName": "TimeSince",
     "cancel": "Cancel",
     "confirm": "Are you sure?",
@@ -122,9 +123,19 @@
     "categories": "Categories"
   },
   "categories": {
+    "addNewCategory": "Add new category",
+    "alreadyExists": "This category already exists",
+    "categoryName": "Category name",
+    "deleteCategory": "Delete category",
+    "deleteConfirmation": "Are you sure you want to delete the category",
+    "description": "Organize your counters by categories",
+    "minLength": "The name must be at least 3 characters long",
     "myCategories": "My Categories",
-    "viewCounters": "View counters",
-    "description": "Organize your counters by categories"
+    "newCategory": "New category",
+    "preview": "Preview",
+    "selectColor": "Select a color",
+    "selectIcon": "Select an icon",
+    "viewCounters": "View counters"
   },
   "form": {
     "required": "This field is required.",

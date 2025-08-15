@@ -1,6 +1,6 @@
-@forward 'abstracts';
 // Main styles index file
 @forward 'abstracts';
+@use 'shared/css-variables';
 
 // Quitar fondo azul de autocompletado en todos los inputs (Chrome/Safari)
 :root {
