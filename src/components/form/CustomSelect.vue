@@ -16,7 +16,7 @@
       :placeholder="placeholder"
       :append-inner-icon="appendInnerIcon"
       :items="items"
-      item-title="text"
+      :item-title="itemText"
       item-value="value"
       @click:append-inner="onAppendInnerClick"
     />
@@ -71,6 +71,10 @@ defineProps({
   onAppendInnerClick: {
     type: Function,
     default: () => {},
+  },
+  itemText: {
+    type: String,
+    default: 'text',
   },
 })
 

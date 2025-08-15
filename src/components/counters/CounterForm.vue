@@ -16,6 +16,7 @@
             v-model="counterData.category"
             :label="text.category"
             :items="getCategoryOptions"
+            item-text="name"
           />
 
           <div class="date-section">
