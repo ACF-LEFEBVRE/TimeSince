@@ -16,64 +16,15 @@
         <div v-if="storeLoading" class="d-flex justify-center align-center pa-4">
           <VProgressCircular indeterminate color="primary" />
         </div>
-        <VRow v-else>
-          <VCol
-            v-for="(category, index) in getCategoryOptions"
-            :key="index"
-            cols="12"
-            sm="6"
-            md="4"
-            lg="3"
-          >
-            <VCard class="category-card" :elevation="2" hover>
-              <div
-                class="category-icon-wrapper"
-                :style="{ backgroundColor: colorMap[category.color as keyof typeof colorMap] }"
-              >
-                <VIcon :icon="category.icon" size="large" color="white" />
-                <div class="counter-badge" v-if="!countersLoading">
-                  {{ getCategoryCounterCount(category.name) }}
-                </div>
-              </div>
-              <VCardTitle>
-                {{ category.name }}
-              </VCardTitle>
-              <VCardSubtitle class="counter-count">
-                {{ formatCounterText(getCategoryCounterCount(category.name)) }}
-              </VCardSubtitle>
-              <VCardActions>
-                <VBtn
-                  variant="text"
-                  color="error"
-                  size="small"
-                  @click="openDeleteCategoryDialog(category.name)"
-                >
-                  {{ text.delete }}
-                </VBtn>
-                <VBtn
-                  variant="text"
-                  color="warning"
-                  size="small"
-                  @click="openEditCategoryDialog(category)"
-                >
-                  {{ text.edit }}
-                </VBtn>
-                <VSpacer />
-                <VBtn
-                  variant="text"
-                  :style="{ color: colorMap[category.color as keyof typeof colorMap] }"
-                  @click="handleCategoryClick(category.name)"
-                  :disabled="getCategoryCounterCount(category.name) === 0"
-                  :title="
-                    getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''
-                  "
-                >
-                  {{ text.viewCounters }}
-                </VBtn>
-              </VCardActions>
-            </VCard>
-          </VCol>
-        </VRow>
+        <CategoryCardsContainerComponent
+          v-else
+          :categories="getCategoryOptions"
+          :counters-loading="countersLoading"
+          :color-map="colorMap"
+          :counters="allCounters"
+          @delete="openDeleteCategoryDialog"
+          @edit="openEditCategoryDialog"
+        />
       </VCardText>
     </VCard>
 
@@ -103,15 +54,13 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
-import { ROUTES } from '@/router/routes'
 import { useCategoriesStore } from '@/components/categories/store/useCategoriesStore'
 import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
 import { useAuth } from '@/composables/useAuth'
-import { useCategorySelection } from '@/composables/useCategorySelection'
 import { useCounters } from '@/components/counters/composables/useCounters'
 import { storeToRefs } from 'pinia'
 import AddOrEditCategoryDialog from '@/modules/categories/components/dialogs/AddOrEditCategoryDialog.vue'
+import CategoryCardsContainerComponent from '@/modules/categories/components/CategoryCardsContainerComponent.vue'
 import CustomButton from '@/components/form/CustomButton.vue'
 import RemoveCategoryDialog from '@/modules/categories/components/dialogs/RemoveCategoryDialog.vue'
 
@@ -119,7 +68,6 @@ import RemoveCategoryDialog from '@/modules/categories/components/dialogs/Remove
 const { t } = useI18n()
 
 const text = {
-  add: t('common.add'),
   addNewCategory: t('categories.addNewCategory'),
   cancel: t('common.cancel'),
   categoryName: t('categories.categoryName'),
@@ -127,27 +75,19 @@ const text = {
   deleteCategory: t('categories.deleteCategory'),
   deleteConfirmation: t('categories.deleteConfirmation'),
   description: t('categories.description'),
-  edit: t('common.edit'),
   editCategory: t('categories.editCategory'),
   minLength: t('categories.minLength'),
-  multipleCounters: t('categories.multipleCounters'),
   myCategories: t('categories.myCategories'),
   newCategory: t('categories.newCategory'),
-  noCounters: t('categories.noCounters'),
-  noCountersInCategory: t('categories.noCountersInCategory'),
-  oneCounter: t('categories.oneCounter'),
   preview: t('categories.preview'),
   save: t('common.save'),
   selectColor: t('categories.selectColor'),
   selectIcon: t('categories.selectIcon'),
-  viewCounters: t('categories.viewCounters'),
 }
 
 // COMPOSABLES
-const router = useRouter()
 const { userId } = useAuth()
 const { allCounters, isLoading: countersLoading } = useCounters(userId)
-const { setSelectedCategory } = useCategorySelection()
 
 // STORE
 const categoriesStore = useCategoriesStore()
@@ -182,16 +122,6 @@ watch(
 )
 
 // METHODS
-const handleCategoryClick = (category: string): void => {
-  // Establecer la categoría seleccionada en el store compartido
-  setSelectedCategory(category)
-
-  // Navegar a la vista de contadores sin pasar parámetros en la URL
-  router.push({
-    path: `/${ROUTES.COUNTERS}`,
-  })
-}
-
 const openNewCategoryDialog = () => {
   isEditing.value = false
   originalCategoryName.value = ''
@@ -219,20 +149,6 @@ const closeCategoryDialog = () => {
 const openDeleteCategoryDialog = (category: string) => {
   categoryToDelete.value = category
   showDeleteCategoryDialog.value = true
-}
-
-// Método para contar cuántos contadores hay de una categoría específica
-const getCategoryCounterCount = (categoryName: string): number => {
-  if (!allCounters.value.length) return 0
-
-  return allCounters.value.filter(counter => counter.category === categoryName).length
-}
-
-// Método para formatear el texto de contadores
-const formatCounterText = (count: number): string => {
-  if (count === 0) return t('categories.noCounters')
-  if (count === 1) return t('categories.oneCounter')
-  return t('categories.multipleCounters', { count })
 }
 
 const closeDeleteCategoryDialog = () => {
@@ -340,12 +256,5 @@ const handleSaveCategoryChanges = async (updatedCategory: CategoryOption) => {
     font-weight: bold;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
-}
-
-.counter-count {
-  text-align: center;
-  color: red;
-  font-size: 12px;
-  margin-top: -8px;
 }
 </style>
