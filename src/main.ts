@@ -10,8 +10,9 @@ import '@mdi/font/css/materialdesignicons.css'
 const pinia = createPinia()
 const app = createApp(App)
 
-app.use(router)
+app.use(pinia)
 app.use(vuetify)
 app.use(i18n)
-app.use(pinia)
+app.use(router)
+
 app.mount('#app')
