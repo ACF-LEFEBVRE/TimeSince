@@ -96,6 +96,7 @@ interface CategoriesStoreResult {
   getCategoryOptions: ComputedRef<CategoryOption[]>
   isLoading: ComputedRef<boolean>
   loadCategories: (userId: string) => Promise<void>
+  updateCategory: (userId: string, oldName: string, updatedCategory: CategoryOption) => Promise<boolean>
 }
 
 export const useCategoriesStore = defineStore('categories', (): CategoriesStoreResult => {
@@ -243,6 +244,52 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
       return false
     }
   }
+  
+  // Método para actualizar una categoría existente
+  const updateCategory = async (userId: string, oldName: string, updatedCategory: CategoryOption) => {
+    try {
+      const categoriesPath = `${Collection.USERS}/${userId}/categories`
+      
+      // Si el nombre ha cambiado, eliminamos la categoría anterior y creamos una nueva
+      if (oldName !== updatedCategory.name) {
+        // Eliminamos el documento anterior
+        await deleteDoc(doc(db, categoriesPath, oldName))
+        
+        // Creamos el nuevo documento
+        await setDoc(doc(db, categoriesPath, updatedCategory.name), {
+          name: updatedCategory.name,
+          color: updatedCategory.color,
+          icon: updatedCategory.icon,
+          createdAt: Date.now(), // Actualizamos la fecha de creación
+        })
+      } else {
+        // Si el nombre no ha cambiado, solo actualizamos los campos
+        await setDoc(doc(db, categoriesPath, updatedCategory.name), {
+          name: updatedCategory.name,
+          color: updatedCategory.color,
+          icon: updatedCategory.icon,
+          // Mantenemos la fecha de creación original
+          // Podríamos añadir un campo updatedAt si quisiéramos controlar la fecha de actualización
+        }, { merge: true }) // Usamos merge para actualizar solo los campos proporcionados
+      }
+      
+      // Actualizamos el array local para mantener la reactividad
+      const index = userCategories.value.findIndex(cat => cat.name === oldName)
+      if (index !== -1) {
+        // Si encontramos la categoría, la reemplazamos
+        userCategories.value.splice(index, 1, updatedCategory)
+      } else {
+        // Si no la encontramos (debería ser raro), la añadimos
+        userCategories.value.push(updatedCategory)
+      }
+      
+      console.log('Category updated successfully')
+      return true
+    } catch (error) {
+      console.error('Error updating category:', error)
+      return false
+    }
+  }
 
   const loadCategories = async (userId: string) => {
     if (!userId) {
@@ -307,5 +354,6 @@ export const useCategoriesStore = defineStore('categories', (): CategoriesStoreR
     getCategoryOptions,
     isLoading: computed(() => isLoading.value),
     loadCategories,
+    updateCategory
   }
 })

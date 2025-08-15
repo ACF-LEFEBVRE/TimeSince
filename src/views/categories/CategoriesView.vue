@@ -44,6 +44,14 @@
                 >
                   {{ text.delete }}
                 </VBtn>
+                <VBtn
+                  variant="text"
+                  color="warning"
+                  size="small"
+                  @click="openEditCategoryDialog(category)"
+                >
+                  {{ text.edit }}
+                </VBtn>
                 <VSpacer />
                 <VBtn
                   variant="text"
@@ -59,18 +67,19 @@
       </VCardText>
     </VCard>
 
-    <!-- Dialog para añadir nueva categoría -->
-    <VDialog v-model="showNewCategoryDialog" max-width="600px">
+    <!-- Dialog para añadir o editar categoría -->
+    <VDialog v-model="showCategoryDialog" max-width="600px">
       <VCard>
-        <VCardTitle class="text-h5">{{ text.addNewCategory }}</VCardTitle>
+        <VCardTitle class="text-h5">{{ isEditing ? text.editCategory : text.addNewCategory }}</VCardTitle>
         <VCardText>
           <VTextField
-            v-model="newCategory.name"
+            v-model="categoryForm.name"
             :label="text.categoryName"
             :rules="categoryNameRules"
+            :disabled="isEditing && categoryForm.name === originalCategoryName"
             required
             autofocus
-            @keyup.enter="addCategory"
+            @keyup.enter="saveCategoryChanges"
           ></VTextField>
 
           <VCardTitle class="pt-4 pb-2">{{ text.selectColor }}</VCardTitle>
@@ -79,9 +88,9 @@
               v-for="(color, index) in availableColors"
               :key="index"
               class="color-option"
-              :class="{ selected: newCategory.color === color }"
+              :class="{ selected: categoryForm.color === color }"
               :style="{ backgroundColor: colorMap[color as keyof typeof colorMap] }"
-              @click="newCategory.color = color"
+              @click="categoryForm.color = color"
             ></div>
           </div>
 
@@ -91,12 +100,12 @@
               v-for="(icon, index) in availableIcons"
               :key="index"
               class="icon-option"
-              :class="{ selected: newCategory.icon === icon }"
-              @click="newCategory.icon = icon"
+              :class="{ selected: categoryForm.icon === icon }"
+              @click="categoryForm.icon = icon"
             >
               <VIcon
                 :icon="icon"
-                :style="{ color: colorMap[newCategory.color as keyof typeof colorMap] }"
+                :style="{ color: colorMap[categoryForm.color as keyof typeof colorMap] }"
               ></VIcon>
             </div>
           </div>
@@ -105,25 +114,25 @@
           <div class="category-preview">
             <div
               class="category-icon-wrapper"
-              :style="{ backgroundColor: colorMap[newCategory.color as keyof typeof colorMap] }"
+              :style="{ backgroundColor: colorMap[categoryForm.color as keyof typeof colorMap] }"
             >
-              <VIcon :icon="newCategory.icon" size="large" color="white" />
+              <VIcon :icon="categoryForm.icon" size="large" color="white" />
             </div>
-            <span class="preview-text">{{ newCategory.name || text.categoryName }}</span>
+            <span class="preview-text">{{ categoryForm.name || text.categoryName }}</span>
           </div>
         </VCardText>
         <VCardActions>
           <VSpacer></VSpacer>
-          <VBtn color="primary" variant="text" @click="closeNewCategoryDialog">
+          <VBtn color="primary" variant="text" @click="closeCategoryDialog">
             {{ text.cancel }}
           </VBtn>
           <VBtn
             color="primary"
-            @click="addCategory"
-            :disabled="!isValidCategory"
+            @click="saveCategoryChanges"
+            :disabled="!isValidCategoryForm"
             :loading="formLoading"
           >
-            {{ text.add }}
+            {{ isEditing ? text.save : text.add }}
           </VBtn>
         </VCardActions>
       </VCard>
@@ -167,16 +176,19 @@ const router = useRouter()
 const { userId } = useAuth()
 const categoriesStore = useCategoriesStore()
 const { getCategoryOptions, isLoading: storeLoading } = storeToRefs(categoriesStore)
-const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories } = categoriesStore
+const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } = categoriesStore
 const { t } = useI18n()
 
 // DATA
 const categoryToDelete = ref('')
 const formLoading = ref(false)
 const showDeleteCategoryDialog = ref(false)
-const showNewCategoryDialog = ref(false)
+const showCategoryDialog = ref(false)
+const isEditing = ref(false)
+const originalCategoryName = ref('')
 
-const newCategory = ref<CategoryOption>({
+// Formulario para añadir o editar categorías
+const categoryForm = ref<CategoryOption>({
   name: '',
   color: 'tertiary-byzantineBlue-200',
   icon: 'mdi-shape',
@@ -212,12 +224,17 @@ const availableColors = [
 
 // Usamos availableIcons del store
 
-const categoryNameRules = [
+// Reglas de validación que tienen en cuenta si estamos editando o creando una categoría
+const categoryNameRules = computed(() => [
   (v: string) => !!v || t('form.required'),
   (v: string) => (v && v.length >= 3) || t('categories.minLength'),
   (v: string) =>
-    !getCategoryOptions.value.some(cat => cat.name === v) || t('categories.alreadyExists'),
-]
+    // Si estamos editando y el nombre no ha cambiado, es válido
+    (isEditing.value && v === originalCategoryName.value) ||
+    // Si es un nombre nuevo, no debe existir ya
+    !getCategoryOptions.value.some(cat => cat.name === v) ||
+    t('categories.alreadyExists'),
+])
 
 // TRANSLATIONS
 const text = {
@@ -229,34 +246,37 @@ const text = {
   deleteCategory: t('categories.deleteCategory'),
   deleteConfirmation: t('categories.deleteConfirmation'),
   description: t('categories.description'),
+  edit: t('common.edit'),
+  editCategory: t('categories.editCategory'),
   minLength: t('categories.minLength'),
   myCategories: t('categories.myCategories'),
   newCategory: t('categories.newCategory'),
   preview: t('categories.preview'),
+  save: t('common.save'),
   selectColor: t('categories.selectColor'),
   selectIcon: t('categories.selectIcon'),
   viewCounters: t('categories.viewCounters'),
 }
 
 // COMPUTED
-const isValidCategory = computed(() => {
+const isValidCategoryForm = computed(() => {
+  // Si estamos editando y el nombre no ha cambiado, es válido
+  if (isEditing.value && categoryForm.value.name === originalCategoryName.value) {
+    return true
+  }
+  
+  // Si el nombre es nuevo, debe tener al menos 3 caracteres y no existir ya
   return (
-    newCategory.value.name.length >= 3 &&
-    !getCategoryOptions.value.some(cat => cat.name === newCategory.value.name)
+    categoryForm.value.name.length >= 3 &&
+    !getCategoryOptions.value.some(cat => cat.name === categoryForm.value.name)
   )
 })
 
 // WATCHES
-// Actualizar las reglas de validación cuando cambian las categorías
+// No necesitamos actualizar las reglas de validación manualmente
+// ya que ahora es un computed que se actualiza automáticamente
 watch(getCategoryOptions, (newCategories: CategoryOption[]) => {
   console.log('Categories updated:', newCategories)
-  // El array de reglas es inmutable, así que creamos uno nuevo
-  categoryNameRules.length = 0
-  categoryNameRules.push(
-    (v: string) => !!v || t('form.required'),
-    (v: string) => (v && v.length >= 3) || t('categories.minLength'),
-    (v: string) => !newCategories.some(cat => cat.name === v) || t('categories.alreadyExists')
-  )
 })
 
 // METHODS
@@ -270,7 +290,24 @@ const handleCategoryClick = (category: string): void => {
 
 const openNewCategoryDialog = () => {
   console.log('Opening new category dialog')
-  showNewCategoryDialog.value = true
+  isEditing.value = false
+  originalCategoryName.value = ''
+  // Reiniciar el formulario con valores por defecto
+  categoryForm.value = {
+    name: '',
+    color: 'tertiary-byzantineBlue-200',
+    icon: 'mdi-shape',
+  }
+  showCategoryDialog.value = true
+}
+
+const openEditCategoryDialog = (category: CategoryOption) => {
+  console.log('Opening edit category dialog for', category.name)
+  isEditing.value = true
+  originalCategoryName.value = category.name
+  // Copiar los valores de la categoría al formulario
+  categoryForm.value = { ...category }
+  showCategoryDialog.value = true
 }
 
 // WATCHES
@@ -285,13 +322,8 @@ watch(
   { immediate: true }
 )
 
-const closeNewCategoryDialog = () => {
-  showNewCategoryDialog.value = false
-  newCategory.value = {
-    name: '',
-    color: 'tertiary-byzantineBlue-200',
-    icon: 'mdi-shape',
-  }
+const closeCategoryDialog = () => {
+  showCategoryDialog.value = false
 }
 
 const openDeleteCategoryDialog = (category: string) => {
@@ -323,26 +355,37 @@ const handleDeleteCategory = async () => {
   }
 }
 
-const addCategory = async () => {
-  if (isValidCategory.value) {
-    formLoading.value = true
-    try {
-      if (userId.value) {
-        const success = await addNewCategory(userId.value, newCategory.value)
-        if (success) {
-          // Si se añade correctamente, cerramos el diálogo
-          closeNewCategoryDialog()
-        } else {
-          console.error('Failed to add category')
-        }
-      } else {
-        console.error('User not logged in')
-      }
-    } catch (error) {
-      console.error('Error adding category:', error)
-    } finally {
-      formLoading.value = false
+// Procesa una nueva categoría o actualiza una existente
+const saveCategoryChanges = async () => {
+  // Validar formulario y usuario
+  if (!isValidCategoryForm.value || !userId.value) {
+    console.error('Invalid form or user not logged in')
+    return
+  }
+  
+  formLoading.value = true
+  try {
+    let success = false
+    const action = isEditing.value ? 'update' : 'add'
+    
+    // Ejecutar la acción correspondiente
+    if (isEditing.value) {
+      success = await updateCategory(userId.value, originalCategoryName.value, categoryForm.value)
+    } else {
+      success = await addNewCategory(userId.value, categoryForm.value)
     }
+    
+    // Manejar resultado
+    if (success) {
+      closeCategoryDialog()
+    } else {
+      console.error(`Failed to ${action} category`)
+    }
+  } catch (error) {
+    const action = isEditing.value ? 'updating' : 'adding'
+    console.error(`Error ${action} category:`, error)
+  } finally {
+    formLoading.value = false
   }
 }
 </script>
