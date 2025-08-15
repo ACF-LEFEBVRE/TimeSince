@@ -1,13 +1,6 @@
 <template>
   <VRow>
-    <VCol
-      v-for="(category, index) in categories"
-      :key="index"
-      cols="12"
-      sm="6"
-      md="4"
-      lg="3"
-    >
+    <VCol v-for="(category, index) in categories" :key="index" cols="12" sm="6" md="4" lg="3">
       <VCard class="category-card" :elevation="2" hover>
         <div
           class="category-icon-wrapper"
@@ -25,20 +18,10 @@
           {{ formatCounterText(getCategoryCounterCount(category.name)) }}
         </VCardSubtitle>
         <VCardActions>
-          <VBtn
-            variant="text"
-            color="error"
-            size="small"
-            @click="handleDeleteClick(category.name)"
-          >
+          <VBtn variant="text" color="error" size="small" @click="handleDeleteClick(category.name)">
             {{ text.delete }}
           </VBtn>
-          <VBtn
-            variant="text"
-            color="warning"
-            size="small"
-            @click="handleEditClick(category)"
-          >
+          <VBtn variant="text" color="warning" size="small" @click="handleEditClick(category)">
             {{ text.edit }}
           </VBtn>
           <VSpacer />
@@ -47,9 +30,7 @@
             :style="{ color: colorMap[category.color as keyof typeof colorMap] }"
             @click="handleCategoryClick(category.name)"
             :disabled="getCategoryCounterCount(category.name) === 0"
-            :title="
-              getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''
-            "
+            :title="getCategoryCounterCount(category.name) === 0 ? text.noCountersInCategory : ''"
           >
             {{ text.viewCounters }}
           </VBtn>
@@ -65,24 +46,35 @@ import { useRouter } from 'vue-router'
 import { ROUTES } from '@/router/routes'
 import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
 import { useCategorySelection } from '@/composables/useCategorySelection'
+import type { PropType } from 'vue'
 
 // PROPS
-const props = defineProps<{
-  categories: CategoryOption[]
-  countersLoading: boolean
-  colorMap: Record<string, string>
-  counters: { category?: string }[] // Hacemos category opcional para que coincida con el tipo real
-}>()
-
-// EVENTS
-const emit = defineEmits(['delete', 'edit'])
+const props = defineProps({
+  categories: {
+    type: Array as PropType<CategoryOption[]>,
+    required: true,
+  },
+  countersLoading: {
+    type: Boolean,
+    default: false,
+  },
+  colorMap: {
+    type: Object as PropType<Record<string, string>>,
+    required: true,
+  },
+  counters: {
+    type: Array as PropType<{ category?: string }[]>,
+    default: () => [],
+  },
+})
 
 // COMPOSABLES
 const router = useRouter()
-const { t } = useI18n()
 const { setSelectedCategory } = useCategorySelection()
 
 // TRANSLATIONS
+const { t } = useI18n()
+
 const text = {
   delete: t('common.delete'),
   edit: t('common.edit'),
@@ -92,6 +84,9 @@ const text = {
   oneCounter: t('categories.oneCounter'),
   viewCounters: t('categories.viewCounters'),
 }
+
+// EVENTS
+const emit = defineEmits(['delete', 'edit'])
 
 // METHODS
 const handleCategoryClick = (category: string): void => {
@@ -115,14 +110,15 @@ const handleEditClick = (category: CategoryOption): void => {
 // Método para contar cuántos contadores hay de una categoría específica
 const getCategoryCounterCount = (categoryName: string): number => {
   if (!props.counters.length) return 0
-  return props.counters.filter(counter => counter.category && counter.category === categoryName).length
+  return props.counters.filter(counter => counter.category && counter.category === categoryName)
+    .length
 }
 
 // Método para formatear el texto de contadores
 const formatCounterText = (count: number): string => {
-  if (count === 0) return t('categories.noCounters')
-  if (count === 1) return t('categories.oneCounter')
-  return t('categories.multipleCounters', { count })
+  if (count === 0) return text.noCounters
+  if (count === 1) return text.oneCounter
+  return text.multipleCounters
 }
 </script>
 
