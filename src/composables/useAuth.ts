@@ -14,7 +14,7 @@ import { useFirebaseErrors } from '@/plugins/firebase/composables/useFirebaseErr
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { useDateCalculation } from '@/composables/useDateCalculation'
 import { useCategoriesStore } from '@/modules/categories/store/useCategoriesStore'
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 
 export interface AuthCredentials {
   email: string

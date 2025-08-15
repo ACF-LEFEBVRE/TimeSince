@@ -1,4 +1,4 @@
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 
 // Colores predefinidos para los contadores
 const colors = [

@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 import CountersList from '@/modules/counters/components/list/CountersList.vue'
 
 // TRANSLATION

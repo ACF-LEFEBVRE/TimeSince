@@ -3,7 +3,7 @@ import type { Ref } from 'vue'
 import { collection, getDocs } from 'firebase/firestore'
 import { useFirebase } from '@/plugins/firebase/composables/useFirebase'
 import { Collection } from '@/plugins/firebase/collections'
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 
 export function useCounters(userId: Ref<string | null>) {
   // COMPOSABLES

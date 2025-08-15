@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 import { useDateCalculation } from '@/composables/useDateCalculation'
 import { useI18n } from 'vue-i18n'
 import CustomTextField from '@/components/form/CustomTextField.vue'

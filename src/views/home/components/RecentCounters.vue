@@ -21,7 +21,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CountersList from '@/modules/counters/components/list/CountersList.vue'
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 
 // TRANSLATION
 const { t } = useI18n()

@@ -32,7 +32,7 @@
 import CounterItem from '@/modules/counters/components/CounterItem.vue'
 import CounterListEmptyState from '@/modules/counters/components/list/CounterListEmptyState.vue'
 import SearchEmptyState from '@/modules/counters/components/SearchEmptyState.vue'
-import type { Counter } from '@/modules/types/counters'
+import type { Counter } from '@/modules/counters/types/counters'
 
 // PROPS
 defineProps({
