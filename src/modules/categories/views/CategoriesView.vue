@@ -83,7 +83,6 @@
       :original-category-name="originalCategoryName"
       :initial-category="categoryForm"
       :existing-categories="getCategoryOptions"
-      :available-colors="availableColors"
       :available-icons="availableIcons"
       :color-map="colorMap"
       :loading="formLoading"
@@ -116,62 +115,9 @@ import AddOrEditCategoryDialog from '@/modules/categories/components/dialogs/Add
 import CustomButton from '@/components/form/CustomButton.vue'
 import RemoveCategoryDialog from '@/modules/categories/components/dialogs/RemoveCategoryDialog.vue'
 
-// COMPOSABLES
-const router = useRouter()
-const { userId } = useAuth()
-const categoriesStore = useCategoriesStore()
-const { getCategoryOptions, isLoading: storeLoading } = storeToRefs(categoriesStore)
-const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } =
-  categoriesStore
-const { t } = useI18n()
-const { allCounters, isLoading: countersLoading } = useCounters(userId)
-
-// DATA
-const categoryToDelete = ref('')
-const formLoading = ref(false)
-const showDeleteCategoryDialog = ref(false)
-const showCategoryDialog = ref(false)
-const isEditing = ref(false)
-const originalCategoryName = ref('')
-
-// Formulario para añadir o editar categorías
-const categoryForm = ref<CategoryOption>({
-  name: '',
-  color: 'tertiary-byzantineBlue-200',
-  icon: 'mdi-shape',
-})
-
-const availableColors = [
-  'tertiary-persianRed-200',
-  'tertiary-persianRed-100',
-  'tertiary-persianRed-050',
-  'tertiary-princetonOrange-200',
-  'tertiary-princetonOrange-100',
-  'tertiary-princetonOrange-050',
-  'tertiary-saffron-200',
-  'tertiary-saffron-100',
-  'tertiary-saffron-050',
-  'tertiary-seaGreen-200',
-  'tertiary-seaGreen-100',
-  'tertiary-seaGreen-050',
-  'tertiary-byzantineBlue-200',
-  'tertiary-byzantineBlue-100',
-  'tertiary-byzantineBlue-050',
-  'tertiary-silver-100',
-  'tertiary-silver-50',
-  'tertiary-ecru-100',
-  'tertiary-ecru-050',
-  'tertiary-citron-100',
-  'tertiary-citron-050',
-  'tertiary-tiffanyBlue-100',
-  'tertiary-tiffanyBlue-050',
-  'tertiary-marianBlue-100',
-  'tertiary-marianBlue-050',
-]
-
-// Usamos availableIcons del store
-
 // TRANSLATIONS
+const { t } = useI18n()
+
 const text = {
   add: t('common.add'),
   addNewCategory: t('categories.addNewCategory'),
@@ -197,19 +143,45 @@ const text = {
   viewCounters: t('categories.viewCounters'),
 }
 
-// COMPUTED
-
-// WATCHES
-// No necesitamos actualizar las reglas de validación manualmente
-// ya que ahora es un computed que se actualiza automáticamente
-watch(getCategoryOptions, (newCategories: CategoryOption[]) => {
-  console.log('Categories updated:', newCategories)
-})
-
-// METHODS
-
+// COMPOSABLES
+const router = useRouter()
+const { userId } = useAuth()
+const { allCounters, isLoading: countersLoading } = useCounters(userId)
 const { setSelectedCategory } = useCategorySelection()
 
+// STORE
+const categoriesStore = useCategoriesStore()
+const { getCategoryOptions, isLoading: storeLoading } = storeToRefs(categoriesStore)
+const { addNewCategory, availableIcons, colorMap, deleteCategory, loadCategories, updateCategory } =
+  categoriesStore
+
+// DATA
+const categoryToDelete = ref('')
+const formLoading = ref(false)
+const showDeleteCategoryDialog = ref(false)
+const showCategoryDialog = ref(false)
+const isEditing = ref(false)
+const originalCategoryName = ref('')
+
+// Formulario para añadir o editar categorías
+const categoryForm = ref<CategoryOption>({
+  name: '',
+  color: 'tertiary-byzantineBlue-200',
+  icon: 'mdi-shape',
+})
+
+// WATCHERS
+watch(
+  userId,
+  async newUserId => {
+    if (newUserId) {
+      await loadCategories(newUserId)
+    }
+  },
+  { immediate: true }
+)
+
+// METHODS
 const handleCategoryClick = (category: string): void => {
   // Establecer la categoría seleccionada en el store compartido
   setSelectedCategory(category)
@@ -221,7 +193,6 @@ const handleCategoryClick = (category: string): void => {
 }
 
 const openNewCategoryDialog = () => {
-  console.log('Opening new category dialog')
   isEditing.value = false
   originalCategoryName.value = ''
   // Reiniciar el formulario con valores por defecto
@@ -234,25 +205,12 @@ const openNewCategoryDialog = () => {
 }
 
 const openEditCategoryDialog = (category: CategoryOption) => {
-  console.log('Opening edit category dialog for', category.name)
   isEditing.value = true
   originalCategoryName.value = category.name
   // Copiar los valores de la categoría al formulario
   categoryForm.value = { ...category }
   showCategoryDialog.value = true
 }
-
-// WATCHES
-watch(
-  userId,
-  async newUserId => {
-    console.log('User ID changed:', newUserId)
-    if (newUserId) {
-      await loadCategories(newUserId)
-    }
-  },
-  { immediate: true }
-)
 
 const closeCategoryDialog = () => {
   showCategoryDialog.value = false

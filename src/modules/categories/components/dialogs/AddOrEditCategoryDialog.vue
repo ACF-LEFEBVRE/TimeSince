@@ -18,7 +18,7 @@
         <VCardTitle class="pt-4 pb-2">{{ text.selectColor }}</VCardTitle>
         <div class="color-selector">
           <div
-            v-for="(color, index) in props.availableColors"
+            v-for="(color, index) in availableColors"
             :key="index"
             class="color-option"
             :class="{ selected: categoryForm.color === color }"
@@ -78,6 +78,7 @@
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import type { CategoryOption } from '@/components/categories/store/useCategoriesStore'
+import { availableColors } from '@/modules/categories/constants/categoryConstants'
 
 // MODEL
 const dialog = defineModel('modelValue')
@@ -88,7 +89,6 @@ const props = defineProps<{
   originalCategoryName: string
   initialCategory: CategoryOption
   existingCategories: CategoryOption[]
-  availableColors: string[]
   availableIcons: string[]
   colorMap: Record<string, string>
   loading?: boolean
